@@ -6,25 +6,25 @@
 namespace graphics {
 using namespace std;
 
-uint32_t textureFromFile( const char* fileName, const string& directory ) {
-    uint32_t ID = 0;
+uint32_t TextureFromFile( const char* file_name, const string& directory ) {
+    uint32_t id = 0;
 
-    auto fullPath = directory + "/" + fileName;
+    const auto full_path = directory + "/" + file_name;
 
-    int w, h, nChannels;
+    int w, h, n_channels;
     auto image =
-        stbi_load( fullPath.c_str(), &w, &h, &nChannels, STBI_default );
+        stbi_load( full_path.c_str(), &w, &h, &n_channels, STBI_default );
     if (image) {
         GLint format = GL_RGB;
-        if (nChannels == 1)
+        if (n_channels == 1)
             format = GL_RED;
-        else if (nChannels == 3)
+        else if (n_channels == 3)
             format = GL_RGB;
-        else if (nChannels == 4)
+        else if (n_channels == 4)
             format = GL_RGBA;
 
-        glGenTextures( 1, &ID );
-        glBindTexture( GL_TEXTURE_2D, ID );
+        glGenTextures( 1, &id );
+        glBindTexture( GL_TEXTURE_2D, id );
 
         glTexImage2D( GL_TEXTURE_2D, 0, format, w, h, 0, format,
                       GL_UNSIGNED_BYTE, image );
@@ -33,21 +33,21 @@ uint32_t textureFromFile( const char* fileName, const string& directory ) {
         glBindTexture( GL_TEXTURE_2D, 0 );
         stbi_image_free( image );
     } else {
-        cout << "ERROR: Could not find texture at " << fullPath << "." << endl;
+        cout << "ERROR: Could not find texture at " << full_path << "." << endl;
     }
 
-    return ID;
+    return id;
 }
 
-Model::Model( const char* path ) { loadModel( path ); }
+Model::Model( const char* path ) { LoadModel( path ); }
 
 void Model::draw( const Shader& program ) const {
-    for (auto& mesh : _meshes) {
+    for (auto& mesh : meshes_) {
         mesh.draw( program );
     }
 }
 
-void Model::loadModel( const std::string& path ) {
+void Model::LoadModel( const std::string& path ) {
     Assimp::Importer importer;
     const aiScene* scene =
         importer.ReadFile( path, aiProcess_Triangulate | aiProcess_FlipUVs );
@@ -58,23 +58,23 @@ void Model::loadModel( const std::string& path ) {
         return;
     }
 
-    _directory = path.substr( 0, path.find_last_of( '/' ) );
+    directory_ = path.substr( 0, path.find_last_of( '/' ) );
 
-    processNode( scene->mRootNode, scene );
+    ProcessNode( scene->mRootNode, scene );
 }
 
-void Model::processNode( aiNode* node, const aiScene* scene ) {
+void Model::ProcessNode( aiNode* node, const aiScene* scene ) {
     for (uint32_t i = 0; i < node->mNumMeshes; i++) {
         auto mesh = scene->mMeshes[node->mMeshes[i]];
-        _meshes.push_back( processMesh( mesh, scene ) );
+        meshes_.push_back( ProcessMesh( mesh, scene ) );
     }
 
     for (uint32_t i = 0; i < node->mNumChildren; i++) {
-        processNode( node->mChildren[i], scene );
+        ProcessNode( node->mChildren[i], scene );
     }
 }
 
-Mesh Model::processMesh( aiMesh* mesh, const aiScene* scene ) {
+Mesh Model::ProcessMesh( aiMesh* mesh, const aiScene* scene ) {
     vector<Mesh::Vertex> vertices;
     vector<uint32_t> indices;
     vector<Mesh::Texture> textures;
@@ -92,10 +92,10 @@ Mesh Model::processMesh( aiMesh* mesh, const aiScene* scene ) {
         }
 
         if (mesh->mTextureCoords[0]) {
-            v.texCoords = glm::vec2( mesh->mTextureCoords[0][i].x,
+            v.tex_coords = glm::vec2( mesh->mTextureCoords[0][i].x,
                                      mesh->mTextureCoords[0][i].y );
         } else {
-            v.texCoords = glm::vec2( 0.0f );
+            v.tex_coords= glm::vec2( 0.0f );
         }
 
         vertices.push_back( v );
@@ -113,30 +113,30 @@ Mesh Model::processMesh( aiMesh* mesh, const aiScene* scene ) {
     if (mesh->mMaterialIndex >= 0) {
         auto material = scene->mMaterials[mesh->mMaterialIndex];
 
-        vector<Mesh::Texture> diffuseMaps = loadMaterialTextures(
+        vector<Mesh::Texture> diffuse_maps = LoadMaterialTextures(
             material, aiTextureType_DIFFUSE, "texture_diffuse" );
-        textures.insert( textures.end(), diffuseMaps.begin(),
-                         diffuseMaps.end() );
+        textures.insert( textures.end(), diffuse_maps.begin(),
+                         diffuse_maps.end() );
 
-        vector<Mesh::Texture> specularMaps = loadMaterialTextures(
+        vector<Mesh::Texture> specular_maps = LoadMaterialTextures(
             material, aiTextureType_SPECULAR, "texture_specular" );
-        textures.insert( textures.end(), specularMaps.begin(),
-                         specularMaps.end() );
+        textures.insert( textures.end(), specular_maps.begin(),
+                         specular_maps.end() );
     }
 
     return Mesh( vertices, indices, textures );
 }
 
-vector<Mesh::Texture> Model::loadMaterialTextures( aiMaterial* material,
-                                                   aiTextureType textureType,
-                                                   const string& typeName ) {
+vector<Mesh::Texture> Model::LoadMaterialTextures( aiMaterial* material,
+                                                   aiTextureType texture_type,
+                                                   const string& type_name ) {
     vector<Mesh::Texture> textures;
-    for (uint32_t i = 0; i < material->GetTextureCount( textureType ); i++) {
+    for (uint32_t i = 0; i < material->GetTextureCount( texture_type ); i++) {
         aiString str;
-        material->GetTexture( textureType, i, &str );
+        material->GetTexture( texture_type, i, &str );
         bool skip = false;
 
-        for (auto& tex : _texuresLoaded) {
+        for (auto& tex : texures_loaded_) {
             if (std::strcmp( tex.path.c_str(), str.C_Str() ) == 0) {
                 textures.push_back( tex );
                 skip = true;
@@ -146,11 +146,11 @@ vector<Mesh::Texture> Model::loadMaterialTextures( aiMaterial* material,
 
         if (!skip) {
             Mesh::Texture texture;
-            texture.id = textureFromFile( str.C_Str(), _directory );
-            texture.type = typeName;
+            texture.id = TextureFromFile( str.C_Str(), directory_ );
+            texture.type = type_name;
             texture.path = str.C_Str();
             textures.push_back( texture );
-            _texuresLoaded.push_back( texture );
+            texures_loaded_.push_back( texture );
         }
     }
     return textures;

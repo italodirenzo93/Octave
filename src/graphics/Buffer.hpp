@@ -8,58 +8,58 @@ template <typename T, uint32_t BufferType>
 class Buffer {
 public:
     Buffer() {
-        glGenBuffers( 1, &m_ID );
+        glGenBuffers( 1, &id_ );
     }
 
     Buffer( const Buffer& other ) { copy( other ); }
 
     Buffer( Buffer&& other ) noexcept
-        : m_ID( other.m_ID ) { other.m_ID = 0; }
+        : id_( other.id_ ) { other.id_ = 0; }
 
     ~Buffer() {
-        glDeleteBuffers( 1, &m_ID );
+        glDeleteBuffers( 1, &id_ );
     }
 
-    uint32_t getID() const { return m_ID; }
+    uint32_t GetId() const { return id_; }
 
-    void setData( const std::vector<T>& data ) {
-        glBindBuffer( BufferType, m_ID );
+    void SetData( const std::vector<T>& data ) {
+        glBindBuffer( BufferType, id_ );
         glBufferData(
             BufferType, static_cast<uint32_t>(data.size() * sizeof( T )),
             reinterpret_cast<const void*>(data.data()), GL_STATIC_DRAW );
         glBindBuffer( BufferType, 0 );
     }
 
-    void setData( std::initializer_list<T> initializer ) {
-        glBindBuffer( BufferType, m_ID );
+    void SetData( std::initializer_list<T> initializer ) {
+        glBindBuffer( BufferType, id_ );
         glBufferData( BufferType,
                       static_cast<uint32_t>(initializer.size() * sizeof( T )),
                       initializer.begin(), GL_STATIC_DRAW );
         glBindBuffer( BufferType, 0 );
     }
 
-    void bind() const {
-        glBindBuffer( BufferType, m_ID );
+    void Bind() const {
+        glBindBuffer( BufferType, id_ );
     }
 
-    void unbind() const {
+    void Unbind() const {
         glBindBuffer( BufferType, 0 );
     }
 
 private:
-    uint32_t m_ID = 0;
+    uint32_t id_ = 0;
 
     void copy( const Buffer& other ) {
         // Create a new buffer
-        glGenBuffers( 1, &m_ID );
+        glGenBuffers( 1, &id_ );
 
         // Load the other buffer for reading
         int size = 0;
-        glBindBuffer( GL_COPY_READ_BUFFER, other.m_ID );
+        glBindBuffer( GL_COPY_READ_BUFFER, other.id_ );
         glGetBufferParameteriv( GL_COPY_READ_BUFFER, GL_BUFFER_SIZE, &size );
 
         // Load the new buffer for writing
-        glBindBuffer( GL_COPY_WRITE_BUFFER, m_ID );
+        glBindBuffer( GL_COPY_WRITE_BUFFER, id_ );
         glBufferData( GL_COPY_WRITE_BUFFER, size, nullptr, GL_STATIC_DRAW );
 
         // Copy all data
@@ -78,8 +78,8 @@ public:
     }
 
     Buffer& operator=( Buffer&& other ) noexcept {
-        m_ID = other.m_ID;
-        other.m_ID = 0;
+        id_ = other.id_;
+        other.id_ = 0;
 
         return *this;
     }

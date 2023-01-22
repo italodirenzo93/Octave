@@ -105,6 +105,9 @@ void Initialize() {
     glEnable( GL_CULL_FACE );
 
 	glClearDepthf( 1.0f );
+
+	// Because Open GL coordinates are weird...
+    stbi_set_flip_vertically_on_load( true );
 }
 
 void ResizeFramebuffer( int width, int height ) {
