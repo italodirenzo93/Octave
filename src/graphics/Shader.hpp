@@ -1,40 +1,41 @@
-#ifndef SHADER_H
-#define SHADER_H
+#ifndef SHADER_HPP
+#define SHADER_HPP
 
-#include "CommonInclude.h"
+#include "CommonInclude.hpp"
 
 namespace graphics {
+class Shader {
+public:
+    explicit Shader( const char* vertexPath, const char* fragmentPath );
+    Shader( Shader&& other ) noexcept;
+    ~Shader();
 
-	class Shader {
-	public:
-		explicit Shader(const char* vertexPath, const char* fragmentPath);
-		Shader(Shader&& other) noexcept;
-		~Shader();
+    uint32_t getID() const { return ID; }
 
-		uint32_t getID() const { return ID; }
+    void activate() const;
+    void deactivate() const;
+    void setBool( const std::string& name, bool value ) const;
+    void setInt( const std::string& name, int value ) const;
+    void setFloat( const std::string& name, float value ) const;
+    void setMat4( const std::string& name, const glm::mat4& value ) const;
+    void setVec3( const std::string& name, const glm::vec3& value ) const;
+    void setVec3( const std::string& name, float x, float y, float z ) const;
 
-		void activate() const;
-		void deactivate() const;
-		void setBool(const std::string& name, bool value) const;
-		void setInt(const std::string& name, int value) const;
-		void setFloat(const std::string& name, float value) const;
-		void setMat4(const std::string& name, const glm::mat4& value) const;
-		void setVec3(const std::string& name, const glm::vec3& value) const;
-		void setVec3(const std::string& name, float x, float y, float z) const;
+private:
+    uint32_t ID = 0;
 
-	private:
-		uint32_t ID = 0;
-		explicit Shader(uint32_t id) : ID(id) {}
+    explicit Shader( uint32_t id )
+        : ID( id ) {
+    }
 
-		Shader() = default;
+    Shader() = default;
 
-	public:
-		Shader& operator= (Shader&& other) noexcept;
+public:
+    Shader& operator=( Shader&& other ) noexcept;
 
-	private:
-		NON_COPYABLE_CLASS(Shader)
-	};
-
+private:
+    NON_COPYABLE_CLASS( Shader )
+};
 }
 
 #endif

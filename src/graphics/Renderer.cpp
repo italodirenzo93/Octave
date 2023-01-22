@@ -100,9 +100,11 @@ void Initialize() {
     }
 #endif
 
+	// Always enabled
     glEnable( GL_DEPTH_TEST );
-    glEnable( GL_STENCIL_TEST );
     glEnable( GL_CULL_FACE );
+
+	glClearDepthf( 1.0f );
 }
 
 void ResizeFramebuffer( int width, int height ) {
