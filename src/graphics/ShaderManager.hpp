@@ -7,9 +7,9 @@
 namespace graphics {
 class ShaderManager {
 public:
-    static ShaderManager& instance() {
+    static ShaderManager& Instance() {
         if (instance_ == nullptr) {
-            instance_ = new ShaderManager;
+            instance_ = new ShaderManager();
         }
 
         return *instance_;
@@ -35,9 +35,12 @@ public:
     std::shared_ptr<Shader> Get( const std::string& name );
 
 private:
-    ShaderManager() = default;
+    ShaderManager();
+
     static ShaderManager* instance_;
 
+	std::filesystem::path shader_directory_;
+	std::vector<std::string> shader_list_;
     std::map<std::string, std::shared_ptr<Shader>> shaders_;
 
     NON_COPYABLE_OR_MOVABLE_CLASS( ShaderManager )
