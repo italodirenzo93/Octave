@@ -1,9 +1,6 @@
 #include "CommonInclude.hpp"
-#include "Config.hpp"
 #include "graphics/Renderer.hpp"
 #include "graphics/ShaderManager.hpp"
-#include "graphics/VertexArrayLayout.hpp"
-#include "graphics/VertexBuffer.hpp"
 
 using namespace std;
 
@@ -17,8 +14,6 @@ struct VertexPositionColor {
 };
 
 int main() {
-    config::Initialize();
-
     // Renderer initialization
     graphics::Renderer renderer;
     cout << renderer.GetDescription() << endl;

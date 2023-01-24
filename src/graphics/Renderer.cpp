@@ -112,30 +112,17 @@ Renderer::Renderer() {
     glfwWindowHint( GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE );
 #endif
 
-    int width, height;
-    if ( !config::TryGetInt( "Video", "FramebufferWidth", width ) ) {
-        width = 800;
-    }
-    if ( !config::TryGetInt( "Video", "FramebufferHeight", height ) ) {
-        height = 600;
-    }
-
-    int sync_interval;
-    if ( !config::TryGetInt( "Video", "SyncInterval", sync_interval ) ) {
-        sync_interval = 1;
-    }
-
-    bool is_fullscreen = false;
-    config::TryGetBool( "Video", "IsFullscreen", is_fullscreen );
+    const Config& config = Config::Instance();
 
     GLFWmonitor* monitor = nullptr;
-    if ( is_fullscreen ) {
+    if ( config.GetIsFullscreen() ) {
         monitor = glfwGetPrimaryMonitor();
     }
 
     // Create window
-    window_ =
-        glfwCreateWindow( width, height, "My Game Engine", monitor, nullptr );
+    window_ = glfwCreateWindow( config.GetFramebufferWidth(),
+                                config.GetFramebufferHeight(), "My Game Engine",
+                                monitor, nullptr );
     if ( !window_ ) {
         cout << "Failed to create GLFW window... exiting" << endl;
         glfwTerminate();
@@ -143,7 +130,7 @@ Renderer::Renderer() {
     }
 
     glfwMakeContextCurrent( window_ );
-    glfwSwapInterval( sync_interval );
+    glfwSwapInterval( config.GetSyncInterval() );
 
     glfwSetFramebufferSizeCallback( window_,
                                     []( GLFWwindow*, int width, int height ) {
@@ -182,13 +169,8 @@ Renderer::Renderer() {
     stbi_set_flip_vertically_on_load( true );
 
     // Shader pre-cache
-    {
-        bool preload = false;
-        config::TryGetBool( "Renderer", "PreloadShaders", preload );
-
-        if ( preload ) {
-            ShaderManager::Instance().PreloadShaders();
-        }
+    if ( config.GetPreloadShaders() ) {
+        ShaderManager::Instance().PreloadShaders();
     }
 }
 
