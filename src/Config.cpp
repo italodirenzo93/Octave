@@ -18,8 +18,7 @@ static constexpr bool kDefaultFullscreen = false;
 static constexpr int kDefaultSyncInterval = 1;
 
 // Renderer
-static constexpr const char* kDefaultShaderList =
-    "basic,mesh,lit,single_color,skybox";
+static constexpr const char* kDefaultShaderList = "basic";
 static constexpr const char* kDefaultShaderDirectory = "resources/shaders";
 static constexpr bool kDefaultPreloadShaders = false;
 
