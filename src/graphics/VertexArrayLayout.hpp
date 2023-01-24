@@ -40,26 +40,14 @@ public:
     VertexArrayLayout( std::initializer_list<LayoutBinding> initializer );
     ~VertexArrayLayout();
 
-    void Bind() const {
-        glBindVertexArray( vao_ );
-    }
-
-    void Unbind() const {
-        glBindVertexArray( 0 );
-    }
-
-private:
-    uint32_t vao_ = 0;
-    std::vector<LayoutBinding> layout_bindings_;
-
-public:
-    void ClearBindings() { layout_bindings_.clear(); }
+    void ClearBindings();
     VertexArrayLayout& AddBinding( const LayoutBinding& binding );
+    VertexArrayLayout& AddBindings( std::initializer_list<LayoutBinding> initializerList );
 
     template <typename Vertex, uint32_t Stride = 1>
     void MapToBuffer( const VertexBuffer<Vertex>& vertex_buffer ) const {
         vertex_buffer.Bind();
-        Bind();
+        glBindVertexArray( id_ );
 
         size_t offset_in_bytes = 0;
 
@@ -79,6 +67,10 @@ public:
                 binding.size * LayoutBinding::GetSizeOfType( binding.type );
         }
     }
+
+private:
+    uint32_t id_ = 0;
+    std::vector<LayoutBinding> layout_bindings_;
 
 public:
     VertexArrayLayout& operator=( const VertexArrayLayout& other );
