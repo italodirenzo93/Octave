@@ -2,7 +2,6 @@
 #define VERTEX_ARRAY_LAYOUT_HPP
 
 #include "CommonInclude.hpp"
-#include "Buffer.hpp"
 
 namespace graphics {
 enum LayoutSemantic { POSITION, COLOR, TEXCOORD, NORMAL };
@@ -33,6 +32,9 @@ struct LayoutBinding {
 };
 
 class VertexArrayLayout {
+    friend class VertexBuffer;
+    friend class Mesh;
+
 public:
     VertexArrayLayout();
     VertexArrayLayout( const VertexArrayLayout& other );
@@ -40,33 +42,11 @@ public:
     VertexArrayLayout( std::initializer_list<LayoutBinding> initializer );
     ~VertexArrayLayout();
 
+    uint32_t GetId() const { return id_; } // TODO: remove this later with friend class Renderer
+
     void ClearBindings();
     VertexArrayLayout& AddBinding( const LayoutBinding& binding );
     VertexArrayLayout& AddBindings( std::initializer_list<LayoutBinding> initializerList );
-
-    template <typename Vertex, uint32_t Stride = 1>
-    void MapToBuffer( const VertexBuffer<Vertex>& vertex_buffer ) const {
-        vertex_buffer.Bind();
-        glBindVertexArray( id_ );
-
-        size_t offset_in_bytes = 0;
-
-        for (auto& binding : layout_bindings_) {
-            auto iter = bindings_.find( binding.semantic );
-            if (iter == bindings_.end()) continue;
-
-            const uint32_t binding_point = iter->second;
-
-            glVertexAttribPointer(
-                binding_point, static_cast<int>(binding.size), binding.type,
-                binding.normalized, Stride * sizeof( Vertex ),
-                reinterpret_cast<const void*>(offset_in_bytes) );
-            glEnableVertexAttribArray( binding_point );
-
-            offset_in_bytes +=
-                binding.size * LayoutBinding::GetSizeOfType( binding.type );
-        }
-    }
 
 private:
     uint32_t id_ = 0;

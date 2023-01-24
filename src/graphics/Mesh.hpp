@@ -3,8 +3,9 @@
 
 #include "CommonInclude.hpp"
 #include "Shader.hpp"
-#include "Buffer.hpp"
 #include "VertexArrayLayout.hpp"
+#include "VertexBuffer.hpp"
+#include "IndexBuffer.hpp"
 
 namespace graphics {
 class Mesh {
@@ -37,7 +38,7 @@ public:
 
 private:
     VertexArrayLayout vao_;
-    VertexBuffer<Vertex> vbo_;
+    VertexBuffer vbo_;
     IndexBuffer ibo_;
 
     void SetupMesh();
