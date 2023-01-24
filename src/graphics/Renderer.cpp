@@ -91,14 +91,11 @@ void APIENTRY DebugOutputCallback( GLenum source, GLenum type, unsigned int id,
 }
 #endif
 
-// Open GL window
-static GLFWwindow* g_window = nullptr;
-
-bool Initialize() {
+Renderer::Renderer() {
     // Initialize GLFW library
     if ( !glfwInit() ) {
         cout << "Failed to initialize GLFW... exiting" << endl;
-        return false;
+        return;
     }
 
     // Set window hints
@@ -137,20 +134,20 @@ bool Initialize() {
     }
 
     // Create window
-    g_window =
+    window_ =
         glfwCreateWindow( width, height, "My Game Engine", monitor, nullptr );
-    if ( !g_window ) {
+    if ( !window_ ) {
         cout << "Failed to create GLFW window... exiting" << endl;
         glfwTerminate();
-        return false;
+        return;
     }
 
-    glfwMakeContextCurrent( g_window );
+    glfwMakeContextCurrent( window_ );
     glfwSwapInterval( sync_interval );
 
-    glfwSetFramebufferSizeCallback( g_window,
+    glfwSetFramebufferSizeCallback( window_,
                                     []( GLFWwindow*, int width, int height ) {
-                                        ResizeFramebuffer( width, height );
+                                        glViewport( 0, 0, width, height );
                                     } );
 
     // Initialize Open GL extension loader
@@ -159,7 +156,7 @@ bool Initialize() {
         cout
             << "Failed set proc address for Open GL extension loader... exiting"
             << endl;
-        return false;
+        return;
     }
 
     // Always enabled
@@ -193,27 +190,25 @@ bool Initialize() {
             ShaderManager::Instance().PreloadShaders();
         }
     }
-
-    return true;
 }
 
-void Terminate() {
-    if ( g_window ) {
-        glfwDestroyWindow( g_window );
-        g_window = nullptr;
+Renderer::~Renderer() {
+    if ( window_ ) {
+        glfwDestroyWindow( window_ );
+        window_ = nullptr;
     }
     glfwTerminate();
 }
 
-void ResizeFramebuffer( int width, int height ) {
+void Renderer::ResizeFramebuffer( int width, int height ) const {
     glViewport( 0, 0, width, height );
 }
 
-bool IsWindowOpen() {
-    return g_window != nullptr && !glfwWindowShouldClose( g_window );
+bool Renderer::IsWindowOpen() const {
+    return window_ != nullptr && !glfwWindowShouldClose( window_ );
 }
 
-std::string GetRendererInfo() {
+std::string Renderer::GetDescription() const {
     ostringstream oss;
 
     // Print OpenGL context information
@@ -226,7 +221,7 @@ std::string GetRendererInfo() {
     return oss.str();
 }
 
-void Clear( bool depth, float r, float g, float b, float a ) {
+void Renderer::Clear( bool depth, float r, float g, float b, float a ) const {
     int clear_flags = GL_COLOR_BUFFER_BIT;
 
     if ( depth ) {
@@ -238,18 +233,31 @@ void Clear( bool depth, float r, float g, float b, float a ) {
     glClear( clear_flags );
 }
 
-void Present() {
-    glfwPollEvents();
-    if ( g_window ) {
-        glfwSwapBuffers( g_window );
+void Renderer::Present() const {
+    if ( window_ ) {
+        glfwSwapBuffers( window_ );
     }
+    glfwPollEvents();
 }
 
-void DrawPrimitives( const VertexArrayLayout& vao, const VertexBuffer& vbo ) {
-    glBindVertexArray( vao.GetId() );
+void Renderer::DrawPrimitives( const VertexArrayLayout& vao,
+                               const VertexBuffer& vbo ) const {
+    glBindVertexArray( vao.id_ );
 
     glDrawArrays( GL_TRIANGLES, 0, static_cast<int>( vbo.GetVertexCount() ) );
 
+    glBindVertexArray( 0 );
+}
+
+void Renderer::DrawIndexedPrimitives( const VertexArrayLayout& vao,
+                                      const IndexBuffer& ibo ) const {
+    glBindVertexArray( vao.id_ );
+    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo.id_ );
+
+    glDrawElements( GL_TRIANGLES, static_cast<int>( ibo.GetElementCount() ),
+                    GL_UNSIGNED_INT, nullptr );
+
+    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
     glBindVertexArray( 0 );
 }
 

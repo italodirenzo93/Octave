@@ -38,14 +38,14 @@ Mesh::Mesh( Mesh&& other ) noexcept {
 void Mesh::draw( const Shader& program ) const {
     uint32_t diffuse_nr = 1;
     uint32_t specular_nr = 1;
-    for (size_t i = 0; i < textures_.size(); i++) {
-        glActiveTexture( GL_TEXTURE0 + i ); // activate the proper texture unit
+    for ( size_t i = 0; i < textures_.size(); i++ ) {
+        glActiveTexture( GL_TEXTURE0 + i );  // activate the proper texture unit
         string name = "uMaterial.";
         name += textures_[i].type;
 
-        if (textures_[i].type == "texture_diffuse")
+        if ( textures_[i].type == "texture_diffuse" )
             name += to_string( diffuse_nr++ );
-        else if (textures_[i].type == "texture_specular")
+        else if ( textures_[i].type == "texture_specular" )
             name += to_string( specular_nr++ );
 
         program.SetInt( name, i );
@@ -56,7 +56,7 @@ void Mesh::draw( const Shader& program ) const {
     glBindVertexArray( vao_.id_ );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo_.id_ );
 
-    glDrawElements( GL_TRIANGLES, static_cast<int>(indices_.size()),
+    glDrawElements( GL_TRIANGLES, static_cast<int>( ibo_.GetElementCount() ),
                     GL_UNSIGNED_INT, nullptr );
 
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo_.id_ );
@@ -64,9 +64,9 @@ void Mesh::draw( const Shader& program ) const {
 }
 
 void Mesh::SetupMesh() {
-    vao_.AddBinding( {POSITION, 3, GL_FLOAT, false} )
-        .AddBinding( {TEXCOORD, 2, GL_FLOAT, false} )
-        .AddBinding( {NORMAL, 3, GL_FLOAT, false} );
+    vao_.AddBinding( { POSITION, 3, GL_FLOAT, false } )
+        .AddBinding( { TEXCOORD, 2, GL_FLOAT, false } )
+        .AddBinding( { NORMAL, 3, GL_FLOAT, false } );
 
     vbo_.SetData( vao_, vertices_ );
     ibo_.SetData( indices_ );
@@ -97,4 +97,4 @@ Mesh& Mesh::operator=( Mesh&& other ) noexcept {
 
     return *this;
 }
-} // namespace graphics
+}  // namespace graphics

@@ -20,10 +20,8 @@ int main() {
     config::Initialize();
 
     // Renderer initialization
-    if ( !graphics::Initialize() ) {
-        return EXIT_FAILURE;
-    }
-    cout << graphics::GetRendererInfo() << endl;
+    graphics::Renderer renderer;
+    cout << renderer.GetDescription() << endl;
 
     graphics::VertexArrayLayout vao;
     vao.AddBindings( { { graphics::POSITION, 3, GL_FLOAT, false },
@@ -40,8 +38,8 @@ int main() {
                       } );
 
     // Main loop
-    while ( graphics::IsWindowOpen() ) {
-        graphics::Clear( true, 0.1f, 0.1f, 0.1f );
+    while ( renderer.IsWindowOpen() ) {
+        renderer.Clear( true, 0.1f, 0.1f, 0.1f );
 
         // TODO: Draw scene here
         auto shader = graphics::ShaderManager::Instance().Get( "basic" );
@@ -51,12 +49,10 @@ int main() {
         shader->SetMat4( "uMatView", glm::identity<glm::mat4>() );
         shader->SetMat4( "uMatModel", glm::identity<glm::mat4>() );
 
-        graphics::DrawPrimitives( vao, vbo );
+        renderer.DrawPrimitives( vao, vbo );
 
-        graphics::Present();
+        renderer.Present();
     }
-
-    graphics::Terminate();
 
     return EXIT_SUCCESS;
 }
