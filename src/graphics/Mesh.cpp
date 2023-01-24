@@ -39,7 +39,7 @@ void Mesh::draw( const Shader& program ) const {
     uint32_t diffuse_nr = 1;
     uint32_t specular_nr = 1;
     for ( size_t i = 0; i < textures_.size(); i++ ) {
-        glActiveTexture( GL_TEXTURE0 + i );  // activate the proper texture unit
+        glActiveTexture( GL_TEXTURE0 + static_cast<int>( i ) );  // activate the proper texture unit
         string name = "uMaterial.";
         name += textures_[i].type;
 
@@ -48,7 +48,7 @@ void Mesh::draw( const Shader& program ) const {
         else if ( textures_[i].type == "texture_specular" )
             name += to_string( specular_nr++ );
 
-        program.SetInt( name, i );
+        program.SetInt( name, static_cast<int>( i ) );
         glBindTexture( GL_TEXTURE_2D, textures_[i].id );
     }
     glActiveTexture( GL_TEXTURE0 );
