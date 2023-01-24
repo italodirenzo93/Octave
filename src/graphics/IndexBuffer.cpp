@@ -33,7 +33,7 @@ IndexBuffer::~IndexBuffer() {
 }
 
 void IndexBuffer::SetData(
-    std::initializer_list<uint32_t> initializerList ) const {
+    std::initializer_list<uint32_t> initializerList ) {
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, id_ );
 
     glBufferData(
@@ -43,9 +43,11 @@ void IndexBuffer::SetData(
         GL_STATIC_DRAW );
 
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
+
+	element_count_ = static_cast<uint32_t>( initializerList.size() );
 }
 
-void IndexBuffer::SetData( const std::vector<uint32_t>& indices ) const {
+void IndexBuffer::SetData( const std::vector<uint32_t>& indices ) {
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, id_ );
 
     glBufferData( GL_ELEMENT_ARRAY_BUFFER,
@@ -54,6 +56,8 @@ void IndexBuffer::SetData( const std::vector<uint32_t>& indices ) const {
                   GL_STATIC_DRAW );
 
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
+
+	element_count_ = static_cast<uint32_t>( indices.size() );
 }
 
 IndexBuffer& IndexBuffer::operator=( const IndexBuffer& other ) {
