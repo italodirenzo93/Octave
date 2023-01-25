@@ -46,7 +46,7 @@ std::vector<Vertex> VertexBuffer::GetData() const {
     glBindBuffer( GL_ARRAY_BUFFER, id_ );
 
     glGetBufferSubData( GL_ARRAY_BUFFER, 0,
-                        static_cast<int>( vertex_count_ * sizeof( Vertex ) ),
+                        static_cast<int>(vertex_count_ * sizeof( Vertex )),
                         data.data() );
 
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
