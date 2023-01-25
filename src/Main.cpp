@@ -22,11 +22,10 @@ int main() {
 	int width, height;
     renderer.GetFramebufferSize( width, height );
 
-    VertexArrayLayout vao;
     VertexBuffer vbo;
     IndexBuffer ibo;
 
-    GeometricPrimitive::CreateCube( vao, vbo, ibo );
+    GeometricPrimitive::CreateCube( vbo, ibo );
 
     Texture texture;
     texture.LoadFromFile( "resources/textures/container.jpg" );
@@ -65,7 +64,7 @@ int main() {
         shader->SetMat4( "uMatView", view );
         shader->SetMat4( "uMatModel", model );
 
-        renderer.DrawIndexedPrimitives( vao, ibo );
+        renderer.DrawIndexedPrimitives( vbo, ibo );
 
         renderer.Present();
 

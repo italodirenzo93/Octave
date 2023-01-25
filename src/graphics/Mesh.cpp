@@ -18,7 +18,6 @@ Mesh::Mesh( const Mesh& other ) {
     indices_ = other.indices_;
     textures_ = other.textures_;
 
-    vao_ = other.vao_;
     vbo_ = other.vbo_;
     ibo_ = other.ibo_;
 
@@ -30,7 +29,6 @@ Mesh::Mesh( Mesh&& other ) noexcept {
     indices_ = std::move( other.indices_ );
     textures_ = std::move( other.textures_ );
 
-    vao_ = std::move( other.vao_ );
     vbo_ = std::move( other.vbo_ );
     ibo_ = std::move( other.ibo_ );
 }
@@ -38,25 +36,26 @@ Mesh::Mesh( Mesh&& other ) noexcept {
 void Mesh::draw( const Shader& program ) const {
     uint32_t diffuse_nr = 1;
     uint32_t specular_nr = 1;
-    for ( size_t i = 0; i < textures_.size(); i++ ) {
-        glActiveTexture( GL_TEXTURE0 + static_cast<int>( i ) );  // activate the proper texture unit
+    for (size_t i = 0; i < textures_.size(); i++) {
+        glActiveTexture( GL_TEXTURE0 + static_cast<int>(i) );
+        // activate the proper texture unit
         string name = "uMaterial.";
         name += textures_[i].type;
 
-        if ( textures_[i].type == "texture_diffuse" )
+        if (textures_[i].type == "texture_diffuse")
             name += to_string( diffuse_nr++ );
-        else if ( textures_[i].type == "texture_specular" )
+        else if (textures_[i].type == "texture_specular")
             name += to_string( specular_nr++ );
 
-        program.SetInt( name, static_cast<int>( i ) );
+        program.SetInt( name, static_cast<int>(i) );
         glBindTexture( GL_TEXTURE_2D, textures_[i].id );
     }
     glActiveTexture( GL_TEXTURE0 );
 
-    glBindVertexArray( vao_.id_ );
+    glBindVertexArray( vbo_.vao_ );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo_.id_ );
 
-    glDrawElements( GL_TRIANGLES, static_cast<int>( ibo_.GetElementCount() ),
+    glDrawElements( GL_TRIANGLES, static_cast<int>(ibo_.GetElementCount()),
                     GL_UNSIGNED_INT, nullptr );
 
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo_.id_ );
@@ -64,11 +63,11 @@ void Mesh::draw( const Shader& program ) const {
 }
 
 void Mesh::SetupMesh() {
-    vao_.AddBinding( { POSITION, 3, GL_FLOAT, false } )
-        .AddBinding( { TEXCOORD, 2, GL_FLOAT, false } )
-        .AddBinding( { NORMAL, 3, GL_FLOAT, false } );
+    VertexBuffer::VertexLayout layout{
+        {POSITION, 3, GL_FLOAT, false}, {TEXCOORD, 2, GL_FLOAT, false},
+        {NORMAL, 3, GL_FLOAT, false}};
 
-    vbo_.SetData( vao_, vertices_ );
+    vbo_.SetData( layout, vertices_ );
     ibo_.SetData( indices_ );
 }
 
@@ -77,7 +76,6 @@ Mesh& Mesh::operator=( const Mesh& other ) {
     indices_ = other.indices_;
     textures_ = other.textures_;
 
-    vao_ = other.vao_;
     vbo_ = other.vbo_;
     ibo_ = other.ibo_;
 
@@ -91,10 +89,9 @@ Mesh& Mesh::operator=( Mesh&& other ) noexcept {
     indices_ = std::move( other.indices_ );
     textures_ = std::move( other.textures_ );
 
-    vao_ = std::move( other.vao_ );
     vbo_ = std::move( other.vbo_ );
     ibo_ = std::move( other.ibo_ );
 
     return *this;
 }
-}  // namespace graphics
+} // namespace graphics

@@ -19,9 +19,8 @@ public:
                 float b = 0.0f, float a = 1.0f ) const;
     void Present() const;
 
-    void DrawPrimitives( const VertexArrayLayout& vao,
-                         const VertexBuffer& vbo ) const;
-    void DrawIndexedPrimitives( const VertexArrayLayout& vao,
+    void DrawPrimitives( const VertexBuffer& vbo ) const;
+    void DrawIndexedPrimitives( const VertexBuffer& vbo,
                                 const IndexBuffer& ibo ) const;
 
     std::string GetDescription() const;
