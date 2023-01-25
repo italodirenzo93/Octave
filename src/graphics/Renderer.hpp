@@ -3,6 +3,8 @@
 
 #include "Window.hpp"
 #include "IndexBuffer.hpp"
+#include "Texture.hpp"
+#include "Shader.hpp"
 #include "VertexBuffer.hpp"
 
 namespace graphics {
@@ -23,6 +25,10 @@ class Renderer {
                          const VertexBuffer& vbo ) const;
     void DrawIndexedPrimitives( const VertexArrayLayout& vao,
                                 const IndexBuffer& ibo ) const;
+
+    void SetTexture( const Texture& texture );
+
+    void SetShader( const Shader& shader );
 
    private:
     const Window& window_;

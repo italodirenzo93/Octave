@@ -1,38 +1,26 @@
 #include "Config.hpp"
+#include "GeometricPrimitive.hpp"
 #include "graphics/Renderer.hpp"
 #include "graphics/ShaderManager.hpp"
 
 using namespace std;
-
-struct VertexPositionColor {
-    glm::vec3 position;
-    glm::vec3 color;
-
-    VertexPositionColor() = default;
-
-    VertexPositionColor( const glm::vec3& pos, const glm::vec3& col )
-        : position( pos ), color( col ) {}
-};
+using namespace graphics;
 
 int main() {
-    graphics::Window window;
+    Window window;
 
     // Renderer initialization
-    graphics::Renderer renderer( window );
+    Renderer renderer( window );
     cout << renderer.GetDescription() << endl;
 
-    graphics::VertexArrayLayout vao{ { graphics::POSITION, 3, GL_FLOAT, false },
-                                     { graphics::COLOR, 3, GL_FLOAT, false } };
+    VertexArrayLayout vao;
+    VertexBuffer vbo;
+    IndexBuffer ibo;
 
-    graphics::VertexBuffer vbo;
-    vbo.SetData( vao, {
-                          VertexPositionColor( glm::vec3( 0.0f, 1.0f, 0.0f ),
-                                               glm::vec3( 1.0f, 0.0f, 0.0f ) ),
-                          VertexPositionColor( glm::vec3( -1.0f, -1.0f, 0.0f ),
-                                               glm::vec3( 0.0f, 1.0f, 0.0f ) ),
-                          VertexPositionColor( glm::vec3( 1.0f, -1.0f, 0.0f ),
-                                               glm::vec3( 0.0f, 0.0f, 1.0f ) ),
-                      } );
+    GeometricPrimitive::CreateCube( vao, vbo, ibo );
+
+    Texture texture;
+    texture.LoadFromFile( "resources/textures/container.jpg" );
 
     auto projection = glm::perspective(
         glm::radians( 45.0f ),
@@ -43,19 +31,33 @@ int main() {
     auto view = glm::lookAt( glm::vec3( 2.0f, 0.0f, 5.0f ), glm::vec3( 0.0f ),
                              glm::vec3( 0.0f, 1.0f, 0.0f ) );
 
+    auto model = glm::identity<glm::mat4>();
+
+    auto last_frame_time = static_cast<float>( glfwGetTime() );
+
     // Main loop
     while ( window.IsOpen() ) {
+        auto now = static_cast<float>( glfwGetTime() );
+        float delta = now - last_frame_time;
+        last_frame_time = now;
+
+        model = glm::rotate( model, glm::radians( delta * 25 ),
+                             glm::vec3( 0.0f, 1.0f, 0.0f ) );
+
         renderer.Clear( true, 0.1f, 0.1f, 0.1f );
 
-        // TODO: Draw scene here
-        auto shader = graphics::ShaderManager::Instance().Get( "basic" );
+        // Draw scene
+        auto shader = ShaderManager::Instance().Get( "basic" );
 
-        shader->Activate();
         shader->SetMat4( "uMatProjection", projection );
         shader->SetMat4( "uMatView", view );
-        shader->SetMat4( "uMatModel", glm::identity<glm::mat4>() );
+        shader->SetMat4( "uMatModel", model );
 
-        renderer.DrawPrimitives( vao, vbo );
+        renderer.SetShader( *shader );
+        renderer.SetTexture( texture );
+
+        //        renderer.DrawPrimitives( vao, vbo );
+        renderer.DrawIndexedPrimitives( vao, ibo );
 
         renderer.Present();
 
