@@ -15,12 +15,6 @@ Window::Window( const std::string& title )
 }
 
 Window::Window( int width, int height, const string& title ) {
-    // Initialize GLFW library
-    if ( !glfwInit() ) {
-        cout << "Failed to initialize GLFW... exiting" << endl;
-        return;
-    }
-
     // Set window hints
 #ifdef __APPLE__
     glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
@@ -46,8 +40,7 @@ Window::Window( int width, int height, const string& title ) {
     handle_ =
         glfwCreateWindow( width, height, title.c_str(), monitor, nullptr );
     if ( !handle_ ) {
-        cout << "Failed to create GLFW window... exiting" << endl;
-        glfwTerminate();
+        cout << "Failed to create GLFW window..." << endl;
         return;
     }
 
@@ -70,11 +63,7 @@ Window::Window( int width, int height, const string& title ) {
 }
 
 Window::~Window() {
-    if ( handle_ ) {
-        glfwDestroyWindow( handle_ );
-        handle_ = nullptr;
-    }
-    glfwTerminate();
+    glfwDestroyWindow( handle_ );
 }
 
 void Window::PollEvents() const {
@@ -83,6 +72,10 @@ void Window::PollEvents() const {
 
 bool Window::IsOpen() const {
     return !glfwWindowShouldClose( handle_ );
+}
+
+void Window::GetSize( int& width, int& height ) const {
+    glfwGetWindowSize( handle_, &width, &height );
 }
 
 }  // namespace graphics

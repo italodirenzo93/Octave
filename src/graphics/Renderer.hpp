@@ -8,14 +8,12 @@
 #include "VertexBuffer.hpp"
 
 namespace graphics {
-
 class Renderer {
-   public:
-    explicit Renderer(const Window& window);
-    ~Renderer();
+public:
+    explicit Renderer( const Window& window );
+    ~Renderer() = default;
 
     void ResizeFramebuffer( int width, int height ) const;
-    std::string GetDescription() const;
 
     void Clear( bool depth = true, float r = 0.0f, float g = 0.0f,
                 float b = 0.0f, float a = 1.0f ) const;
@@ -26,16 +24,17 @@ class Renderer {
     void DrawIndexedPrimitives( const VertexArrayLayout& vao,
                                 const IndexBuffer& ibo ) const;
 
-    void SetTexture( const Texture& texture );
+    std::string GetDescription() const;
+    void GetFramebufferSize( int& width, int& height ) const;
 
+    void SetTexture( const Texture& texture );
     void SetShader( const Shader& shader );
 
-   private:
+private:
     const Window& window_;
 
     NON_COPYABLE_OR_MOVABLE_CLASS( Renderer )
 };
-
-}  // namespace graphics
+} // namespace graphics
 
 #endif

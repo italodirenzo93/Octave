@@ -4,11 +4,10 @@
 #include "CommonInclude.hpp"
 
 namespace graphics {
-
 class Window {
     friend class Renderer;
 
-   public:
+public:
     Window();
     explicit Window( const std::string& title );
     Window( int width, int height, const std::string& title );
@@ -17,13 +16,13 @@ class Window {
     void PollEvents() const;
 
     bool IsOpen() const;
+	void GetSize( int& width, int& height ) const;
 
-   private:
+private:
     GLFWwindow* handle_ = nullptr;
 
     NON_COPYABLE_OR_MOVABLE_CLASS( Window )
 };
-
-}  // namespace graphics
+} // namespace graphics
 
 #endif
