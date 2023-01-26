@@ -13,10 +13,10 @@ public:
     Window( int width, int height, const std::string& title );
     ~Window();
 
-    void PollEvents() const;
+    void PollEvents() const noexcept;
 
-    bool IsOpen() const;
-	void GetSize( int& width, int& height ) const;
+    bool IsOpen() const noexcept;
+	void GetSize( int& width, int& height ) const noexcept;
 
 private:
     GLFWwindow* handle_ = nullptr;

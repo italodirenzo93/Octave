@@ -7,7 +7,7 @@
 namespace graphics {
 class ShaderManager {
 public:
-    static ShaderManager& Instance() {
+    static ShaderManager& Instance() noexcept {
         if (instance_ == nullptr) {
             instance_ = std::unique_ptr<ShaderManager>( new ShaderManager() );
         }
@@ -20,17 +20,19 @@ public:
     /**
      * Pre-compiles and caches all shaders
      */
-    void PreloadShaders();
+    void PreloadShaders() noexcept;
 
     /**
      * Purges the shader cache of any currently unused shaders
      */
-    void ClearUnused();
+    void ClearUnused() noexcept;
 
     /**
      * Look up shader program by name
+     * @param name Name of the shader program
+     * @returns A shared pointer to the shader or nullptr if it could not be obtained
      */
-    std::shared_ptr<Shader> Get( const std::string& name );
+    std::shared_ptr<Shader> Get( const std::string& name ) noexcept;
 
 private:
     ShaderManager();

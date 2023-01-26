@@ -1,6 +1,7 @@
 #include "Window.hpp"
 
 #include "Config.hpp"
+#include "Exception.hpp"
 
 using namespace std;
 
@@ -40,8 +41,7 @@ Window::Window( int width, int height, const string& title ) {
     handle_ =
         glfwCreateWindow( width, height, title.c_str(), monitor, nullptr );
     if ( !handle_ ) {
-        cout << "Failed to create GLFW window..." << endl;
-        return;
+        throw Exception( "Unable to create GLFW window" );
     }
 
     glfwMakeContextCurrent( handle_ );
@@ -55,10 +55,7 @@ Window::Window( int width, int height, const string& title ) {
     // Initialize Open GL extension loader
     if ( !gladLoadGLLoader(
              reinterpret_cast<GLADloadproc>( glfwGetProcAddress ) ) ) {
-        cout
-            << "Failed set proc address for Open GL extension loader... exiting"
-            << endl;
-        return;
+        throw Exception( "Unable to initialize GLAD OpenGL extension loader" );
     }
 }
 
@@ -66,15 +63,15 @@ Window::~Window() {
     glfwDestroyWindow( handle_ );
 }
 
-void Window::PollEvents() const {
+void Window::PollEvents() const noexcept {
     glfwPollEvents();
 }
 
-bool Window::IsOpen() const {
+bool Window::IsOpen() const noexcept {
     return !glfwWindowShouldClose( handle_ );
 }
 
-void Window::GetSize( int& width, int& height ) const {
+void Window::GetSize( int& width, int& height ) const noexcept {
     glfwGetWindowSize( handle_, &width, &height );
 }
 

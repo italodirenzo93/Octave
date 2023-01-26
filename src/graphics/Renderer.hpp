@@ -17,24 +17,24 @@ enum class PrimitiveType {
 
 class Renderer {
 public:
-    explicit Renderer( const Window& window );
-    ~Renderer() = default;
+    explicit Renderer( const Window& window ) noexcept;
+    ~Renderer() noexcept = default;
 
     void ResizeFramebuffer( int width, int height ) const;
 
     void Clear( bool depth = true, float r = 0.0f, float g = 0.0f,
-                float b = 0.0f, float a = 1.0f ) const;
-    void Present() const;
+                float b = 0.0f, float a = 1.0f ) const noexcept;
+    void Present() const noexcept;
 
-    void DrawPrimitives( PrimitiveType type, const VertexBuffer& vbo ) const;
+    void DrawPrimitives( PrimitiveType type, const VertexBuffer& vbo ) const noexcept;
     void DrawIndexedPrimitives( PrimitiveType type, const VertexBuffer& vbo,
-                                const IndexBuffer& ibo ) const;
+                                const IndexBuffer& ibo ) const noexcept;
 
-    std::string GetDescription() const;
-    void GetFramebufferSize( int& width, int& height ) const;
+    std::string GetDescription() const noexcept;
+    void GetFramebufferSize( int& width, int& height ) const noexcept;
 
-    void SetTexture( const Texture& texture );
-    void SetShader( const Shader& shader );
+    void SetTexture( const Texture& texture ) noexcept;
+    void SetShader( const Shader& shader ) noexcept;
 
 private:
     const Window& window_;

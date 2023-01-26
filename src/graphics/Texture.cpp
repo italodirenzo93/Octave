@@ -1,13 +1,15 @@
 #include "Texture.hpp"
 
+#include "Exception.hpp"
+
 namespace graphics {
 using namespace std;
 
-Texture::Texture() {
+Texture::Texture() noexcept {
     glGenTextures( 1, &id_ );
 }
 
-Texture::~Texture() {
+Texture::~Texture() noexcept {
     glDeleteTextures( 1, &id_ );
 }
 
@@ -22,10 +24,10 @@ Texture::Texture( Texture&& other ) noexcept
     other.height_ = 0;
 }
 
-bool Texture::LoadFromFile( const std::string& file_name ) {
+void Texture::LoadFromFile( const std::string& file_name ) {
     int n_channels;
-    stbi_uc* image =
-        stbi_load( file_name.c_str(), &width_, &height_, &n_channels, STBI_default );
+    stbi_uc* image = stbi_load( file_name.c_str(), &width_, &height_,
+                                &n_channels, STBI_default );
 
     if ( image ) {
         if ( n_channels == 1 )
@@ -40,16 +42,12 @@ bool Texture::LoadFromFile( const std::string& file_name ) {
                       GL_UNSIGNED_BYTE, image );
         glGenerateMipmap( GL_TEXTURE_2D );
         glBindTexture( GL_TEXTURE_2D, 0 );
-
-        stbi_image_free( image );
     } else {
-        std::cout << "Unable to load texture at " << file_name << std::endl;
         stbi_image_free( image );
-
-        return false;
+        throw Exception( "Unable to load texture at " + file_name );
     }
 
-    return true;
+    stbi_image_free(image);
 }
 
 Texture& Texture::operator=( Texture&& other ) noexcept {

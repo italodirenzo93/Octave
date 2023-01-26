@@ -2,15 +2,29 @@
 #define SHADER_HPP
 
 #include "CommonInclude.hpp"
+#include "Exception.hpp"
 
 namespace graphics {
 class Shader {
     friend class Renderer;
 
 public:
+    class CompileError : public Exception {
+        friend class Shader;
+        explicit CompileError( const std::string& message ) noexcept
+            : Exception( message ) {}
+    };
+
+public:
+     /**
+      * Read and compile a shader program from disk
+      * @param vertex_path Path to vertex shader source file
+      * @param fragment_path Path to fragment shader source file
+      * @throws Shader::CompileError
+      */
     explicit Shader( const char* vertex_path, const char* fragment_path );
     Shader( Shader&& other ) noexcept;
-    ~Shader();
+    ~Shader() noexcept;
 
     void SetBool( const std::string& name, bool value ) const;
     void SetInt( const std::string& name, int value ) const;
@@ -22,16 +36,14 @@ public:
 private:
     uint32_t id_ = 0;
 
-    explicit Shader( uint32_t id )
-        : id_( id ) {
-    }
-
     Shader() = default;
 
 public:
     Shader& operator=( Shader&& other ) noexcept;
 
 private:
+    static uint32_t CompileFromFile(const char* vertex_path, const char* fragment_path);
+
     NON_COPYABLE_CLASS( Shader )
 };
 }
