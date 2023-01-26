@@ -8,6 +8,13 @@
 #include "VertexBuffer.hpp"
 
 namespace graphics {
+
+enum class PrimitiveType {
+    kTriangleList,
+	kTriangleStrip,
+	kTriangleFan
+};
+
 class Renderer {
 public:
     explicit Renderer( const Window& window );
@@ -19,8 +26,8 @@ public:
                 float b = 0.0f, float a = 1.0f ) const;
     void Present() const;
 
-    void DrawPrimitives( const VertexBuffer& vbo ) const;
-    void DrawIndexedPrimitives( const VertexBuffer& vbo,
+    void DrawPrimitives( PrimitiveType type, const VertexBuffer& vbo ) const;
+    void DrawIndexedPrimitives( PrimitiveType type, const VertexBuffer& vbo,
                                 const IndexBuffer& ibo ) const;
 
     std::string GetDescription() const;
@@ -34,6 +41,7 @@ private:
 
     NON_COPYABLE_OR_MOVABLE_CLASS( Renderer )
 };
+
 } // namespace graphics
 
 #endif
