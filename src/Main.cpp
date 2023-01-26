@@ -44,8 +44,15 @@ int main() {
 
         auto shader = ShaderManager::Instance().Get( "basic" );
         if ( !shader ) {
-            throw Exception( "Missing required shader ");
+            throw Exception( "Missing required shader " );
         }
+
+        // Update camera aspect when window size is changed
+        window.SetSizeChangedCallback( [&]( int w, int h ) {
+            projection = glm::perspectiveFov(
+                glm::radians( 45.0f ), static_cast<float>( w ),
+                static_cast<float>( h ), 0.1f, 100.0f );
+        } );
 
         // Main loop
         while ( window.IsOpen() ) {
@@ -80,6 +87,6 @@ int main() {
         return EXIT_FAILURE;
     }
 
-	glfwTerminate();
+    glfwTerminate();
     return EXIT_SUCCESS;
 }

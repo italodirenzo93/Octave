@@ -47,10 +47,11 @@ Window::Window( int width, int height, const string& title ) {
     glfwMakeContextCurrent( handle_ );
     glfwSwapInterval( config.GetSyncInterval() );
 
-    glfwSetFramebufferSizeCallback( handle_,
-                                    []( GLFWwindow*, int width, int height ) {
-                                        glViewport( 0, 0, width, height );
-                                    } );
+    // Pass a pointer to this class instance to the window
+    // so we can access in from our callback functions
+    glfwSetWindowUserPointer( handle_, this );
+
+    glfwSetWindowSizeCallback(handle_, WindowSizeCallback);
 
     // Initialize Open GL extension loader
     if ( !gladLoadGLLoader(
@@ -73,6 +74,13 @@ bool Window::IsOpen() const noexcept {
 
 void Window::GetSize( int& width, int& height ) const noexcept {
     glfwGetWindowSize( handle_, &width, &height );
+}
+
+void Window::WindowSizeCallback(GLFWwindow* window, int width, int height) noexcept {
+    auto c_window = reinterpret_cast<Window*>( glfwGetWindowUserPointer( window ) );
+    if ( c_window && c_window->cb_window_size_ ) {
+        c_window->cb_window_size_( width, height );
+    }
 }
 
 }  // namespace graphics
