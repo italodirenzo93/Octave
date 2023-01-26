@@ -2,9 +2,8 @@
 #define CAMERA_HPP
 
 #include "CommonInclude.hpp"
-#include "Shader.hpp"
+#include "graphics/Shader.hpp"
 
-namespace graphics {
 class Camera {
 public:
     Camera( float aspect_ratio, const glm::vec3& pos, const glm::vec3& up );
@@ -25,14 +24,13 @@ public:
     glm::mat4 GetProjectionMatrix() const;
     glm::mat4 GetViewMatrix() const;
 
-    void Project( const Shader& shader ) const;
-    void Unproject( const Shader& shader ) const;
+    void Project( const graphics::Shader& shader ) const;
+    void Unproject( const graphics::Shader& shader ) const;
 
     void Update();
 
 private:
     NON_COPYABLE_OR_MOVABLE_CLASS( Camera )
 };
-} // namespace graphics
 
 #endif
