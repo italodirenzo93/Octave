@@ -1,4 +1,10 @@
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
+
+#include <assimp/Importer.hpp>
+
 #include "GeometricPrimitive.hpp"
+#include "graphics/Mesh.hpp"
 #include "graphics/Renderer.hpp"
 #include "graphics/ShaderManager.hpp"
 
@@ -29,6 +35,8 @@ int main() {
 
         Texture texture;
         texture.LoadFromFile( "resources/textures/container.jpg" );
+
+        Mesh cube( std::move( vbo ), std::move( ibo ), std::move( texture ) );
 
         auto projection = glm::perspectiveFov(
             glm::radians( 45.0f ), static_cast<float>( width ),
@@ -67,14 +75,16 @@ int main() {
 
             // Draw scene
             renderer.SetShader( *shader );
-            renderer.SetTexture( texture );
+            //            renderer.SetTexture( texture );
 
             shader->SetMat4( "uMatProjection", projection );
             shader->SetMat4( "uMatView", view );
             shader->SetMat4( "uMatModel", model );
 
-            renderer.DrawIndexedPrimitives( PrimitiveType::kTriangleList, vbo,
-                                            ibo );
+            //            renderer.DrawIndexedPrimitives(
+            //            PrimitiveType::kTriangleList, vbo,
+            //                                            ibo );
+            cube.Draw( renderer );
 
             renderer.Present();
 

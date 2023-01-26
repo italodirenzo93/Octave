@@ -12,7 +12,7 @@ public:
         glm::vec2 tex_coord;
 
         VertexType() = default;
-        explicit VertexType( std::initializer_list<float> initializer_list );
+        VertexType( std::initializer_list<float> initializer_list );
     };
 
 
