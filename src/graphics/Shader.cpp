@@ -121,6 +121,17 @@ void Shader::SetVec3( const std::string& name, float x, float y,
     SetVec3( name, glm::vec3( x, y, z ) );
 }
 
+void Shader::SetTexture( const std::string& name, int index, const Texture& texture ) const {
+    assert( index >= 0 );
+
+    const auto uniform_name = name + "[" + to_string(index) + "]";
+    const auto location = glGetUniformLocation( id_, uniform_name.c_str() );
+    glUniform1i( location, index );
+
+    glActiveTexture( GL_TEXTURE0 + index );
+    glBindTexture( GL_TEXTURE_2D, texture.id_ );
+}
+
 Shader& Shader::operator=( Shader&& other ) noexcept {
     id_ = other.id_;
     other.id_ = 0;

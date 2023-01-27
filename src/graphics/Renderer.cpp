@@ -197,11 +197,6 @@ void Renderer::GetFramebufferSize( int& width, int& height ) const noexcept {
     glfwGetFramebufferSize( window_.handle_, &width, &height );
 }
 
-void Renderer::SetTexture( const Texture& texture ) noexcept {
-    glActiveTexture( GL_TEXTURE0 );
-    glBindTexture( GL_TEXTURE_2D, texture.id_ );
-}
-
 void Renderer::SetShader( const Shader& shader ) noexcept {
     glUseProgram( shader.id_ );
 }

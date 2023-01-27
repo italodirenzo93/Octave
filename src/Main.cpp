@@ -151,8 +151,10 @@ int main( int argc, char* argv[] ) {
             glm::radians( fov ), static_cast<float>( width ),
             static_cast<float>( height ), 0.1f, 100.0f );
 
+        glm::vec3 position( 2.0f, 0.0f, 5.0f );
+
         auto view =
-            glm::lookAt( glm::vec3( 2.0f, 0.0f, 5.0f ), glm::vec3( 0.0f ),
+            glm::lookAt( position, glm::vec3( 0.0f ),
                          glm::vec3( 0.0f, 1.0f, 0.0f ) );
 
         auto model = glm::identity<glm::mat4>();
@@ -191,7 +193,9 @@ int main( int argc, char* argv[] ) {
             shader->SetMat4( "uMatView", view );
             shader->SetMat4( "uMatModel", model );
 
-            mesh.Draw( renderer );
+            shader->SetVec3( "uViewPos", position );
+
+            mesh.Draw( *shader, renderer );
 
             renderer.Present();
 

@@ -33,7 +33,6 @@ public:
     [[nodiscard]] std::string GetDescription() const noexcept;
     void GetFramebufferSize( int& width, int& height ) const noexcept;
 
-    void SetTexture( const Texture& texture ) noexcept;
     void SetShader( const Shader& shader ) noexcept;
 
 private:
