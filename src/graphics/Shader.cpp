@@ -59,6 +59,7 @@ uint32_t Shader::CompileFromFile( const char* vertex_path,
     // print compile errors if any
     glGetShaderiv( fragment, GL_COMPILE_STATUS, &success );
     if (!success) {
+        glGetShaderInfoLog( fragment, 512, nullptr, info_log );
         throw CompileError( info_log );
     }
 
