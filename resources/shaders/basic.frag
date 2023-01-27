@@ -9,10 +9,9 @@ out vec4 FragColor;
 
 uniform vec3 uViewPos;
 
-//uniform sampler2D uDiffuseMap;
-//uniform sampler2D uSpecularMap;
-//uniform sampler2D uNormalMap;
-
+// texture 0 = diffuse map
+// texture 1 = specular map
+// texture 2 = normal map
 #define MAX_TEXTURE_COUNT 3
 uniform sampler2D uTextures[MAX_TEXTURE_COUNT];
 
@@ -48,8 +47,7 @@ vec3 CalculateLighting() {
 }
 
 void main() {
-    vec3 result = vec3( texture( uTextures[0], TexCoord ) );
-//    vec3 result = CalculateLighting();
+    vec3 result = CalculateLighting();
 
 	FragColor = vec4( result, 1.0 );
 }

@@ -13,7 +13,7 @@ namespace graphics {
 class Mesh {
 public:
     Mesh() = default;
-    Mesh( VertexBuffer&& vbo, IndexBuffer&& ibo, Texture&& texture ) noexcept;
+    Mesh( VertexBuffer&& vbo, IndexBuffer&& ibo, std::vector<Texture>&& texture ) noexcept;
     Mesh( const Mesh& other ) noexcept;
     Mesh( Mesh&& other ) noexcept;
     ~Mesh() = default;
@@ -23,7 +23,7 @@ public:
 private:
     VertexBuffer vbo_;
     IndexBuffer ibo_;
-    Texture texture_;
+    std::vector<Texture> textures_;
 
 public:
     Mesh& operator=( const Mesh& other ) noexcept;
