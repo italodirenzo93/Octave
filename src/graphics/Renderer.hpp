@@ -7,7 +7,7 @@
 #include "Shader.hpp"
 #include "VertexBuffer.hpp"
 
-namespace graphics {
+namespace octave::graphics {
 
 enum class PrimitiveType {
     kTriangleList,
@@ -41,6 +41,6 @@ private:
     NON_COPYABLE_OR_MOVABLE_CLASS( Renderer )
 };
 
-} // namespace graphics
+} // namespace octave::graphics
 
 #endif

@@ -9,6 +9,8 @@
 using namespace std;
 namespace fs = std::filesystem;
 
+namespace octave {
+
 static constexpr const char* kConfigTemplate = "resources/config/Engine.ini";
 
 // Video
@@ -128,7 +130,9 @@ bool Config::GetPreloadShaders() const noexcept {
 }
 
 float Config::GetFieldOfView() const noexcept {
-    auto fov =
+    const auto fov =
         ini_.GetDoubleValue( "Renderer", "FieldOfView", kDefaultFieldOfView );
     return static_cast<float>( fov );
 }
+
+}  // namespace octave

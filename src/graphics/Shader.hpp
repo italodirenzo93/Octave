@@ -5,7 +5,7 @@
 #include "Exception.hpp"
 #include "Texture.hpp"
 
-namespace graphics {
+namespace octave::graphics {
 class Shader {
     friend class Renderer;
 

@@ -7,7 +7,7 @@
 
 #include <assimp/scene.h>
 
-//namespace graphics {
+//namespace octave::graphics {
 //class Model {
 //public:
 //    explicit Model( const char* path );
@@ -26,6 +26,6 @@
 //        aiMaterial* material, aiTextureType texture_type,
 //        const std::string& type_name );
 //};
-//} // namespace graphics
+//} // namespace octave::graphics
 
 #endif

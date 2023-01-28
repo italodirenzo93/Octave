@@ -3,7 +3,7 @@
 
 #include "CommonInclude.hpp"
 
-namespace graphics {
+namespace octave::graphics {
 
 class IndexBuffer {
     friend class Mesh;
@@ -33,6 +33,6 @@ public:
     bool operator==( const IndexBuffer& other ) const noexcept;
 };
 
-}  // namespace graphics
+}  // namespace octave::graphics
 
 #endif

@@ -8,7 +8,7 @@
 #include "Renderer.hpp"
 #include "Texture.hpp"
 
-namespace graphics {
+namespace octave::graphics {
 
 class Mesh {
 public:
@@ -39,6 +39,6 @@ public:
     Mesh& operator=( Mesh&& other ) noexcept;
 };
 
-} // namespace graphics
+} // namespace octave::graphics
 
 #endif

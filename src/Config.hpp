@@ -5,8 +5,10 @@
 
 #include <SimpleIni.h>
 
+namespace octave {
+
 class Config {
-public:
+   public:
     static Config& Instance() noexcept {
         if ( instance_ == nullptr ) {
             instance_ = std::unique_ptr<Config>( new Config() );
@@ -31,7 +33,7 @@ public:
     [[nodiscard]] bool GetPreloadShaders() const noexcept;
     [[nodiscard]] float GetFieldOfView() const noexcept;
 
-private:
+   private:
     Config() noexcept;
     static std::unique_ptr<Config> instance_;
 
@@ -39,5 +41,7 @@ private:
 
     NON_COPYABLE_OR_MOVABLE_CLASS( Config )
 };
+
+}  // namespace octave
 
 #endif

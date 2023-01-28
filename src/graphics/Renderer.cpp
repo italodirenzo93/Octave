@@ -5,7 +5,7 @@
 #include "Config.hpp"
 #include "ShaderManager.hpp"
 
-namespace graphics {
+namespace octave::graphics {
 using namespace std;
 
 inline GLenum PrimitiveToGLType( PrimitiveType type ) {
@@ -200,4 +200,4 @@ void Renderer::GetFramebufferSize( int& width, int& height ) const noexcept {
 void Renderer::SetShader( const Shader& shader ) noexcept {
     glUseProgram( shader.id_ );
 }
-} // namespace graphics
+} // namespace octave::graphics

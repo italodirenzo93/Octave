@@ -4,7 +4,7 @@
 #include "CommonInclude.hpp"
 #include "Shader.hpp"
 
-namespace graphics {
+namespace octave::graphics {
 class ShaderManager {
 public:
     static ShaderManager& Instance() noexcept {
