@@ -14,21 +14,22 @@ namespace octave {
 static constexpr const char* kConfigTemplate = "resources/config/Engine.ini";
 
 // Video
-static constexpr int kDefaultWidth = 800;
-static constexpr int kDefaultHeight = 600;
-static constexpr bool kDefaultFullscreen = false;
+static constexpr int kDefaultWidth = 1280;
+static constexpr int kDefaultHeight = 720;
+static constexpr bool kDefaultIsFullscreen = false;
+static constexpr bool kDefaultIsMaximized = false;
 static constexpr int kDefaultSyncInterval = 1;
 
 // Renderer
 static constexpr const char* kDefaultShaderList = "basic";
 static constexpr const char* kDefaultShaderDirectory = "resources/shaders";
 static constexpr bool kDefaultPreloadShaders = false;
-static constexpr float kDefaultFieldOfView = 45.0f;
+static constexpr float kDefaultFieldOfView = 90.0f;
 
 static void SetDefaultConfig( CSimpleIniA& config ) {
     config.SetLongValue( "Video", "FramebufferWidth", kDefaultWidth );
     config.SetLongValue( "Video", "FramebufferHeight", kDefaultHeight );
-    config.SetBoolValue( "Video", "IsFullscreen", kDefaultFullscreen );
+    config.SetBoolValue( "Video", "IsFullscreen", kDefaultIsFullscreen );
     config.SetLongValue( "Video", "SyncInterval", kDefaultSyncInterval );
 
     config.SetValue( "Renderer", "ShaderList", kDefaultShaderList );
@@ -92,8 +93,12 @@ int Config::GetFramebufferHeight() const noexcept {
     return static_cast<int>( height );
 }
 
-bool Config::GetIsFullscreen() const noexcept {
-    return ini_.GetBoolValue( "Video", "IsFullscreen", kDefaultFullscreen );
+bool Config::IsFullscreen() const noexcept {
+    return ini_.GetBoolValue( "Video", "IsFullscreen", kDefaultIsFullscreen );
+}
+
+bool Config::IsMaximized() const noexcept {
+    return ini_.GetBoolValue( "Video", "IsMaximized", kDefaultIsMaximized );
 }
 
 int Config::GetSyncInterval() const noexcept {
