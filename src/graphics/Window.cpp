@@ -60,7 +60,7 @@ Window::Window( int width, int height, const string& title ) {
     }
 }
 
-Window::~Window() {
+Window::~Window() noexcept {
     glfwDestroyWindow( handle_ );
 }
 

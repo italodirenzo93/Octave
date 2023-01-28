@@ -12,18 +12,27 @@ namespace graphics {
 
 class Mesh {
 public:
-    Mesh() = default;
-    Mesh( VertexBuffer&& vbo, IndexBuffer&& ibo, std::vector<Texture>&& texture ) noexcept;
+    Mesh() noexcept;
+    Mesh( const std::shared_ptr<VertexBuffer>& vbo, const std::shared_ptr<IndexBuffer>& ibo, const std::vector<std::shared_ptr<Texture>>& textures ) noexcept;
     Mesh( const Mesh& other ) noexcept;
     Mesh( Mesh&& other ) noexcept;
     ~Mesh() = default;
 
-    void Draw( const Shader& shader, Renderer& renderer ) const;
+    void Draw( const Shader& shader, const Renderer& renderer ) const;
+
+    Mesh& SetVertexBuffer( const std::shared_ptr<VertexBuffer>& vbo ) noexcept;
+    Mesh& SetIndexBuffer( const std::shared_ptr<IndexBuffer>& ibo ) noexcept;
+    Mesh& SetTextures( const std::vector<std::shared_ptr<Texture>>& textures ) noexcept;
+
+    [[nodiscard]] float GetShininess() const noexcept { return shininess_; }
+    Mesh& SetShininess( float shininess ) noexcept;
 
 private:
-    VertexBuffer vbo_;
-    IndexBuffer ibo_;
-    std::vector<Texture> textures_;
+    std::shared_ptr<VertexBuffer> vbo_;
+    std::shared_ptr<IndexBuffer> ibo_;
+    std::vector<std::shared_ptr<Texture>> textures_;
+
+    float shininess_;
 
 public:
     Mesh& operator=( const Mesh& other ) noexcept;

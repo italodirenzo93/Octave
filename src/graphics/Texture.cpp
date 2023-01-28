@@ -47,7 +47,7 @@ void Texture::LoadFromFile( const std::string& file_name ) {
         throw Exception( "Unable to load texture at " + file_name );
     }
 
-    stbi_image_free(image);
+    stbi_image_free( image );
 }
 
 Texture& Texture::operator=( Texture&& other ) noexcept {
@@ -63,4 +63,10 @@ Texture& Texture::operator=( Texture&& other ) noexcept {
 
     return *this;
 }
+
+bool Texture::operator==( const Texture& other ) const noexcept {
+    return id_ == other.id_ && format_ == other.format_ &&
+           width_ == other.width_ && height_ == other.height_;
+}
+
 }  // namespace graphics

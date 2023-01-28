@@ -78,6 +78,10 @@ void IndexBuffer::SetData( const std::vector<uint32_t>& indices ) noexcept {
 }
 
 IndexBuffer& IndexBuffer::operator=( const IndexBuffer& other ) noexcept {
+    if ( &other == this ) {
+        return *this;
+    }
+
     glGenBuffers( 1, &id_ );
 
     glBindBuffer( GL_COPY_READ_BUFFER, other.id_ );
@@ -102,6 +106,10 @@ IndexBuffer& IndexBuffer::operator=( IndexBuffer&& other ) noexcept {
     other.element_count_ = 0;
 
     return *this;
+}
+
+bool IndexBuffer::operator==( const IndexBuffer& other ) const noexcept {
+    return id_ == other.id_ && element_count_ && other.element_count_;
 }
 
 }  // namespace graphics

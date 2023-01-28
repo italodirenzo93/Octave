@@ -33,6 +33,7 @@ set(GLFW_USE_HYBRID_HPG ON CACHE BOOL "" FORCE)
 # Assimp
 set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_NO_EXPORT ON CACHE BOOL "" FORCE)
 
 # Subprojects
 add_subdirectory(dependencies/assimp)
