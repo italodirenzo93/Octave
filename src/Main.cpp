@@ -3,6 +3,7 @@
 
 #include <assimp/Importer.hpp>
 
+#include "Camera.hpp"
 #include "Config.hpp"
 #include "GeometricPrimitive.hpp"
 #include "graphics/Mesh.hpp"
@@ -199,16 +200,9 @@ int main( int argc, char* argv[] ) {
             mesh = LoadCube();
         }
 
-        const float fov = Config::Instance().GetFieldOfView();
-
-        auto projection = glm::perspectiveFov(
-            glm::radians( fov ), static_cast<float>( width ),
-            static_cast<float>( height ), 0.1f, 100.0f );
-
-        const glm::vec3 position( 0.0f, 0.0f, 5.0f );
-
-        const auto view = glm::lookAt( position, glm::vec3( 0.0f ),
-                                       glm::vec3( 0.0f, 1.0f, 0.0f ) );
+        Camera camera;
+        camera.SetPosition( 0.0f, 0.0f, 5.0f );
+        camera.SetFieldOfView( Config::Instance().GetFieldOfView() );
 
         auto model = glm::identity<glm::mat4>();
         model = glm::rotate( model, glm::radians( 90.0f ),
@@ -222,18 +216,12 @@ int main( int argc, char* argv[] ) {
         }
 
         renderer.SetShader( *shader );
-
-        shader->SetMat4( "uMatProjection", projection );
-        shader->SetMat4( "uMatView", view );
-
-        shader->SetVec3( "uViewPos", position );
         SetDefaultLighting( *shader );
 
         // Update camera aspect when window size is changed
-        window.SetSizeChangedCallback( [&projection]( int w, int h ) {
-            projection = glm::perspectiveFov(
-                glm::radians( 45.0f ), static_cast<float>( w ),
-                static_cast<float>( h ), 0.1f, 100.0f );
+        window.SetSizeChangedCallback( [&camera]( int w, int h ) {
+            const float aspect = static_cast<float>( w ) / static_cast<float>( h );
+            camera.SetAspectRatio( aspect );
         } );
 
         // Main loop
@@ -242,16 +230,22 @@ int main( int argc, char* argv[] ) {
             const float delta = now - last_frame_time;
             last_frame_time = now;
 
+            // Rotate the model around its Y-axis
             model = glm::rotate( model, glm::radians( delta * 25 ),
                                  glm::vec3( 0.0f, 0.0f, 1.0f ) );
 
+            shader->SetMat4( "uMatProjection", camera.GetProjectionMatrix() );
+            shader->SetMat4( "uMatView", camera.GetViewMatrix() );
+            shader->SetMat4( "uMatModel", model );
+
+            // Clear the viewport
             renderer.Clear( true, 0.1f, 0.1f, 0.1f );
 
             // Draw scene
-            shader->SetMat4( "uMatModel", model );
-
+            shader->SetVec3( "uViewPos", camera.GetPosition() );
             mesh.Draw( *shader, renderer );
 
+            // Show the result
             renderer.Present();
             window.PollEvents();
         }

@@ -4,24 +4,52 @@ namespace octave {
 
 using namespace graphics;
 
-Camera::Camera( float aspect_ratio, const glm::vec3& pos, const glm::vec3& up )
-    : aspect_ratio_( aspect_ratio ),
-      position_( pos ),
-      up_( up ),
-      world_up_( up ) {
-    Update();
+Camera::Camera() noexcept {
+    field_of_view_ = 45.0f;
+    aspect_ratio_ = 16.0f / 9.0f;
+    position_ = glm::vec3(0.0f);
+
+    front_ = glm::vec3( 0.0f, 0.0f, -1.0f );
+    up_ = world_up_;
+    right_ = glm::vec3( 1.0f, 0.0f, 0.0f );
+
+    matrix_projection_ = glm::identity<glm::mat4>();
+    matrix_view_ = glm::identity<glm::mat4>();
+
+    UpdateProjectionMatrix();
+    UpdateViewMatrix();
 }
 
-glm::mat4 Camera::GetProjectionMatrix() const {
-    return glm::perspective( glm::radians( field_of_view_ ), aspect_ratio_,
-                             0.1f, 100.0f );
+Camera& Camera::SetPosition( float x, float y, float z) noexcept {
+    position_ = glm::vec3( x, y, z );
+    UpdateViewMatrix();
+    return *this;
 }
 
-glm::mat4 Camera::GetViewMatrix() const {
-    return glm::lookAt( position_, position_ + front_, up_ );
+Camera& Camera::SetPosition( const glm::vec3& position ) noexcept {
+    position_ = position;
+    UpdateViewMatrix();
+    return *this;
 }
 
-void Camera::Update() {
+Camera& Camera::SetFieldOfView( float fov ) noexcept {
+    field_of_view_ = fov;
+    UpdateProjectionMatrix();
+    return *this;
+}
+
+Camera& Camera::SetAspectRatio( float aspect ) noexcept {
+    aspect_ratio_ = aspect;
+    UpdateProjectionMatrix();
+    return *this;
+}
+
+void Camera::UpdateProjectionMatrix() noexcept {
+    matrix_projection_= glm::perspective( glm::radians( field_of_view_ ), aspect_ratio_,
+                      0.1f, 100.0f );
+}
+
+void Camera::UpdateViewMatrix() noexcept {
     front_ = glm::vec3( 1.0f );
 
     front_.x = cos( glm::radians( yaw_ ) ) * cos( glm::radians( pitch_ ) );
@@ -31,18 +59,8 @@ void Camera::Update() {
     front_ = glm::normalize( front_ );
     right_ = glm::normalize( glm::cross( front_, world_up_ ) );
     up_ = glm::normalize( glm::cross( right_, front_ ) );
-}
 
-void Camera::Project( const Shader& shader ) const {
-    shader.SetVec3( "uViewPos", position_ );
-    shader.SetMat4( "uMatProjection", GetProjectionMatrix() );
-    shader.SetMat4( "uMatView", GetViewMatrix() );
-}
-
-void Camera::Unproject( const Shader& shader ) const {
-    shader.SetVec3( "uViewPos", glm::vec3( 0.0f ) );
-    shader.SetMat4( "uMatProjection", glm::identity<glm::mat4>() );
-    shader.SetMat4( "uMatView", glm::identity<glm::mat4>() );
+    matrix_view_ = glm::lookAt( position_, position_ + front_, up_ );
 }
 
 }  // namespace octave
