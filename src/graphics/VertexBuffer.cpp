@@ -77,9 +77,7 @@ void VertexBuffer::SetVertexAttributes( const VertexLayout& layout,
 }
 
 VertexBuffer& VertexBuffer::operator=( const VertexBuffer& other ) noexcept {
-    if ( &other == this ) {
-        return *this;
-    }
+    SELF_REFERENCE_CHECK( other );
 
     glGenBuffers( 1, &vbo_ );
 
