@@ -5,7 +5,7 @@
 
 namespace octave::graphics {
 
-enum LayoutSemantic { POSITION, COLOR, TEXCOORD, NORMAL };
+enum class LayoutSemantic { kPosition, kColor, kTexCoord, kNormal };
 
 struct LayoutBinding {
     LayoutSemantic semantic;

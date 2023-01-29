@@ -74,9 +74,9 @@ Mesh LoadMesh( const filesystem::path& path ) {
             vertices.emplace_back( vertex );
         }
 
-        vbo->SetData( { { POSITION, 3, GL_FLOAT, false },
-                        { NORMAL, 3, GL_FLOAT, false },
-                        { TEXCOORD, 2, GL_FLOAT, false } },
+        vbo->SetData( { { LayoutSemantic::kPosition, 3, GL_FLOAT, false },
+                        { LayoutSemantic::kNormal, 3, GL_FLOAT, false },
+                        { LayoutSemantic::kTexCoord, 2, GL_FLOAT, false } },
                       vertices );
     }
 
@@ -219,7 +219,7 @@ int main( int argc, char* argv[] ) {
         SetDefaultLighting( *shader );
 
         // Update camera aspect when window size is changed
-        window.SetSizeChangedCallback( [&camera]( int w, int h ) {
+        window.AddSizeChangedCallback( [&camera]( int w, int h ) {
             const float aspect = static_cast<float>( w ) / static_cast<float>( h );
             camera.SetAspectRatio( aspect );
         } );

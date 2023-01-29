@@ -23,9 +23,9 @@ GeometricPrimitive::VertexType::VertexType(
 }
 
 void GeometricPrimitive::CreateCube( VertexBuffer& vbo, IndexBuffer& ibo ) {
-    const VertexBuffer::VertexLayout layout{ { POSITION, 3, GL_FLOAT, false },
-                                             { NORMAL, 3, GL_FLOAT, false },
-                                             { TEXCOORD, 2, GL_FLOAT, false } };
+    const VertexBuffer::VertexLayout layout{ { LayoutSemantic::kPosition, 3, GL_FLOAT, false },
+                                             { LayoutSemantic::kNormal, 3, GL_FLOAT, false },
+                                             { LayoutSemantic::kTexCoord, 2, GL_FLOAT, false } };
 
     vbo.SetData(
         layout,
