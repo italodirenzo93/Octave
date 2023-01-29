@@ -24,7 +24,7 @@ public:
     [[nodiscard]] int GetFramebufferWidth() const noexcept;
     [[nodiscard]] int GetFramebufferHeight() const noexcept;
     [[nodiscard]] bool IsFullscreen() const noexcept;
-    [[nodiscard]] bool IsMaximized() const noexcept;
+    [[nodiscard]] bool IsBorderless() const noexcept;
     [[nodiscard]] int GetSyncInterval() const noexcept;
 
     // Renderer
