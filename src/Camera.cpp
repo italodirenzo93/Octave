@@ -55,6 +55,14 @@ void Camera::Translate( const glm::vec3& translation ) noexcept {
     }
 }
 
+void Camera::Rotate( const glm::vec3& angles ) noexcept {
+    if ( angles != glm::zero<glm::vec3>() ) {
+        yaw_ += angles.y;
+        pitch_ += angles.x;
+        UpdateViewMatrix();
+    }
+}
+
 void Camera::UpdateProjectionMatrix() noexcept {
     matrix_projection_ = glm::perspective( glm::radians( field_of_view_ ),
                                            aspect_ratio_, 0.1f, 100.0f );

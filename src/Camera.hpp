@@ -24,6 +24,7 @@ public:
 
     void Translate( float x = 0.0f, float y = 0.0f, float z = 0.0f ) noexcept;
     void Translate( const glm::vec3& translation ) noexcept;
+    void Rotate( const glm::vec3& angles ) noexcept;
 
 private:
      glm::vec3 position_;
