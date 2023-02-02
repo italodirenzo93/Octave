@@ -6,6 +6,6 @@ namespace octave {
 bool Up();
 void Down();
 
-} // namespace octave
+}  // namespace octave
 
 #endif  // OCTAVE_OCTAVE_HPP

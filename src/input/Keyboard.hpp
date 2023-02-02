@@ -7,17 +7,17 @@ namespace octave::input {
 
 class Keyboard {
 public:
-    explicit Keyboard( const graphics::Window& window) noexcept;
-    ~Keyboard() = default;
+	explicit Keyboard( const graphics::Window& window ) noexcept;
+	~Keyboard() = default;
 
-    [[nodiscard]] bool IsKeyDown( int glfwKey ) const noexcept;
+	[[nodiscard]] bool IsKeyDown( int glfwKey ) const noexcept;
 
 private:
-    const graphics::Window& window_;
+	const graphics::Window& window_;
 
-    NON_COPYABLE_OR_MOVABLE_CLASS( Keyboard )
+	NON_COPYABLE_OR_MOVABLE_CLASS( Keyboard )
 };
 
-}  // namespace octave
+}  // namespace octave::input
 
 #endif  // OCTAVE_KEYBOARD_HPP

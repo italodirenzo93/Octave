@@ -11,125 +11,128 @@ Window::Window() : Window( "My Game Engine" ) {
 }
 
 Window::Window( const std::string& title )
-    : Window( Config::Instance().GetFramebufferWidth(),
-              Config::Instance().GetFramebufferHeight(), title ) {
+	: Window( Config::Instance().GetFramebufferWidth(),
+			  Config::Instance().GetFramebufferHeight(), title ) {
 }
 
 Window::Window( int width, int height, const string& title ) {
-    // Set defaults as a baseline
-    glfwDefaultWindowHints();
+	// Set defaults as a baseline
+	glfwDefaultWindowHints();
 
-    // Open GL context hints
+	// Open GL context hints
 #ifdef __APPLE__
-    glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
-    glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
+	glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
+	glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
 #else
-    glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
-    glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
+	glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
+	glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
 #endif
-    glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
-    glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE );
+	glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
+	glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE );
 #ifdef __DEBUG__
-    glfwWindowHint( GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE );
+	glfwWindowHint( GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE );
 #endif
 
-    const Config& config = Config::Instance();
+	const Config& config = Config::Instance();
 
-    // Fullscreen
-    GLFWmonitor* monitor = nullptr;
+	// Fullscreen
+	GLFWmonitor* monitor = nullptr;
 
-    if (config.IsFullscreen()) {
-        const auto primary_monitor = glfwGetPrimaryMonitor();
-        const auto vidmode = glfwGetVideoMode( primary_monitor );
+	if ( config.IsFullscreen() ) {
+		const auto primary_monitor = glfwGetPrimaryMonitor();
+		const auto vidmode = glfwGetVideoMode( primary_monitor );
 
-        width = vidmode->width;
-        height = vidmode->height;
+		width = vidmode->width;
+		height = vidmode->height;
 
-        glfwWindowHint( GLFW_RED_BITS, vidmode->redBits );
-        glfwWindowHint( GLFW_GREEN_BITS, vidmode->greenBits );
-        glfwWindowHint( GLFW_BLUE_BITS, vidmode->blueBits );
-        glfwWindowHint( GLFW_REFRESH_RATE, vidmode->refreshRate );
+		glfwWindowHint( GLFW_RED_BITS, vidmode->redBits );
+		glfwWindowHint( GLFW_GREEN_BITS, vidmode->greenBits );
+		glfwWindowHint( GLFW_BLUE_BITS, vidmode->blueBits );
+		glfwWindowHint( GLFW_REFRESH_RATE, vidmode->refreshRate );
 
-        monitor = primary_monitor; // passing a monitor to glfwCreateWindow enabled fullscreen mode
-    }
+		monitor = primary_monitor;  // passing a monitor to glfwCreateWindow
+									// enabled fullscreen mode
+	}
 
-    if ( config.IsBorderless() ) {
-        glfwWindowHint( GLFW_DECORATED, GLFW_FALSE );
-        monitor = nullptr; // window is the size of the monitor but not true fullscreen
-    }
+	if ( config.IsBorderless() ) {
+		glfwWindowHint( GLFW_DECORATED, GLFW_FALSE );
+		monitor = nullptr;  // window is the size of the monitor but not true
+							// fullscreen
+	}
 
-    // Create window
-    handle_ =
-        glfwCreateWindow( width, height, title.c_str(), monitor, nullptr );
-    if ( !handle_ ) {
-        throw Exception( "Unable to create GLFW window" );
-    }
+	// Create window
+	handle_ =
+		glfwCreateWindow( width, height, title.c_str(), monitor, nullptr );
+	if ( !handle_ ) {
+		throw Exception( "Unable to create GLFW window" );
+	}
 
-    glfwMakeContextCurrent( handle_ );
-    glfwSwapInterval( config.GetSyncInterval() );
+	glfwMakeContextCurrent( handle_ );
+	glfwSwapInterval( config.GetSyncInterval() );
 
-    // Pass a pointer to this class instance to the window
-    // so we can access in from our callback functions
-    glfwSetWindowUserPointer( handle_, this );
+	// Pass a pointer to this class instance to the window
+	// so we can access in from our callback functions
+	glfwSetWindowUserPointer( handle_, this );
 
-    // Set callback wrapper functions
-    glfwSetFramebufferSizeCallback( handle_, WindowSizeCallback );
+	// Set callback wrapper functions
+	glfwSetFramebufferSizeCallback( handle_, WindowSizeCallback );
 
-    // Initialize Open GL extension loader
-    if ( !gladLoadGLLoader(
-             reinterpret_cast<GLADloadproc>( glfwGetProcAddress ) ) ) {
-        throw Exception( "Unable to initialize GLAD OpenGL extension loader" );
-    }
+	// Initialize Open GL extension loader
+	if ( !gladLoadGLLoader(
+			 reinterpret_cast<GLADloadproc>( glfwGetProcAddress ) ) ) {
+		throw Exception( "Unable to initialize GLAD OpenGL extension loader" );
+	}
 }
 
 Window::~Window() noexcept {
-    glfwDestroyWindow( handle_ );
+	glfwDestroyWindow( handle_ );
 }
 
 void Window::PollEvents() const noexcept {
-    glfwPollEvents();
+	glfwPollEvents();
 }
 
 bool Window::IsOpen() const noexcept {
-    return !glfwWindowShouldClose( handle_ );
+	return !glfwWindowShouldClose( handle_ );
 }
 
 bool Window::IsMinimized() const noexcept {
-    return glfwGetWindowAttrib( handle_, GLFW_ICONIFIED ) == GLFW_TRUE;
+	return glfwGetWindowAttrib( handle_, GLFW_ICONIFIED ) == GLFW_TRUE;
 }
 
 bool Window::IsMaximized() const noexcept {
-    return glfwGetWindowAttrib( handle_, GLFW_MAXIMIZED ) == GLFW_TRUE;
+	return glfwGetWindowAttrib( handle_, GLFW_MAXIMIZED ) == GLFW_TRUE;
 }
 
 void Window::Minimize() const noexcept {
-    glfwIconifyWindow( handle_ );
+	glfwIconifyWindow( handle_ );
 }
 
 void Window::Maximize() const noexcept {
-    glfwMaximizeWindow( handle_ );
+	glfwMaximizeWindow( handle_ );
 }
 
 void Window::Restore() const noexcept {
-    glfwRestoreWindow( handle_ );
+	glfwRestoreWindow( handle_ );
 }
 
 void Window::GetSize( int& width, int& height ) const noexcept {
-    glfwGetWindowSize( handle_, &width, &height );
+	glfwGetWindowSize( handle_, &width, &height );
 }
 
 void Window::WindowSizeCallback( GLFWwindow* window, int width,
-                                 int height ) noexcept {
-	// TODO: this function call should live elsewhere as its not the Window class' job
-    glViewport( 0, 0, width, height );
+								 int height ) noexcept {
+	// TODO: this function call should live elsewhere as its not the Window
+	// class' job
+	glViewport( 0, 0, width, height );
 
-    const auto c_window =
-        static_cast<Window*>( glfwGetWindowUserPointer( window ) );
-    if ( c_window ) {
-        for ( const auto& callback : c_window->cb_window_size_) {
-            callback( width, height );
-        }
-    }
+	const auto c_window =
+		static_cast<Window*>( glfwGetWindowUserPointer( window ) );
+	if ( c_window ) {
+		for ( const auto& callback : c_window->cb_window_size_ ) {
+			callback( width, height );
+		}
+	}
 }
 
 }  // namespace octave::graphics
