@@ -52,6 +52,7 @@ file(GLOB_RECURSE source CONFIGURE_DEPENDS "src/*.h" "src/*.hpp" "src/*.cpp")
 add_executable(Octave ${source})
 target_link_libraries(Octave ${OPENGL_LIBRARIES} assimp glad glfw glm simpleini stb_image)
 target_include_directories(Octave PRIVATE)
+target_precompile_headers(Octave PRIVATE "src/CommonInclude.hpp")
 
 # Visual Studio Startup Project
 if(WIN32)
