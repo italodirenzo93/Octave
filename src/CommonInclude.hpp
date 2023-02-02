@@ -12,6 +12,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <AL/al.h>
+#include <AL/alc.h>
+#include <AL/alext.h>
+
 // clang-format on
 
 // C++ headers

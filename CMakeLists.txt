@@ -43,6 +43,7 @@ add_subdirectory(dependencies/assimp)
 add_subdirectory(dependencies/glad)
 add_subdirectory(dependencies/glfw)
 add_subdirectory(dependencies/glm)
+add_subdirectory(dependencies/openal-soft)
 add_subdirectory(dependencies/simpleini)
 add_subdirectory(dependencies/stb_image)
 
@@ -50,7 +51,7 @@ add_subdirectory(dependencies/stb_image)
 file(GLOB_RECURSE source CONFIGURE_DEPENDS "src/*.h" "src/*.hpp" "src/*.cpp")
 
 add_executable(Octave ${source})
-target_link_libraries(Octave ${OPENGL_LIBRARIES} assimp glad glfw glm simpleini stb_image)
+target_link_libraries(Octave ${OPENGL_LIBRARIES} assimp glad glfw glm OpenAL simpleini stb_image)
 target_include_directories(Octave PRIVATE)
 target_precompile_headers(Octave PRIVATE "src/CommonInclude.hpp")
 
