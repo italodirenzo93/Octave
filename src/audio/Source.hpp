@@ -6,6 +6,13 @@
 
 namespace octave::audio {
 
+enum class PlaybackState {
+	Initial,
+	Playing,
+	Paused,
+	Stopped
+};
+
 class Source {
 public:
 	Source() noexcept;
@@ -25,7 +32,11 @@ public:
 	Source& SetPosition( const glm::vec3& position );
 	Source& SetPosition( float x, float y, float z );
 
+	[[nodiscard]] PlaybackState GetState() const noexcept;
+
 	void Play();
+	void Pause();
+	void Stop();
 
 private:
 	uint32_t id_ = 0;

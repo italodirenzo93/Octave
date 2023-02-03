@@ -4,16 +4,9 @@
 
 namespace octave::audio {
 
-static inline void ThrowIfError() {
-	const ALenum error = alGetError();
-	if ( error != AL_NO_ERROR ) {
-		throw Exception( "OpenAL error " + std::to_string( error ) );
-	}
-}
-
 Source::Source() noexcept {
 	alGenSources( 1, &id_ );
-	ThrowIfError();
+	al::ThrowIfFailed();
 }
 
 Source::~Source() noexcept {
@@ -22,13 +15,13 @@ Source::~Source() noexcept {
 
 Source& Source::SetBuffer( const Buffer& buffer ) {
 	alSourcei( id_, AL_BUFFER, static_cast<int>( buffer.id_ ) );
-	ThrowIfError();
+	al::ThrowIfFailed();
 	return *this;
 }
 
 Source& Source::SetGain( float gain ) {
 	alSourcef( id_, AL_GAIN, std::max( gain, 0.0f ) );
-	ThrowIfError();
+	al::ThrowIfFailed();
 	return *this;
 }
 
@@ -40,7 +33,7 @@ bool Source::IsLooping() const noexcept {
 
 Source& Source::SetLooping( bool loop ) {
 	alSourcei( id_, AL_LOOPING, loop );
-	ThrowIfError();
+	al::ThrowIfFailed();
 	return *this;
 }
 
@@ -57,26 +50,53 @@ float Source::GetPitch() const noexcept {
 }
 
 Source& Source::SetPitch( float pitch ) {
-	alSourcef( id_, AL_PITCH, pitch );
-	ThrowIfError();
+	alSourcef( id_, AL_PITCH, std::max( pitch, 0.0f ) );
+	al::ThrowIfFailed();
 	return *this;
 }
 
 Source& Source::SetPosition( const glm::vec3& position ) {
 	alSourcefv( id_, AL_POSITION, glm::value_ptr( position ) );
-	ThrowIfError();
+	al::ThrowIfFailed();
 	return *this;
 }
 
 Source& Source::SetPosition( float x, float y, float z ) {
 	alSource3f( id_, AL_POSITION, x, y, z );
-	ThrowIfError();
+	al::ThrowIfFailed();
 	return *this;
+}
+
+PlaybackState Source::GetState() const noexcept {
+	int state;
+	alGetSourcei( id_, AL_SOURCE_STATE, &state );
+
+	switch ( state ) {
+		default:
+		case AL_INITIAL:
+			return PlaybackState::Initial;
+		case AL_PLAYING:
+			return PlaybackState::Playing;
+		case AL_PAUSED:
+			return PlaybackState::Paused;
+		case AL_STOPPED:
+			return PlaybackState::Stopped;
+	}
 }
 
 void Source::Play() {
 	alSourcePlay( id_ );
-	ThrowIfError();
+	al::ThrowIfFailed();
+}
+
+void Source::Pause() {
+	alSourcePause( id_ );
+	al::ThrowIfFailed();
+}
+
+void Source::Stop() {
+	alSourceStop( id_ );
+	al::ThrowIfFailed();
 }
 
 }  // namespace octave::audio
