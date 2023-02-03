@@ -2,8 +2,8 @@
 <COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
   <asset><contributor><author></author><authoring_tool>FBX COLLADA exporter</authoring_tool><comments></comments></contributor><created>2022-08-27T00:20:26Z</created><keywords></keywords><modified>2022-08-27T00:20:26Z</modified><revision></revision><subject></subject><title></title><unit meter="1.000000" name="centimeter"></unit><up_axis>Y_UP</up_axis></asset>
   <library_images>
-    <image id="file2-image" name="file2"><init_from>file://C:/Projects/PlayStation/MCard_C.jpg</init_from></image>
-    <image id="file4-image" name="file4"><init_from>file://C:/Projects/PlayStation/MCard_S.jpg</init_from></image>
+    <image id="file2-image" name="file2"><init_from>MCard_C.jpg</init_from></image>
+    <image id="file4-image" name="file4"><init_from>MCard_S.jpg</init_from></image>
   </library_images>
   <library_materials>
     <material id="Memory_Card" name="Memory_Card">

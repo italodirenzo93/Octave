@@ -140,7 +140,7 @@ void Model::Draw( const Shader& shader,
 Model Model::LoadFromFile( const std::filesystem::path& path ) {
 	Assimp::Importer importer;
 	const auto scene = importer.ReadFile(
-		path.string(), aiProcess_Triangulate | aiProcess_FlipWindingOrder | aiProcess_FlipUVs );
+		path.string(), aiProcess_Triangulate | aiProcess_FlipWindingOrder );
 
 	if ( !scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
 		 !scene->mRootNode ) {
