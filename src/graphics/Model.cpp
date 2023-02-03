@@ -62,15 +62,15 @@ static Mesh ProcessMesh( const string& directory, aiMesh* mesh,
 			filesystem::path texture_path = str.C_Str();
 			const auto full_path = directory / texture_path;
 
-			const auto iter = texture_cache.find( full_path );
+			const auto iter = texture_cache.find( full_path.string() );
 			if ( iter != texture_cache.end() ) {
 				return iter->second;
 			}
 
 			auto texture = make_shared<Texture>();
 			try {
-				texture->LoadFromFile( full_path );
-				texture_cache[full_path] = texture;
+				texture->LoadFromFile( full_path.string() );
+				texture_cache[full_path.string()] = texture;
 			} catch ( const Exception& e ) {
 				cerr << "Error loading model texture : " << e.what() << endl;
 			}
@@ -150,7 +150,7 @@ Model Model::LoadFromFile( const std::filesystem::path& path ) {
 	vector<Mesh> meshes;
 
 	// Recursively read mesh data
-	ProcessNode( path.parent_path(), meshes, scene->mRootNode, scene );
+	ProcessNode( path.parent_path().string(), meshes, scene->mRootNode, scene );
 
 	return Model( meshes );
 }

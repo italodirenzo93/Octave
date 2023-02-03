@@ -24,7 +24,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Re-evaluate this option later...
-set(BUILD_SHARED_LIBS OFF)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+set(LIBTYPE STATIC)
 
 # GLFW
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
@@ -39,11 +40,12 @@ set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(ASSIMP_NO_EXPORT ON CACHE BOOL "" FORCE)
 
 # OpenAL Soft
-set(ALSOFT_UTILS OFF)
-set(ALSOFT_EXAMPLES OFF)
-set(ALSOFT_INSTALL_EXAMPLES OFF)
-set(ALSOFT_INSTALL_UTILS OFF)
-set(ALSOFT_UPDATE_BUILD_VERSION OFF)
+set(ALSOFT_UTILS OFF CACHE BOOL "" FORCE)
+set(ALSOFT_EAX OFF CACHE BOOL "" FORCE)
+set(ALSOFT_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(ALSOFT_INSTALL_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(ALSOFT_INSTALL_UTILS OFF CACHE BOOL "" FORCE)
+set(ALSOFT_UPDATE_BUILD_VERSION OFF CACHE BOOL "" FORCE)
 
 # Subprojects
 add_subdirectory(dependencies/assimp)
@@ -58,7 +60,7 @@ add_subdirectory(dependencies/stb_image)
 file(GLOB_RECURSE source CONFIGURE_DEPENDS "src/*.h" "src/*.hpp" "src/*.cpp")
 
 add_executable(Octave ${source})
-target_link_libraries(Octave ${OPENGL_LIBRARIES} assimp glad glfw glm OpenAL simpleini stb_image)
+target_link_libraries(Octave PRIVATE ${OPENGL_LIBRARIES} assimp glad glfw glm OpenAL simpleini stb_image)
 target_include_directories(Octave PRIVATE)
 target_precompile_headers(Octave PRIVATE "src/CommonInclude.hpp")
 
