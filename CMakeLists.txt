@@ -38,6 +38,13 @@ set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(ASSIMP_NO_EXPORT ON CACHE BOOL "" FORCE)
 
+# OpenAL Soft
+set(ALSOFT_UTILS OFF)
+set(ALSOFT_EXAMPLES OFF)
+set(ALSOFT_INSTALL_EXAMPLES OFF)
+set(ALSOFT_INSTALL_UTILS OFF)
+set(ALSOFT_UPDATE_BUILD_VERSION OFF)
+
 # Subprojects
 add_subdirectory(dependencies/assimp)
 add_subdirectory(dependencies/glad)
