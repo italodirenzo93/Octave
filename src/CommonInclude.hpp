@@ -55,22 +55,22 @@ public:
 	explicit OpenGLError( GLenum error ) noexcept {
 		switch ( error ) {
 			case GL_INVALID_ENUM:
-				message_ = "GL_INVALID_ENUM";
+				message_ = "INVALID_ENUM";
 				break;
 			case GL_INVALID_VALUE:
-				message_ = "GL_INVALID_VALUE";
+				message_ = "INVALID_VALUE";
 				break;
 			case GL_INVALID_OPERATION:
-				message_ = "GL_INVALID_OPERATION";
+				message_ = "INVALID_OPERATION";
 				break;
 			case GL_STACK_OVERFLOW:
-				message_ = "GL_STACK_OVERFLOW";
+				message_ = "STACK_OVERFLOW";
 				break;
 			case GL_STACK_UNDERFLOW:
-				message_ = "GL_STACK_UNDERFLOW";
+				message_ = "STACK_UNDERFLOW";
 				break;
 			case GL_OUT_OF_MEMORY:
-				message_ = "GL_OUT_OF_MEMORY";
+				message_ = "OUT_OF_MEMORY";
 				break;
 			default:
 				message_ = "Unknown error";
@@ -88,6 +88,10 @@ inline void ThrowIfFailed() {
 
 }  // namespace octave::graphics::gl
 
+#define GL_CALL( func ) \
+	func;               \
+	octave::graphics::gl::ThrowIfFailed()
+
 namespace octave::audio::al {
 
 class OpenALError : public Exception {
@@ -95,19 +99,19 @@ public:
 	explicit OpenALError( ALenum error ) noexcept {
 		switch ( error ) {
 			case AL_INVALID_NAME:
-				message_ = "AL_INVALID_NAME";
+				message_ = "INVALID_NAME";
 				break;
 			case AL_INVALID_ENUM:
-				message_ = "AL_INVALID_ENUM";
+				message_ = "INVALID_ENUM";
 				break;
 			case AL_INVALID_VALUE:
-				message_ = "AL_INVALID_VALUE";
+				message_ = "INVALID_VALUE";
 				break;
 			case AL_INVALID_OPERATION:
-				message_ = "AL_INVALID_OPERATION";
+				message_ = "INVALID_OPERATION";
 				break;
 			case AL_OUT_OF_MEMORY:
-				message_ = "AL_OUT_OF_MEMORY";
+				message_ = "OUT_OF_MEMORY";
 				break;
 			default:
 				message_ = "Unknown error";
