@@ -10,6 +10,12 @@ Source::Source() noexcept {
 }
 
 Source::~Source() noexcept {
+	PlaybackState state = GetState();
+	if ( state == PlaybackState::Playing || state == PlaybackState::Paused ) {
+		Stop();
+	}
+
+	alSourcei( id_, AL_BUFFER, 0 );
 	alDeleteSources( 1, &id_ );
 }
 
