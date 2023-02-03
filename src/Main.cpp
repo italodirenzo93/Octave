@@ -9,6 +9,7 @@
 #include "Octave.hpp"
 #include "StepTimer.hpp"
 #include "graphics/Mesh.hpp"
+#include "graphics/Model.hpp"
 #include "graphics/Renderer.hpp"
 #include "graphics/ShaderManager.hpp"
 #include "input/Keyboard.hpp"
@@ -63,128 +64,6 @@ struct Transform {
 		return model;
 	}
 };
-
-Mesh LoadMesh( const filesystem::path& path ) {
-	Assimp::Importer importer;
-	auto scene = importer.ReadFile(
-		path.string(), aiProcess_Triangulate | aiProcess_FlipWindingOrder );
-	if ( !scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ) {
-		throw Exception( importer.GetErrorString() );
-	}
-
-	if ( scene->mNumMeshes == 0 ) {
-		throw Exception( "Scene has no meshes" );
-	}
-
-	const aiMesh* mesh = scene->mMeshes[0];
-
-	auto vbo = make_shared<VertexBuffer>();
-	auto ibo = make_shared<IndexBuffer>();
-	vector<shared_ptr<Texture>> textures( 3 );
-
-	Mesh ret_mesh;
-
-	// Parse vertex data
-	{
-		vector<VertexPositionNormalTexture> vertices;
-		for ( uint32_t i = 0; i < mesh->mNumVertices; i++ ) {
-			const aiVector3D pos = mesh->mVertices[i];
-
-			VertexPositionNormalTexture vertex = {};
-			vertex.position.x = pos.x;
-			vertex.position.y = pos.y;
-			vertex.position.z = pos.z;
-
-			if ( mesh->HasNormals() ) {
-				const aiVector3D normal = mesh->mNormals[i];
-				vertex.normal.x = normal.x;
-				vertex.normal.y = normal.y;
-				vertex.normal.z = normal.z;
-			}
-
-			if ( mesh->HasTextureCoords( 0 ) ) {
-				const aiVector3D tex_coords = mesh->mTextureCoords[0][i];
-				vertex.tex_coords.x = tex_coords.x;
-				vertex.tex_coords.y = tex_coords.y;
-			}
-
-			vertices.emplace_back( vertex );
-		}
-
-		vbo->SetData( { { LayoutSemantic::kPosition, 3, GL_FLOAT, false },
-						{ LayoutSemantic::kNormal, 3, GL_FLOAT, false },
-						{ LayoutSemantic::kTexCoord, 2, GL_FLOAT, false } },
-					  vertices );
-	}
-
-	// Parse index data
-	{
-		vector<uint32_t> indices;
-		for ( uint32_t i = 0; i < mesh->mNumFaces; i++ ) {
-			const aiFace face = mesh->mFaces[i];
-			for ( uint32_t j = 0; j < face.mNumIndices; j++ ) {
-				indices.emplace_back( face.mIndices[j] );
-			}
-		}
-
-		ibo->SetData( indices );
-	}
-
-	// Parse textures
-	auto material = scene->mMaterials[mesh->mMaterialIndex];
-	if ( material != nullptr ) {
-		auto load_texture = [&]( aiTextureType type ) {
-			aiString str;
-			material->GetTexture( type, 0, &str );
-
-			filesystem::path texture_path = str.C_Str();
-
-			auto texture = make_shared<Texture>();
-			try {
-				texture->LoadFromFile(
-					( path.parent_path() / texture_path.filename() ).string() );
-			} catch ( const Exception& e ) {
-				cerr << "Error loading model texture : " << e.what() << endl;
-			}
-			return texture;
-		};
-
-		// Diffuse map
-		if ( material->GetTextureCount( aiTextureType_DIFFUSE ) > 0 ) {
-			textures[0] = load_texture( aiTextureType_DIFFUSE );
-		} else {
-			cout << "No diffuse map texture to load" << endl;
-		}
-
-		// Specular map
-		if ( material->GetTextureCount( aiTextureType_SPECULAR ) > 0 ) {
-			textures[1] = load_texture( aiTextureType_SPECULAR );
-		} else {
-			cout << "No specular map texture to load" << endl;
-		}
-
-		// Normal map
-		//        if ( material->GetTextureCount( aiTextureType_NORMALS ) > 0 )
-		//        {
-		//            textures[2] = load_texture( aiTextureType_NORMALS );
-		//        } else {
-		//            cout << "No normal map texture to load" << endl;
-		//        }
-
-		// Shininess
-		float shininess;
-		if ( material->Get( AI_MATKEY_SHININESS, shininess ) ==
-			 aiReturn_SUCCESS ) {
-			ret_mesh.SetShininess( shininess );
-		}
-	}
-
-	ret_mesh.SetVertexBuffer( vbo );
-	ret_mesh.SetIndexBuffer( ibo );
-	ret_mesh.SetTextures( textures );
-
-	return ret_mesh;
-}
 
 Mesh LoadCube() {
 	auto vbo = make_shared<VertexBuffer>();
@@ -281,12 +160,12 @@ int main( int argc, char* argv[] ) {
 		int width, height;
 		renderer.GetFramebufferSize( width, height );
 
-		Mesh mesh;
+		Model model;
 
 		if ( argc > 1 ) {
-			mesh = LoadMesh( argv[1] );
+			model = Model::LoadFromFile( argv[1] );
 		} else {
-			mesh = LoadCube();
+			model.AddMesh( LoadCube() );
 		}
 
 		Camera camera;
@@ -295,9 +174,9 @@ int main( int argc, char* argv[] ) {
 		camera.SetAspectRatio( static_cast<float>( width ) /
 							   static_cast<float>( height ) );
 
-		auto model = glm::identity<glm::mat4>();
-		model = glm::rotate( model, glm::radians( 90.0f ),
-							 glm::vec3( 1.0f, 0.0f, 0.0f ) );
+		auto model_matrix = glm::identity<glm::mat4>();
+		model_matrix = glm::rotate( model_matrix, glm::radians( 90.0f ),
+									glm::vec3( 1.0f, 0.0f, 0.0f ) );
 
 		const auto shader = ShaderManager::Instance().Get( "basic" );
 		if ( !shader ) {
@@ -332,10 +211,11 @@ int main( int argc, char* argv[] ) {
 			renderer.Clear( true, 0.1f, 0.1f, 0.1f );
 
 			// Draw scene
-			model = glm::rotate( model, glm::radians( delta * 25.0f ),
-								 glm::vec3( 0.0f, 0.0f, 1.0f ) );
-			shader->SetMat4( "uMatModel", model );
-			mesh.Draw( *shader, renderer );
+			model_matrix =
+				glm::rotate( model_matrix, glm::radians( delta * 25.0f ),
+							 glm::vec3( 0.0f, 0.0f, 1.0f ) );
+			shader->SetMat4( "uMatModel", model_matrix );
+			model.Draw( *shader, renderer );
 
 			// Show the result
 			renderer.Present();
