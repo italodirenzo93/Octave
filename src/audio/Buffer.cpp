@@ -38,7 +38,7 @@ int Buffer::GetSize() const noexcept {
 	return size;
 }
 
-void Buffer::LoadFromOggFile( const std::string& path ) {
+void Buffer::LoadFromVorbisFile( const std::string& path ) {
 	int n_channels, sample_rate;
 	short* data;
 
