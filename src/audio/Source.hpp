@@ -15,11 +15,13 @@ enum class PlaybackState {
 
 class Source {
 public:
-	Source() noexcept;
+	Source();
 	~Source() noexcept;
 
 	// Properties
 	Source& SetBuffer( const Buffer& buffer );
+
+	[[nodiscard]] float GetGain() const noexcept;
 	Source& SetGain( float gain );
 
 	[[nodiscard]] bool IsLooping() const noexcept;

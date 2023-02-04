@@ -4,7 +4,7 @@
 
 namespace octave::audio {
 
-Source::Source() noexcept {
+Source::Source() {
 	alGenSources( 1, &id_ );
 	al::ThrowIfFailed();
 }
@@ -23,6 +23,12 @@ Source& Source::SetBuffer( const Buffer& buffer ) {
 	alSourcei( id_, AL_BUFFER, static_cast<int>( buffer.id_ ) );
 	al::ThrowIfFailed();
 	return *this;
+}
+
+float Source::GetGain() const noexcept {
+	float gain;
+	alGetSourcef( id_, AL_GAIN, &gain );
+	return gain;
 }
 
 Source& Source::SetGain( float gain ) {

@@ -3,9 +3,6 @@
 #include "GeometricPrimitive.hpp"
 #include "Octave.hpp"
 #include "StepTimer.hpp"
-//#include "audio/Buffer.hpp"
-//#include "audio/Context.hpp"
-//#include "audio/Source.hpp"
 #include "graphics/Mesh.hpp"
 #include "graphics/Model.hpp"
 #include "graphics/Renderer.hpp"
@@ -191,20 +188,6 @@ int main( int argc, char* argv[] ) {
 
 		Keyboard keyboard( window );
 		StepTimer step_timer;
-
-//		audio::Context audio_context;
-//		cout << audio_context.GetDeviceInfo() << endl;
-//
-//		audio::Buffer audio_buffer;
-//		audio::Source audio_source;
-//
-//		audio_buffer.LoadFromOggFile(
-//			"./resources/music/SciFiSoundtrack_Demo2.ogg" );
-//
-//		audio_source.SetBuffer( audio_buffer )
-//			.SetGain( 1.0f )
-//			.SetLooping( true )
-//			.Play();
 
 		// Main loop
 		while ( window.IsOpen() ) {
