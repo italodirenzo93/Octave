@@ -64,18 +64,38 @@ void GeometricPrimitive::CreateCube( VertexBuffer& vbo, IndexBuffer& ibo ) {
 
 void GeometricPrimitive::CreateQuad( graphics::VertexBuffer& vbo ) {
 	const VertexBuffer::VertexLayout layout{
-		{ LayoutSemantic::kPosition, 2, GL_FLOAT, false },
+		{ LayoutSemantic::kPosition, 3, GL_FLOAT, false },
+		{ LayoutSemantic::kNormal, 3, GL_FLOAT, false },
 		{ LayoutSemantic::kTexCoord, 2, GL_FLOAT, false } };
 
 	// clang-format off
 	vbo.SetData( layout, {
- 		// pos // tex
-		0.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 0.0f
+		// pos // tex
+		VertexType::PositionTexture(0.0f, 1.0f, 0.0f, 0.0f, 1.0f),
+		VertexType::PositionTexture(1.0f, 0.0f, 0.0f, 1.0f, 0.0f),
+		VertexType::PositionTexture(0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+		VertexType::PositionTexture(0.0f, 1.0f, 0.0f, 0.0f, 1.0f),
+		VertexType::PositionTexture(1.0f, 1.0f, 0.0f, 1.0f, 1.0f),
+		VertexType::PositionTexture(1.0f, 0.0f, 0.0f, 1.0f, 0.0f)
+	});
+	// clang-format on
+}
+
+void GeometricPrimitive::CreatePlane( graphics::VertexBuffer& vbo ) {
+	const VertexBuffer::VertexLayout layout{
+		{ LayoutSemantic::kPosition, 3, GL_FLOAT, false },
+		{ LayoutSemantic::kNormal, 3, GL_FLOAT, false },
+		{ LayoutSemantic::kTexCoord, 2, GL_FLOAT, false } };
+
+	// clang-format off
+	vbo.SetData(layout, {
+		// pos // tex
+		VertexType::PositionTexture(0.0f, 0.0f, 1.0f, 0.0f, 1.0f),
+		VertexType::PositionTexture(1.0f, 0.0f, 0.0f, 1.0f, 0.0f),
+		VertexType::PositionTexture(0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+		VertexType::PositionTexture(0.0f, 0.0f, 1.0f, 0.0f, 1.0f),
+		VertexType::PositionTexture(1.0f, 0.0f, 1.0f, 1.0f, 1.0f),
+		VertexType::PositionTexture(1.0f, 0.0f, 0.0f, 1.0f, 0.0f)
 	});
 	// clang-format on
 }
