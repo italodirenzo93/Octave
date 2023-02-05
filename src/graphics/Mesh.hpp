@@ -1,5 +1,5 @@
-#ifndef MESH_HPP
-#define MESH_HPP
+#ifndef OCTAVE_MESH_HPP
+#define OCTAVE_MESH_HPP
 
 #include "CommonInclude.hpp"
 #include "IndexBuffer.hpp"

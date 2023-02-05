@@ -1,5 +1,5 @@
-#ifndef VERTEXBUFFER_HPP
-#define VERTEXBUFFER_HPP
+#ifndef OCTAVE_VERTEXBUFFER_HPP
+#define OCTAVE_VERTEXBUFFER_HPP
 
 #include "CommonInclude.hpp"
 

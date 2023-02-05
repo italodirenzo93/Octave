@@ -1,5 +1,5 @@
-#ifndef GEOMETRICPRIMITIVE_HPP
-#define GEOMETRICPRIMITIVE_HPP
+#ifndef OCTAVE_GEOMETRICPRIMITIVE_HPP
+#define OCTAVE_GEOMETRICPRIMITIVE_HPP
 
 #include "graphics/IndexBuffer.hpp"
 #include "graphics/VertexBuffer.hpp"

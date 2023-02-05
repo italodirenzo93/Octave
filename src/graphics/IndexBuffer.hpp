@@ -1,5 +1,5 @@
-#ifndef INDEXBUFFER_HPP
-#define INDEXBUFFER_HPP
+#ifndef OCTAVE_INDEXBUFFER_HPP
+#define OCTAVE_INDEXBUFFER_HPP
 
 #include "CommonInclude.hpp"
 

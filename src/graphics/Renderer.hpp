@@ -1,5 +1,5 @@
-#ifndef RENDERER_HPP
-#define RENDERER_HPP
+#ifndef OCTAVE_RENDERER_HPP
+#define OCTAVE_RENDERER_HPP
 
 #include "IndexBuffer.hpp"
 #include "Shader.hpp"

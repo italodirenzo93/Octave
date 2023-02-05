@@ -1,5 +1,5 @@
-#ifndef SHADERMANAGER_HPP
-#define SHADERMANAGER_HPP
+#ifndef OCTAVE_SHADERMANAGER_HPP
+#define OCTAVE_SHADERMANAGER_HPP
 
 #include "CommonInclude.hpp"
 #include "Shader.hpp"
