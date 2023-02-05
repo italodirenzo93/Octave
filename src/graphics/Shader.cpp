@@ -92,44 +92,60 @@ Shader::~Shader() noexcept {
 	glDeleteProgram( id_ );
 }
 
-void Shader::SetBool( const std::string& name, bool value ) const {
-	glUniform1i( glGetUniformLocation( id_, name.c_str() ),
-				 static_cast<int>( value ) );
+void Shader::SetBool( const std::string& name, bool value ) noexcept {
+	glUniform1i( GetUniform( name ), static_cast<int>( value ) );
 }
 
-void Shader::SetInt( const std::string& name, int value ) const {
-	glUniform1i( glGetUniformLocation( id_, name.c_str() ), value );
+void Shader::SetInt( const std::string& name, int value ) noexcept {
+	glUniform1i( GetUniform( name ), value );
 }
 
-void Shader::SetFloat( const std::string& name, float value ) const {
-	glUniform1f( glGetUniformLocation( id_, name.c_str() ), value );
+void Shader::SetFloat( const std::string& name, float value ) noexcept {
+	glUniform1f( GetUniform( name ), value );
 }
 
-void Shader::SetMat4( const std::string& name, const glm::mat4& value ) const {
-	auto location = glGetUniformLocation( id_, name.c_str() );
-	glUniformMatrix4fv( location, 1, GL_FALSE, glm::value_ptr( value ) );
+void Shader::SetMat4( const std::string& name,
+					  const glm::mat4& value ) noexcept {
+	glUniformMatrix4fv( GetUniform( name ), 1, GL_FALSE,
+						glm::value_ptr( value ) );
 }
 
-void Shader::SetVec3( const std::string& name, const glm::vec3& value ) const {
-	auto location = glGetUniformLocation( id_, name.c_str() );
-	glUniform3fv( location, 1, glm::value_ptr( value ) );
+void Shader::SetVec3( const std::string& name,
+					  const glm::vec3& value ) noexcept {
+	glUniform3fv( GetUniform( name ), 1, glm::value_ptr( value ) );
 }
 
 void Shader::SetVec3( const std::string& name, float x, float y,
-					  float z ) const {
-	SetVec3( name, glm::vec3( x, y, z ) );
+					  float z ) noexcept {
+	glUniform3f( GetUniform( name ), x, y, z );
 }
 
 void Shader::SetTexture( const std::string& name, int index,
-						 const Texture& texture ) const {
+						 const Texture& texture ) noexcept {
 	assert( index >= 0 );
 
 	const auto uniform_name = name + "[" + to_string( index ) + "]";
-	const auto location = glGetUniformLocation( id_, uniform_name.c_str() );
+	const auto location = GetUniform( uniform_name );
 	glUniform1i( location, index );
 
 	glActiveTexture( GL_TEXTURE0 + index );
 	glBindTexture( GL_TEXTURE_2D, texture.id_ );
+}
+
+int Shader::GetUniform( const std::string& name ) noexcept {
+	const auto iter = uniform_locations_.find( name );
+	if ( iter == uniform_locations_.end() ) {
+		const auto location = glGetUniformLocation( id_, name.c_str() );
+		if ( location < 0 ) {
+			return -1;
+		}
+
+		uniform_locations_[name] = location;
+
+		return location;
+	}
+
+	return iter->second;
 }
 
 Shader& Shader::operator=( Shader&& other ) noexcept {

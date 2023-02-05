@@ -42,7 +42,7 @@ private:
 
 	std::filesystem::path shader_directory_;
 	std::vector<std::string> shader_list_;
-	std::map<std::string, std::shared_ptr<Shader>> shaders_;
+	std::unordered_map<std::string, std::shared_ptr<Shader>> shaders_;
 
 	NON_COPYABLE_OR_MOVABLE_CLASS( ShaderManager )
 };

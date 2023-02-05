@@ -2,7 +2,7 @@
 
 namespace octave::graphics {
 // NOTE: This must be kept in sync with the input layout of the vertex shader!
-static const std::map<LayoutSemantic, uint32_t> kAttributeBindings{
+static const std::unordered_map<LayoutSemantic, uint32_t> kAttributeBindings{
 	{ LayoutSemantic::kPosition, 0 },
 	{ LayoutSemantic::kColor, 1 },
 	{ LayoutSemantic::kTexCoord, 2 },

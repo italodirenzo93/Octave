@@ -34,7 +34,7 @@ Mesh::Mesh( Mesh&& other ) noexcept {
 	other.shininess_ = kDefaultShininess;
 }
 
-void Mesh::Draw( const Shader& shader, const Renderer& renderer ) const {
+void Mesh::Draw( Shader& shader, const Renderer& renderer ) const {
 	if ( vbo_ == nullptr ) {
 		throw Exception( "Vertex buffer not set" );
 	}

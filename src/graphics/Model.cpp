@@ -8,7 +8,7 @@ using namespace std;
 
 namespace octave::graphics {
 
-static map<string, shared_ptr<Texture>> texture_cache;
+static unordered_map<string, shared_ptr<Texture>> texture_cache;
 
 static Mesh ProcessMesh( const string& directory, aiMesh* mesh,
 						 const aiScene* scene ) {
@@ -130,8 +130,7 @@ Model::Model( Model&& other ) noexcept {
 	meshes_ = std::move( other.meshes_ );
 }
 
-void Model::Draw( const Shader& shader,
-				  const Renderer& renderer ) const noexcept {
+void Model::Draw( Shader& shader, const Renderer& renderer ) const {
 	for ( const auto& mesh : meshes_ ) {
 		mesh.Draw( shader, renderer );
 	}
