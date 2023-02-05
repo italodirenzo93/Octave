@@ -7,7 +7,7 @@ using namespace std;
 
 namespace octave::graphics {
 
-Window::Window() : Window( "My Game Engine" ) {
+Window::Window() : Window( "Octave" ) {
 }
 
 Window::Window( const std::string& title )
@@ -110,6 +110,7 @@ bool Window::IsMaximized() const noexcept {
 
 Window& Window::SetTitle( const std::string& title ) noexcept {
 	glfwSetWindowTitle( handle_, title.c_str() );
+	return *this;
 }
 
 void Window::PollEvents() const noexcept {
