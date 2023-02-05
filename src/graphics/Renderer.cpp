@@ -135,16 +135,20 @@ Renderer::Renderer( const Window& window ) noexcept : window_( window ) {
 	}
 }
 
-void Renderer::Clear( bool depth, float r, float g, float b,
+void Renderer::Clear( bool color, bool depth, float r, float g, float b,
 					  float a ) const noexcept {
-	int clear_flags = GL_COLOR_BUFFER_BIT;
+	int clear_flags = 0;
+
+	if ( color ) {
+		clear_flags |= GL_COLOR_BUFFER_BIT;
+		glClearColor( r, g, b, a );
+	}
 
 	if ( depth ) {
 		clear_flags |= GL_DEPTH_BUFFER_BIT;
 		glClearDepthf( 1.0f );
 	}
 
-	glClearColor( r, g, b, a );
 	glClear( clear_flags );
 }
 

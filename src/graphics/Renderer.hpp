@@ -15,8 +15,8 @@ public:
 	explicit Renderer( const Window& window ) noexcept;
 	~Renderer() noexcept = default;
 
-	void Clear( bool depth = true, float r = 0.0f, float g = 0.0f,
-				float b = 0.0f, float a = 1.0f ) const noexcept;
+	void Clear( bool color = true, bool depth = true, float r = 0.0f,
+				float g = 0.0f, float b = 0.0f, float a = 1.0f ) const noexcept;
 	void Present() const noexcept;
 
 	void DrawPrimitives( PrimitiveType type,
@@ -33,7 +33,7 @@ public:
 	using OnFramebufferSizeChangedCallback = std::function<void( int, int )>;
 	void SetFramebufferSizeChangedCallback(
 		OnFramebufferSizeChangedCallback callback ) noexcept {
-		cb_framebuffer_size_callback_ = callback;
+		cb_framebuffer_size_callback_ = std::move( callback );
 	}
 
 private:

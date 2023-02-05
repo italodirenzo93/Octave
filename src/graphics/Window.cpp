@@ -25,10 +25,12 @@ Window::Window( int width, int height, const string& title ) {
 	glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
 #else
 	glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
-	glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
+	glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 6 );
 #endif
+
 	glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
 	glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE );
+
 #ifdef __DEBUG__
 	glfwWindowHint( GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE );
 #endif
@@ -51,7 +53,7 @@ Window::Window( int width, int height, const string& title ) {
 		glfwWindowHint( GLFW_REFRESH_RATE, vidmode->refreshRate );
 
 		monitor = primary_monitor;  // passing a monitor to glfwCreateWindow
-									// enabled fullscreen mode
+									// enables fullscreen mode
 	}
 
 	if ( config.IsBorderless() ) {
@@ -64,7 +66,9 @@ Window::Window( int width, int height, const string& title ) {
 	handle_ =
 		glfwCreateWindow( width, height, title.c_str(), monitor, nullptr );
 	if ( !handle_ ) {
-		throw Exception( "Unable to create GLFW window" );
+		const char* description = nullptr;
+		glfwGetError(&description);
+		throw Exception( description );
 	}
 
 	glfwMakeContextCurrent( handle_ );
@@ -88,8 +92,8 @@ Window::~Window() noexcept {
 	glfwDestroyWindow( handle_ );
 }
 
-void Window::PollEvents() const noexcept {
-	glfwPollEvents();
+void Window::GetSize( int& width, int& height ) const noexcept {
+	glfwGetWindowSize( handle_, &width, &height );
 }
 
 bool Window::IsOpen() const noexcept {
@@ -104,6 +108,14 @@ bool Window::IsMaximized() const noexcept {
 	return glfwGetWindowAttrib( handle_, GLFW_MAXIMIZED ) == GLFW_TRUE;
 }
 
+Window& Window::SetTitle( const std::string& title ) noexcept {
+	glfwSetWindowTitle( handle_, title.c_str() );
+}
+
+void Window::PollEvents() const noexcept {
+	glfwPollEvents();
+}
+
 void Window::Minimize() const noexcept {
 	glfwIconifyWindow( handle_ );
 }
@@ -116,8 +128,8 @@ void Window::Restore() const noexcept {
 	glfwRestoreWindow( handle_ );
 }
 
-void Window::GetSize( int& width, int& height ) const noexcept {
-	glfwGetWindowSize( handle_, &width, &height );
+void Window::Close() const noexcept {
+	glfwSetWindowShouldClose( handle_, GLFW_TRUE );
 }
 
 void Window::WindowSizeCallback( GLFWwindow* window, int width,
