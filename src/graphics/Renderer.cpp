@@ -127,9 +127,6 @@ Renderer::Renderer( const Window& window ) noexcept : window_( window ) {
 	}
 #endif
 
-	// Because Open GL coordinates are weird...
-	stbi_set_flip_vertically_on_load( true );
-
 	// Shader pre-cache
 	if ( Config::Instance().GetPreloadShaders() ) {
 		ShaderManager::Instance().PreloadShaders();
@@ -159,23 +156,17 @@ void Renderer::Present() const noexcept {
 
 void Renderer::DrawPrimitives( PrimitiveType type,
 							   const VertexBuffer& vbo ) const noexcept {
-	glPushDebugGroup( GL_DEBUG_SOURCE_APPLICATION, 0, -1, "DrawPrimitives" );
-
 	glBindVertexArray( vbo.vao_ );
 
 	glDrawArrays( PrimitiveToGLType( type ), 0,
 				  static_cast<int>( vbo.GetVertexCount() ) );
 
 	glBindVertexArray( 0 );
-
-	glPopDebugGroup();
 }
 
 void Renderer::DrawIndexedPrimitives( PrimitiveType type,
 									  const VertexBuffer& vbo,
 									  const IndexBuffer& ibo ) const noexcept {
-	glPushDebugGroup( GL_DEBUG_SOURCE_APPLICATION, 0, -1, "DrawIndexedPrimitives" );
-
 	glBindVertexArray( vbo.vao_ );
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo.id_ );
 
@@ -185,8 +176,6 @@ void Renderer::DrawIndexedPrimitives( PrimitiveType type,
 
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
 	glBindVertexArray( 0 );
-
-	glPopDebugGroup();
 }
 
 std::string Renderer::GetDescription() const noexcept {

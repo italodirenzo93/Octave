@@ -25,6 +25,9 @@ Texture::Texture( Texture&& other ) noexcept
 }
 
 void Texture::LoadFromFile( const std::string& file_name ) {
+	// Because Open GL coordinates are weird...
+	stbi_set_flip_vertically_on_load( true );
+
 	int n_channels;
 	stbi_uc* image = stbi_load( file_name.c_str(), &width_, &height_,
 								&n_channels, STBI_default );
