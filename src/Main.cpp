@@ -26,7 +26,7 @@ struct Transform {
 						const glm::vec3& rotation = glm::vec3( 0.0f ),
 						const glm::vec3& scale = glm::vec3( 1.0f ) )
 		: translation( translation ), rotation( rotation ), scale( scale ) {}
-	~Transform() = default;
+	~Transform() noexcept = default;
 
 	[[nodiscard]] glm::mat4 GetModelMatrix() const noexcept {
 		auto model = glm::identity<glm::mat4>();
@@ -224,14 +224,21 @@ int main( int argc, char* argv[] ) {
 
 		// Main loop
 		while ( window.IsOpen() ) {
-			step_timer.Tick();
-			const auto delta = step_timer.GetDeltaTime();
+			renderer.SetShader(*shader);
 
-			if ( keyboard.IsKeyDown( GLFW_KEY_ESCAPE ) ) {
-				window.Close();
-			}
+			step_timer.Tick([&]{
+				if ( keyboard.IsKeyDown( GLFW_KEY_ESCAPE ) ) {
+					window.Close();
+				}
 
-			DebugCameraControls( keyboard, camera, 25.0f, delta );
+				const auto delta = static_cast<float>( step_timer.GetElapsedSeconds() );
+
+				model_matrix =
+					glm::rotate( model_matrix, glm::radians( delta * 25.0f ),
+								 glm::vec3( 0.0f, 1.0f, 0.0f ) );
+
+				DebugCameraControls( keyboard, camera, 25.0f, delta );
+			});
 
 			shader->SetMat4( "uMatProjection", camera.GetProjectionMatrix() );
 			shader->SetMat4( "uMatView", camera.GetViewMatrix() );
@@ -241,9 +248,6 @@ int main( int argc, char* argv[] ) {
 			renderer.Clear( true, true, 0.1f, 0.1f, 0.1f );
 
 			// Draw scene
-			model_matrix =
-				glm::rotate( model_matrix, glm::radians( delta * 25.0f ),
-							 glm::vec3( 0.0f, 1.0f, 0.0f ) );
 			shader->SetMat4( "uMatModel", model_matrix );
 			model.Draw( *shader, renderer );
 
