@@ -67,7 +67,7 @@ Window::Window( int width, int height, const string& title ) {
 		glfwCreateWindow( width, height, title.c_str(), monitor, nullptr );
 	if ( !handle_ ) {
 		const char* description = nullptr;
-		glfwGetError(&description);
+		glfwGetError( &description );
 		throw Exception( description );
 	}
 

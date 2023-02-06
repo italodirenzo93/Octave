@@ -241,13 +241,14 @@ int main( int argc, char* argv[] ) {
 			renderer.Clear( true, true, 0.1f, 0.1f, 0.1f );
 
 			// Draw scene
-			//			model_matrix =
-			//				glm::rotate( model_matrix, glm::radians( delta * 25.0f
-			//), 							 glm::vec3( 0.0f, 1.0f, 0.0f ) ); 			shader->SetMat4( "uMatModel",
-			//model_matrix ); 			model.Draw( *shader, renderer );
+			model_matrix =
+				glm::rotate( model_matrix, glm::radians( delta * 25.0f ),
+							 glm::vec3( 0.0f, 1.0f, 0.0f ) );
+			shader->SetMat4( "uMatModel", model_matrix );
+			model.Draw( *shader, renderer );
 
 			// Draw the floor
-			floor.Draw( *shader, renderer );
+			//			floor.Draw( *shader, renderer );
 
 			// Show the result
 			renderer.Present();
