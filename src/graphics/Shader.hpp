@@ -17,13 +17,7 @@ public:
 	};
 
 public:
-	/**
-	 * Read and compile a shader program from disk
-	 * @param vertex_path Path to vertex shader source file
-	 * @param fragment_path Path to fragment shader source file
-	 * @throws Shader::CompileError
-	 */
-	explicit Shader( const char* vertex_path, const char* fragment_path );
+	Shader() noexcept = default;
 	Shader( Shader&& other ) noexcept;
 	~Shader() noexcept;
 
@@ -36,10 +30,18 @@ public:
 	Shader& SetTexture( const std::string& name, int index,
 					 const Texture& texture ) noexcept;
 
+	/**
+	 * Read and compile a shader program from disk
+	 * @param vertex_path Path to vertex shader source file
+	 * @param fragment_path Path to fragment shader source file
+	 * @throws Shader::CompileError
+	 */
+	void CompileFromFile( const std::filesystem::path& vertex_path, const std::filesystem::path& fragment_path );
+
+	void CompileFromString( const std::string& vertex_source, const std::string& fragment_source );
+
 private:
 	uint32_t id_ = 0;
-
-	Shader() = default;
 
 public:
 	Shader& operator=( Shader&& other ) noexcept;
@@ -48,9 +50,6 @@ private:
 	std::unordered_map<std::string, int> uniform_locations_;
 
 	int GetUniform( const std::string& name ) noexcept;
-
-	static uint32_t CompileFromFile( const char* vertex_path,
-									 const char* fragment_path );
 
 	NON_COPYABLE_CLASS( Shader )
 };
