@@ -61,8 +61,8 @@ struct Object {
 		if ( !vbo ) return;
 
 		auto model_matrix = glm::identity<glm::mat4>();
-		model_matrix = glm::scale( model_matrix, scale );
 		model_matrix = glm::translate( model_matrix, position );
+		model_matrix = glm::scale( model_matrix, scale );
 
 		shader.SetMat4( "uMatModel", model_matrix );
 
@@ -212,10 +212,8 @@ int main( int argc, char* argv[] ) {
 		Object floor;
 		{
 			VertexBuffer vbo;
-			IndexBuffer ibo;
-			GeometricPrimitive::CreateCube( vbo, ibo );
-			floor.vbo = vbo;
-			floor.ibo = ibo;
+			GeometricPrimitive::CreatePlane( vbo );
+			floor.vbo = std::move( vbo );
 
 			auto texture = make_shared<Texture>();
 			texture->LoadFromFile( "./resources/textures/wood.png" );
