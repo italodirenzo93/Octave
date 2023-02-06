@@ -7,7 +7,6 @@ namespace octave::audio {
 
 Buffer::Buffer() {
 	alGenBuffers( 1, &id_ );
-	al::ThrowIfFailed();
 }
 
 Buffer::~Buffer() noexcept {
@@ -42,26 +41,26 @@ void Buffer::LoadFromVorbisFile( const std::string& path ) {
 	int n_channels, sample_rate;
 	short* data;
 
-	const int n_samples = stb_vorbis_decode_filename(path.c_str(), &n_channels, &sample_rate, &data );
+	const int n_samples = stb_vorbis_decode_filename( path.c_str(), &n_channels,
+													  &sample_rate, &data );
 
 	if ( n_samples < 0 ) {
 		throw Exception( "Unable to open OGG Vorbis file " + path );
 	}
 
 	ALenum format;
-	if ( n_channels  > 1 ) {
+	if ( n_channels > 1 ) {
 		format = AL_FORMAT_STEREO16;
 	} else {
 		format = AL_FORMAT_MONO16;
 	}
 
-	alBufferData( id_, format, static_cast<void*>( data ),
-				  static_cast<ALsizei>( n_samples * sizeof ( short ) * n_channels ),
-				  static_cast<ALsizei>( sample_rate ) );
+	AL_CALL( alBufferData(
+		id_, format, static_cast<void*>( data ),
+		static_cast<ALsizei>( n_samples * sizeof( short ) * n_channels ),
+		static_cast<ALsizei>( sample_rate ) ) );
 
 	free( data );
-
-	al::ThrowIfFailed();
 }
 
 }  // namespace octave::audio

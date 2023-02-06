@@ -23,10 +23,10 @@ static inline GLenum PrimitiveToGLType( PrimitiveType type ) {
 }
 
 #ifdef __DEBUG__
-static void GLAPIENTRY DebugOutputCallback( GLenum source, GLenum type, unsigned int id,
-								   GLenum severity, GLsizei length,
-								   const char* message,
-								   const void* userParam ) {
+static void GLAPIENTRY DebugOutputCallback( GLenum source, GLenum type,
+											unsigned int id, GLenum severity,
+											GLsizei length, const char* message,
+											const void* userParam ) {
 	// ignore non-significant error/warning codes
 	if ( id == 131169 || id == 131185 || id == 131218 || id == 131204 ) return;
 
@@ -122,8 +122,9 @@ Renderer::Renderer( const Window& window ) noexcept : window_( window ) {
 		glEnable( GL_DEBUG_OUTPUT );
 		glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS );
 		glDebugMessageCallback( DebugOutputCallback, nullptr );
-		glDebugMessageControl( GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0,
-							   nullptr, GL_FALSE );
+		glDebugMessageControl( GL_DONT_CARE, GL_DONT_CARE,
+							   GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr,
+							   GL_FALSE );
 	}
 #endif
 
@@ -156,10 +157,10 @@ void Renderer::Present() const noexcept {
 
 void Renderer::DrawPrimitives( PrimitiveType type,
 							   const VertexBuffer& vbo ) const noexcept {
-	glBindVertexArray( vbo.vao_ );
+	GL_CALL( glBindVertexArray( vbo.vao_ ) );
 
-	glDrawArrays( PrimitiveToGLType( type ), 0,
-				  static_cast<int>( vbo.GetVertexCount() ) );
+	GL_CALL( glDrawArrays( PrimitiveToGLType( type ), 0,
+						   static_cast<int>( vbo.GetVertexCount() ) ) );
 
 	glBindVertexArray( 0 );
 }
@@ -167,12 +168,12 @@ void Renderer::DrawPrimitives( PrimitiveType type,
 void Renderer::DrawIndexedPrimitives( PrimitiveType type,
 									  const VertexBuffer& vbo,
 									  const IndexBuffer& ibo ) const noexcept {
-	glBindVertexArray( vbo.vao_ );
-	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo.id_ );
+	GL_CALL( glBindVertexArray( vbo.vao_ ) );
+	GL_CALL( glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo.id_ ) );
 
-	glDrawElements( PrimitiveToGLType( type ),
-					static_cast<int>( ibo.GetElementCount() ), GL_UNSIGNED_INT,
-					nullptr );
+	GL_CALL( glDrawElements( PrimitiveToGLType( type ),
+							 static_cast<int>( ibo.GetElementCount() ),
+							 GL_UNSIGNED_INT, nullptr ) );
 
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
 	glBindVertexArray( 0 );
