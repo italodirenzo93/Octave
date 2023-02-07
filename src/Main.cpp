@@ -103,10 +103,19 @@ inline void SetDefaultLighting( Shader& shader ) {
 	const glm::vec3 diffuse( 0.5f );
 	const glm::vec3 specular( 0.8f );
 
-	shader.SetVec3( "uLight.direction", direction );
-	shader.SetVec3( "uLight.ambient", ambient );
-	shader.SetVec3( "uLight.diffuse", diffuse );
-	shader.SetVec3( "uLight.specular", specular );
+	shader.SetVec3( "uDirectionalLight.direction", direction );
+	shader.SetVec3( "uDirectionalLight.ambient", ambient );
+	shader.SetVec3( "uDirectionalLight.diffuse", diffuse );
+	shader.SetVec3( "uDirectionalLight.specular", specular );
+
+	shader.SetBool( "uPointLights[0].enabled", true );
+	shader.SetVec3( "uPointLights[0].position", glm::vec3( 2, 3, -2 ) );
+	shader.SetVec3( "uPointLights[0].ambient", ambient );
+	shader.SetVec3( "uPointLights[0].diffuse", diffuse );
+	shader.SetVec3( "uPointLights[0].specular", specular );
+	shader.SetFloat( "uPointLights[0].constant", 1.0f );
+	shader.SetFloat( "uPointLights[0].linear", 0.09f );
+	shader.SetFloat( "uPointLights[0].quadratic", 0.032f );
 }
 
 void DebugCameraControls( const Keyboard& keyboard, Camera& camera,
@@ -186,7 +195,7 @@ int main( int argc, char* argv[] ) {
 		}
 
 		Camera camera;
-		camera.SetPosition( 0.0f, 0.0f, 7.0f );
+		camera.SetPosition( 0.0f, 0.0f, 10.0f );
 		camera.SetFieldOfView( Config::Instance().GetFieldOfView() );
 		camera.SetAspectRatio( static_cast<float>( width ) /
 							   static_cast<float>( height ) );
