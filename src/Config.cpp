@@ -24,7 +24,8 @@ static constexpr int kDefaultSyncInterval = 1;
 static constexpr const char* kDefaultShaderList = "basic";
 static constexpr const char* kDefaultShaderDirectory = "resources/shaders";
 static constexpr bool kDefaultPreloadShaders = false;
-static constexpr float kDefaultFieldOfView = 90.0f;
+static constexpr float kDefaultFieldOfView = 45.0f;
+static constexpr bool kDefaultIsCullFaceEnabled = true;
 
 static void SetDefaultConfig( CSimpleIniA& config ) {
 	config.SetLongValue( "Video", "FramebufferWidth", kDefaultWidth );
@@ -36,6 +37,8 @@ static void SetDefaultConfig( CSimpleIniA& config ) {
 	config.SetValue( "Renderer", "ShaderList", kDefaultShaderList );
 	config.SetValue( "Renderer", "ShaderDirectory", kDefaultShaderDirectory );
 	config.SetBoolValue( "Renderer", "PreloadShaders", kDefaultPreloadShaders );
+	config.SetDoubleValue( "Renderer", "FieldOfView", kDefaultFieldOfView );
+	config.SetBoolValue( "Renderer", "CullFace", kDefaultIsCullFaceEnabled );
 }
 
 unique_ptr<Config> Config::instance_ = nullptr;
@@ -139,6 +142,11 @@ float Config::GetFieldOfView() const noexcept {
 	const auto fov =
 		ini_.GetDoubleValue( "Renderer", "FieldOfView", kDefaultFieldOfView );
 	return static_cast<float>( fov );
+}
+
+bool Config::IsCullFaceEnabled() const noexcept {
+	return ini_.GetBoolValue( "Renderer", "CullFace",
+							  kDefaultIsCullFaceEnabled );
 }
 
 }  // namespace octave

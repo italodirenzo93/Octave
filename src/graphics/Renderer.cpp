@@ -106,13 +106,17 @@ static void GLAPIENTRY DebugOutputCallback( GLenum source, GLenum type,
 #endif
 
 Renderer::Renderer( const Window& window ) noexcept : window_( window ) {
+	const Config& config = Config::Instance();
+
 	// Always enabled
 	glEnable( GL_DEPTH_TEST );
-	glEnable( GL_CULL_FACE );
-
 	glClearDepth( 1.0f );
-	glCullFace( GL_BACK );
-	glFrontFace( GL_CW );
+
+	if ( config.IsCullFaceEnabled() ) {
+		glEnable( GL_CULL_FACE );
+		glCullFace( GL_BACK );
+		glFrontFace( GL_CW );
+	}
 
 #ifdef __DEBUG__
 	// Configure debug callback if we got a debug context
@@ -129,7 +133,7 @@ Renderer::Renderer( const Window& window ) noexcept : window_( window ) {
 #endif
 
 	// Shader pre-cache
-	if ( Config::Instance().GetPreloadShaders() ) {
+	if ( config.GetPreloadShaders() ) {
 		ShaderManager::Instance().PreloadShaders();
 	}
 }
