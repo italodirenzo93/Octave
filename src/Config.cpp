@@ -28,17 +28,17 @@ static constexpr float kDefaultFieldOfView = 45.0f;
 static constexpr bool kDefaultIsCullFaceEnabled = true;
 
 static void SetDefaultConfig( CSimpleIniA& config ) {
-	config.SetLongValue( "Video", "FramebufferWidth", kDefaultWidth );
-	config.SetLongValue( "Video", "FramebufferHeight", kDefaultHeight );
-	config.SetBoolValue( "Video", "IsFullscreen", kDefaultIsFullscreen );
-	config.SetBoolValue( "Video", "IsBorderless", kDefaultIsBorderless );
-	config.SetLongValue( "Video", "SyncInterval", kDefaultSyncInterval );
+	config.SetLongValue( "Video", "iFramebufferWidth", kDefaultWidth );
+	config.SetLongValue( "Video", "iFramebufferHeight", kDefaultHeight );
+	config.SetBoolValue( "Video", "bIsFullscreen", kDefaultIsFullscreen );
+	config.SetBoolValue( "Video", "bIsBorderless", kDefaultIsBorderless );
+	config.SetLongValue( "Video", "iSyncInterval", kDefaultSyncInterval );
 
-	config.SetValue( "Renderer", "ShaderList", kDefaultShaderList );
-	config.SetValue( "Renderer", "ShaderDirectory", kDefaultShaderDirectory );
-	config.SetBoolValue( "Renderer", "PreloadShaders", kDefaultPreloadShaders );
-	config.SetDoubleValue( "Renderer", "FieldOfView", kDefaultFieldOfView );
-	config.SetBoolValue( "Renderer", "CullFace", kDefaultIsCullFaceEnabled );
+	config.SetValue( "Renderer", "sShaderList", kDefaultShaderList );
+	config.SetValue( "Renderer", "sShaderDirectory", kDefaultShaderDirectory );
+	config.SetBoolValue( "Renderer", "bPreloadShaders", kDefaultPreloadShaders );
+	config.SetDoubleValue( "Renderer", "fFieldOfView", kDefaultFieldOfView );
+	config.SetBoolValue( "Renderer", "bCullFace", kDefaultIsCullFaceEnabled );
 }
 
 unique_ptr<Config> Config::instance_ = nullptr;
@@ -87,27 +87,27 @@ void Config::Reset() noexcept {
 
 int Config::GetFramebufferWidth() const noexcept {
 	const long width =
-		ini_.GetLongValue( "Video", "FramebufferWidth", kDefaultWidth );
+		ini_.GetLongValue( "Video", "iFramebufferWidth", kDefaultWidth );
 	return static_cast<int>( width );
 }
 
 int Config::GetFramebufferHeight() const noexcept {
 	const long height =
-		ini_.GetLongValue( "Video", "FramebufferHeight", kDefaultHeight );
+		ini_.GetLongValue( "Video", "iFramebufferHeight", kDefaultHeight );
 	return static_cast<int>( height );
 }
 
 bool Config::IsFullscreen() const noexcept {
-	return ini_.GetBoolValue( "Video", "IsFullscreen", kDefaultIsFullscreen );
+	return ini_.GetBoolValue( "Video", "bIsFullscreen", kDefaultIsFullscreen );
 }
 
 bool Config::IsBorderless() const noexcept {
-	return ini_.GetBoolValue( "Video", "IsBorderless", kDefaultIsBorderless );
+	return ini_.GetBoolValue( "Video", "bIsBorderless", kDefaultIsBorderless );
 }
 
 int Config::GetSyncInterval() const noexcept {
 	const long sync =
-		ini_.GetLongValue( "Video", "SyncInterval", kDefaultSyncInterval );
+		ini_.GetLongValue( "Video", "bSyncInterval", kDefaultSyncInterval );
 	return static_cast<int>( sync );
 }
 
@@ -115,7 +115,7 @@ std::vector<std::string> Config::GetShaderList() const noexcept {
 	vector<string> shader_list;
 
 	const string val =
-		ini_.GetValue( "Renderer", "ShaderList", kDefaultShaderList );
+		ini_.GetValue( "Renderer", "bShaderList", kDefaultShaderList );
 
 	const regex expr( "," );
 	sregex_token_iterator iter( val.begin(), val.end(), expr, -1 );
@@ -129,23 +129,23 @@ std::vector<std::string> Config::GetShaderList() const noexcept {
 }
 
 std::filesystem::path Config::GetShaderDirectory() const noexcept {
-	return ini_.GetValue( "Renderer", "ShaderDirectory",
+	return ini_.GetValue( "Renderer", "bShaderDirectory",
 						  kDefaultShaderDirectory );
 }
 
 bool Config::GetPreloadShaders() const noexcept {
-	return ini_.GetBoolValue( "Renderer", "PreloadShaders",
+	return ini_.GetBoolValue( "Renderer", "bPreloadShaders",
 							  kDefaultPreloadShaders );
 }
 
 float Config::GetFieldOfView() const noexcept {
 	const auto fov =
-		ini_.GetDoubleValue( "Renderer", "FieldOfView", kDefaultFieldOfView );
+		ini_.GetDoubleValue( "Renderer", "bFieldOfView", kDefaultFieldOfView );
 	return static_cast<float>( fov );
 }
 
 bool Config::IsCullFaceEnabled() const noexcept {
-	return ini_.GetBoolValue( "Renderer", "CullFace",
+	return ini_.GetBoolValue( "Renderer", "bCullFace",
 							  kDefaultIsCullFaceEnabled );
 }
 
