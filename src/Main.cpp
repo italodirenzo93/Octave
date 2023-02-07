@@ -62,13 +62,15 @@ struct Object {
 
 		auto model_matrix = glm::identity<glm::mat4>();
 		model_matrix = glm::translate( model_matrix, position );
+		// rotate
 		model_matrix = glm::scale( model_matrix, scale );
 
 		shader.SetMat4( "uMatModel", model_matrix );
-
-		int n = 0;
-		for ( const auto& texture : textures ) {
-			shader.SetTexture( "uTextures", n++, *texture );
+		{
+			int n = 0;
+			for ( const auto& texture : textures ) {
+				shader.SetTexture( "uTextures", n++, *texture );
+			}
 		}
 
 		if ( ibo ) {
@@ -216,7 +218,11 @@ int main( int argc, char* argv[] ) {
 			floor.vbo = std::move( vbo );
 
 			auto texture = make_shared<Texture>();
-			texture->LoadFromFile( "./resources/textures/wood.png" );
+			texture->LoadFromFile( "./resources/textures/wood_diffuse.png" );
+			floor.textures.emplace_back( texture );
+
+			texture = make_shared<Texture>();
+			texture->LoadFromFile( "./resources/textures/wood_specular.png" );
 			floor.textures.emplace_back( texture );
 		}
 		floor.position = glm::vec3( 0.0f, -3.0f, 0.0f );
@@ -224,21 +230,22 @@ int main( int argc, char* argv[] ) {
 
 		// Main loop
 		while ( window.IsOpen() ) {
-			renderer.SetShader(*shader);
+			renderer.SetShader( *shader );
 
-			step_timer.Tick([&]{
+			step_timer.Tick( [&] {
 				if ( keyboard.IsKeyDown( GLFW_KEY_ESCAPE ) ) {
 					window.Close();
 				}
 
-				const auto delta = static_cast<float>( step_timer.GetElapsedSeconds() );
+				const auto delta =
+					static_cast<float>( step_timer.GetElapsedSeconds() );
 
 				model_matrix =
 					glm::rotate( model_matrix, glm::radians( delta * 25.0f ),
 								 glm::vec3( 0.0f, 1.0f, 0.0f ) );
 
 				DebugCameraControls( keyboard, camera, 25.0f, delta );
-			});
+			} );
 
 			shader->SetMat4( "uMatProjection", camera.GetProjectionMatrix() );
 			shader->SetMat4( "uMatView", camera.GetViewMatrix() );
@@ -252,7 +259,7 @@ int main( int argc, char* argv[] ) {
 			model.Draw( *shader, renderer );
 
 			// Draw the floor
-			//			floor.Draw( *shader, renderer );
+			floor.Draw( *shader, renderer );
 
 			// Show the result
 			renderer.Present();

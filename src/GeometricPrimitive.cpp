@@ -90,12 +90,13 @@ void GeometricPrimitive::CreatePlane( graphics::VertexBuffer& vbo ) {
 	// clang-format off
 	vbo.SetData(layout, {
 		// pos // tex
-		VertexType::PositionTexture(0.0f, 0.0f, 1.0f, 0.0f, 1.0f),
-		VertexType::PositionTexture(1.0f, 0.0f, 0.0f, 1.0f, 0.0f),
-		VertexType::PositionTexture(0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-		VertexType::PositionTexture(0.0f, 0.0f, 1.0f, 0.0f, 1.0f),
-		VertexType::PositionTexture(1.0f, 0.0f, 1.0f, 1.0f, 1.0f),
-		VertexType::PositionTexture(1.0f, 0.0f, 0.0f, 1.0f, 0.0f)
+		VertexType::PositionNormalTexture(glm::vec3 (-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 0.0f)), //Back left
+		VertexType::PositionNormalTexture(glm::vec3(1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 0.0f)), // Back right
+		VertexType::PositionNormalTexture(glm::vec3(-1.0f, 0.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f)), // Front left
+
+		VertexType::PositionNormalTexture(glm::vec3(1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f),glm::vec2(1.0f, 0.0f)),
+		VertexType::PositionNormalTexture(glm::vec3(1.0f, 0.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f)),
+		VertexType::PositionNormalTexture(glm::vec3(-1.0f, 0.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f)),
 	});
 	// clang-format on
 }

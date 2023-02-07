@@ -30,6 +30,14 @@ public:
 			return PositionTexture( glm::vec3( pos_x, pos_y, pos_z ),
 									glm::vec2( tex_x, tex_y ) );
 		}
+
+		static VertexType PositionNormalTexture ( const glm::vec3& position, const glm::vec3& normal, const glm::vec2& tex_coord ) {
+			VertexType vt;
+			vt.position = position;
+			vt.normal = normal;
+			vt.tex_coord = tex_coord;
+			return vt;
+		}
 	};
 
 	static void CreateCube( graphics::VertexBuffer& vbo,
