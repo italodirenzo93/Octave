@@ -28,20 +28,10 @@ public:
 	void GetFramebufferSize( int& width, int& height ) const noexcept;
 
 	void SetShader( const Shader& shader ) noexcept;
-
-	// Callbacks
-	using OnFramebufferSizeChangedCallback = std::function<void( int, int )>;
-	void SetFramebufferSizeChangedCallback(
-		OnFramebufferSizeChangedCallback callback ) noexcept {
-		cb_framebuffer_size_callback_ = std::move( callback );
-	}
+	void SetViewport( int x, int y, int width, int height ) noexcept;
 
 private:
 	const Window& window_;
-
-	OnFramebufferSizeChangedCallback cb_framebuffer_size_callback_;
-	static void FramebufferSizeCallback( GLFWwindow* window, int width,
-										 int height );
 
 	NON_COPYABLE_OR_MOVABLE_CLASS( Renderer )
 };

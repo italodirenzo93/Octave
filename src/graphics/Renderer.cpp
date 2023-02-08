@@ -204,8 +204,13 @@ void Renderer::SetShader( const Shader& shader ) noexcept {
 	glUseProgram( shader.id_ );
 }
 
-void Renderer::FramebufferSizeCallback( GLFWwindow* window, int width,
-										int height ) {
-	glViewport( 0, 0, width, height );
+void Renderer::SetViewport( int x, int y, int width, int height ) noexcept {
+	assert( x >= 0 );
+	assert( y >= 0 );
+	assert( width > 0 );
+	assert( height > 0 );
+
+	glViewport( x, y, width, height );
 }
+
 }  // namespace octave::graphics

@@ -16,39 +16,6 @@ using namespace octave;
 using namespace octave::graphics;
 using namespace octave::input;
 
-struct Transform {
-	glm::vec3 translation = glm::vec3( 0.0f );
-	glm::vec3 rotation = glm::vec3( 0.0f );
-	glm::vec3 scale = glm::vec3( 1.0f );
-
-	Transform() = default;
-	explicit Transform( const glm::vec3& translation = glm::vec3( 0.0f ),
-						const glm::vec3& rotation = glm::vec3( 0.0f ),
-						const glm::vec3& scale = glm::vec3( 1.0f ) )
-		: translation( translation ), rotation( rotation ), scale( scale ) {}
-	~Transform() noexcept = default;
-
-	[[nodiscard]] glm::mat4 GetModelMatrix() const noexcept {
-		auto model = glm::identity<glm::mat4>();
-
-		// Translation
-		model = glm::translate( model, translation );
-
-		// Rotation
-		model = glm::rotate( model, glm::radians( rotation.x ),
-							 glm::vec3( 1.0f, 0.0f, 0.0f ) );
-		model = glm::rotate( model, glm::radians( rotation.y ),
-							 glm::vec3( 0.0f, 1.0f, 0.0f ) );
-		model = glm::rotate( model, glm::radians( rotation.z ),
-							 glm::vec3( 0.0f, 0.0f, 1.0f ) );
-
-		// Scale
-		model = glm::scale( model, scale );
-
-		return model;
-	}
-};
-
 struct Object {
 	optional<VertexBuffer> vbo;
 	optional<IndexBuffer> ibo;
@@ -172,11 +139,6 @@ int main( int argc, char* argv[] ) {
 	// Initialize engine
 	octave::Up();
 
-	std::vector<Transform> object_transforms{
-		Transform( glm::vec3( 0.0f ), glm::vec3( 90.0f, 0.0f, 0.0f ) ),
-		Transform( glm::vec3( 1.0f, 0.25f, -1.0f ),
-				   glm::vec3( 90.0f, 0.0f, 90.0f ) ) };
-
 	try {
 		Window window;
 
@@ -212,10 +174,14 @@ int main( int argc, char* argv[] ) {
 		SetDefaultLighting( *shader );
 
 		// Update camera aspect when window size is changed
-		window.AddSizeChangedCallback( [&camera]( int w, int h ) {
-			camera.width_ = static_cast<float>( w );
-			camera.height_ = static_cast<float>( h );
+		window.AddSizeChangedCallback( [&camera, &renderer]( int w, int h ) {
+			if ( w > 0 && h > 0 ) {
+				renderer.SetViewport( 0, 0, w, h );
+				camera.width_ = static_cast<float>( w );
+				camera.height_ = static_cast<float>( h );
+			}
 		} );
+
 
 		Keyboard keyboard( window );
 		StepTimer step_timer;
