@@ -25,6 +25,7 @@ public:
 	[[nodiscard]] bool IsMaximized() const noexcept;
 
 	Window& SetTitle( const std::string& title ) noexcept;
+	Window& SetSyncInterval( int interval ) noexcept;
 
 	// Actions
 	void PollEvents() const noexcept;
@@ -40,6 +41,7 @@ public:
 
 private:
 	GLFWwindow* handle_ = nullptr;
+	bool tearing_support_ = false;
 
 	// Callbacks
 	std::vector<OnSizeChangedCallback> cb_window_size_;

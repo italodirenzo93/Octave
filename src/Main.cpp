@@ -221,6 +221,7 @@ int main( int argc, char* argv[] ) {
 				DebugCameraControls( keyboard, camera, 25.0f, delta );
 			} );
 
+			renderer.SetShader( *shader );
 			shader->SetMat4( "uMatProjection", camera.GetProjectionMatrix() );
 			shader->SetMat4( "uMatView", camera.GetViewMatrix() );
 			shader->SetVec3( "uViewPos", camera.position_ );

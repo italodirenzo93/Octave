@@ -3,6 +3,10 @@
 #include "Config.hpp"
 #include "Exception.hpp"
 
+#ifdef max
+#undef max
+#endif
+
 using namespace std;
 
 namespace octave::graphics {
@@ -72,7 +76,10 @@ Window::Window( int width, int height, const string& title ) {
 	}
 
 	glfwMakeContextCurrent( handle_ );
-	glfwSwapInterval( config.GetSyncInterval() );
+
+	tearing_support_ = glfwExtensionSupported( "WGL_EXT_swap_control_tear" ) ||
+					   glfwExtensionSupported( "GLX_EXT_swap_control_tear" );
+	SetSyncInterval( config.GetSyncInterval() );
 
 	// Pass a pointer to this class instance to the window
 	// so we can access in from our callback functions
@@ -110,6 +117,14 @@ bool Window::IsMaximized() const noexcept {
 
 Window& Window::SetTitle( const std::string& title ) noexcept {
 	glfwSetWindowTitle( handle_, title.c_str() );
+	return *this;
+}
+
+Window& Window::SetSyncInterval( int interval ) noexcept {
+	if ( !tearing_support_ ) {
+		interval = std::max( interval, 0 );
+	}
+	glfwSwapInterval( interval );
 	return *this;
 }
 
