@@ -2,6 +2,10 @@
 
 #include "CommonInclude.hpp"
 
+#define AL_LIBTYPE_STATIC
+#include <AL/al.h>
+#include <AL/alc.h>
+
 using namespace std;
 
 namespace octave {

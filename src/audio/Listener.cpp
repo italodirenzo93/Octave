@@ -1,5 +1,7 @@
 #include "Listener.hpp"
 
+#include "alCommon.hpp"
+
 namespace octave::audio {
 
 float Listener::GetGain() noexcept {
