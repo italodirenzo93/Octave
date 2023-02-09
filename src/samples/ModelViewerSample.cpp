@@ -63,6 +63,34 @@ static void DebugCameraControls( const Keyboard& keyboard, DebugCamera& camera,
 	}
 }
 
+static void DebugCameraControls( const Gamepad& gamepad, DebugCamera& camera,
+								 float camera_speed, float delta ) {
+	const auto [left_x, left_y] = gamepad.GetLeftStick();
+
+	// Move
+	if ( left_x > 0.0f ) {
+		camera.position_ +=
+			left_x * glm::normalize( glm::cross( camera.front_, camera.up_ ) ) *
+			camera_speed * delta;
+	}
+
+	if ( left_y > 0.0f ) {
+		camera.position_ += left_y * camera_speed * delta * camera.front_;
+	}
+
+	// Look
+	const auto [right_x, right_y] = gamepad.GetRightStick();
+	const float turn_speed = camera_speed * 3.0f;
+
+	if ( right_x > 0.0f ) {
+		camera.yaw_ += right_x * turn_speed * delta;
+	}
+
+	if ( right_y > 0.0f ) {
+		camera.pitch_ += right_y * turn_speed * delta;
+	}
+}
+
 inline void SetDefaultLighting( Shader& shader ) {
 	const glm::vec3 direction( 0.5f, 0.0f, -0.5f );
 	const glm::vec3 ambient( 0.2f );
@@ -139,6 +167,10 @@ void ModelViewerSample::OnUpdate( const StepTimer& timer ) {
 	}
 
 	DebugCameraControls( *keyboard_, camera_, 25.0f, delta );
+
+	if ( pad_ ) {
+		DebugCameraControls( *pad_, camera_, 25.0f, delta );
+	}
 
 	model_matrix_ = glm::rotate( model_matrix_, glm::radians( delta * 25.0f ),
 								 glm::vec3( 0, 1, 0 ) );
