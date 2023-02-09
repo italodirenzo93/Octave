@@ -8,6 +8,7 @@ namespace octave::input {
 class Gamepad {
 public:
 	explicit Gamepad( int player_index ) noexcept;
+	Gamepad( Gamepad&& other ) noexcept = default;
 	~Gamepad() noexcept = default;
 
 	[[nodiscard]] std::string GetName() const noexcept;
@@ -19,6 +20,9 @@ public:
 
 private:
 	int player_index_;
+
+public:
+	Gamepad& operator=( Gamepad&& other ) noexcept = default;
 
 public:
 	Gamepad( const Gamepad& ) = delete;

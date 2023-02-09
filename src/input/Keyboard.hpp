@@ -10,7 +10,7 @@ public:
 	explicit Keyboard( const graphics::Window& window ) noexcept;
 	~Keyboard() = default;
 
-	[[nodiscard]] bool IsKeyDown( int glfwKey ) const noexcept;
+	[[nodiscard]] bool IsKeyDown( int key_code ) const noexcept;
 
 private:
 	const graphics::Window& window_;
