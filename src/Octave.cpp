@@ -1,5 +1,7 @@
 #include "Octave.hpp"
 
+#include <fstream>
+
 #include "CommonInclude.hpp"
 
 #define AL_LIBTYPE_STATIC
@@ -24,6 +26,21 @@ bool Up() {
 		return false;
 	}
 
+	// Load game controller mappings
+	{
+		ifstream ifs( "./resources/config/gamecontrollerdb.txt" );
+		if ( ifs.is_open() ) {
+			cout << "gamecontrollerdb.txt found. Updating game controller DB..."
+				 << endl;
+			string mappings( ( istreambuf_iterator<char>( ifs ) ),
+							 istreambuf_iterator<char>() );
+			if ( !glfwUpdateGamepadMappings( mappings.c_str() ) ) {
+				cerr << "Unable to update game controller DB" << endl;
+			}
+		}
+	}
+
+	// Initialize OpenAL Soft
 	g_device = alcOpenDevice( nullptr );
 	if ( g_device ) {
 		g_context = alcCreateContext( g_device, nullptr );
