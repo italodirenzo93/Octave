@@ -17,7 +17,7 @@ static bool b_is_initialized = false;
 static ALCdevice* g_device = nullptr;
 static ALCcontext* g_context = nullptr;
 
-bool Up() {
+bool Up(int argc, char* argv[]) {
 	if ( b_is_initialized ) return false;
 
 	// Initialize GLFW library

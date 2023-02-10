@@ -15,6 +15,10 @@ std::string Gamepad::GetName() const noexcept {
 	return glfwGetGamepadName( player_index_ );
 }
 
+std::string Gamepad::GetGUID() const noexcept {
+	return glfwGetJoystickGUID( player_index_ );
+}
+
 std::tuple<float, float> Gamepad::GetLeftStick() const noexcept {
 	GLFWgamepadstate state;
 	if ( !glfwGetGamepadState( player_index_, &state ) ) {

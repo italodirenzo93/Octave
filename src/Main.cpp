@@ -9,7 +9,7 @@ using namespace octave::samples;
 
 int main( int argc, char* argv[] ) {
 	// Initialize engine
-	octave::Up();
+	octave::Up( argc, argv );
 
 	std::unique_ptr<Sample> sample;
 
