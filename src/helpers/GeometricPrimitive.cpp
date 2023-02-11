@@ -1,6 +1,6 @@
 #include "GeometricPrimitive.hpp"
 
-namespace octave {
+namespace octave::helpers {
 
 using namespace graphics;
 

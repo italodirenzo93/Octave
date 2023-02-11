@@ -15,7 +15,7 @@ public:
 		: Sample( window ) {}
 
 	void OnLoad() override;
-	void OnUpdate( const StepTimer& timer ) override;
+	void OnUpdate( const helpers::StepTimer& timer ) override;
 	void OnRender() override;
 	void OnUnload() override;
 

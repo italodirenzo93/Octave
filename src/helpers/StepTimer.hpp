@@ -1,7 +1,7 @@
 #ifndef OCTAVE_STEPTIMER_HPP
 #define OCTAVE_STEPTIMER_HPP
 
-namespace octave {
+namespace octave::helpers {
 
 // Helper class for animation and simulation timing.
 class StepTimer {
