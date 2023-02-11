@@ -112,6 +112,10 @@ inline void SetDefaultLighting( Shader& shader ) {
 	shader.SetFloat( "uPointLights[0].quadratic", 0.032f );
 }
 
+static inline glm::mat3 MakeNormalMatrix( const glm::mat4& model_matrix ) {
+	return glm::mat3( glm::transpose( glm::inverse( model_matrix ) ) );
+}
+
 void ModelViewerSample::OnLoad() {
 	cout << renderer_.GetDescription() << endl;
 
@@ -186,6 +190,7 @@ void ModelViewerSample::OnRender() {
 		shader_->SetMat4( "uMatProjection", camera_.GetProjectionMatrix() );
 		shader_->SetMat4( "uMatView", camera_.GetViewMatrix() );
 		shader_->SetMat4( "uMatModel", model_matrix_ );
+		shader_->SetMat3( "uMatNormal", MakeNormalMatrix( model_matrix_ ) );
 
 		shader_->SetVec3( "uViewPos", camera_.position_ );
 		model_.Draw( *shader_, renderer_ );
@@ -199,6 +204,7 @@ void ModelViewerSample::OnRender() {
 		auto model = glm::identity<glm::mat4>();
 		model = glm::translate( model, floor_position_ );
 		shader_->SetMat4( "uMatModel", model );
+		shader_->SetMat3( "uMatNormal", MakeNormalMatrix( model ) );
 
 		renderer_.DrawPrimitives( PrimitiveType::kTriangleList, floor_vbo_ );
 	}
