@@ -1,6 +1,8 @@
 #ifndef OCTAVE_GAMEPAD_HPP
 #define OCTAVE_GAMEPAD_HPP
 
+#include <string>
+
 namespace octave::input {
 
 class Gamepad {
@@ -12,8 +14,8 @@ public:
 	[[nodiscard]] std::string GetName() const noexcept;
 	[[nodiscard]] std::string GetGUID() const noexcept;
 
-	[[nodiscard]] std::tuple<float, float> GetLeftStick() const noexcept;
-	[[nodiscard]] std::tuple<float, float> GetRightStick() const noexcept;
+	[[nodiscard]] std::pair<float, float> GetLeftStick() const noexcept;
+	[[nodiscard]] std::pair<float, float> GetRightStick() const noexcept;
 	[[nodiscard]] bool IsButtonDown( int button ) const noexcept;
 
 	[[nodiscard]] static bool IsPresent( int player_index ) noexcept;

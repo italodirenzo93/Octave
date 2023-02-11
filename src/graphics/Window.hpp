@@ -18,7 +18,7 @@ public:
 	Window( int width, int height, const std::string& title );
 	~Window() noexcept;
 
-	[[nodiscard]] std::tuple<int, int> GetSize() const noexcept;
+	[[nodiscard]] std::pair<int, int> GetSize() const noexcept;
 
 	[[nodiscard]] bool IsOpen() const noexcept;
 	[[nodiscard]] bool IsMinimized() const noexcept;

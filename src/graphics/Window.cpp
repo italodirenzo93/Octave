@@ -192,10 +192,10 @@ Window::~Window() noexcept {
 	glfwDestroyWindow( handle_ );
 }
 
-tuple<int, int> Window::GetSize() const noexcept {
+std::pair<int, int> Window::GetSize() const noexcept {
 	int width, height;
 	glfwGetWindowSize( handle_, &width, &height );
-	return make_tuple( width, height );
+	return { width, height };
 }
 
 bool Window::IsOpen() const noexcept {
