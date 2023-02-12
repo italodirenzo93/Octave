@@ -1,15 +1,18 @@
 #ifndef OCTAVE_OCTAVE_HPP
 #define OCTAVE_OCTAVE_HPP
 
+// clang-format off
+
 #include "graphics/IndexBuffer.hpp"
 #include "graphics/Mesh.hpp"
 #include "graphics/Model.hpp"
 #include "graphics/Renderer.hpp"
 #include "graphics/Shader.hpp"
-#include "graphics/ShaderManager.hpp"
 #include "graphics/Texture.hpp"
 #include "graphics/VertexBuffer.hpp"
 #include "graphics/Window.hpp"
+
+#include "resources//ShaderManager.hpp"
 
 #include "audio/Buffer.hpp"
 #include "audio/Listener.hpp"
@@ -18,9 +21,11 @@
 #include "input/Gamepad.hpp"
 #include "input/Keyboard.hpp"
 
+// clang-format on
+
 namespace octave {
 
-bool Up(int argc, char* argv[]);
+bool Up( int argc, char* argv[] );
 void Down();
 
 }  // namespace octave

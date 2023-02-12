@@ -7,6 +7,7 @@
 #include "graphics/Model.hpp"
 #include "input/Gamepad.hpp"
 #include "input/Keyboard.hpp"
+#include "resources/ShaderManager.hpp"
 
 namespace octave::samples {
 
@@ -27,6 +28,8 @@ private:
 	std::shared_ptr<graphics::Shader> shader_;
 	std::unique_ptr<input::Keyboard> keyboard_;
 	std::unique_ptr<input::Gamepad> pad_;
+
+	resources::ShaderManager shaders_;
 
 	graphics::Model model_;
 	glm::mat4 model_matrix_;

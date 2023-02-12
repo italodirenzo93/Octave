@@ -3,7 +3,6 @@
 #include <sstream>
 
 #include "Config.hpp"
-#include "ShaderManager.hpp"
 
 using namespace std;
 
@@ -33,11 +32,6 @@ Renderer::Renderer( const Window& window ) noexcept : window_( window ) {
 		glEnable( GL_CULL_FACE );
 		glCullFace( GL_BACK );
 		glFrontFace( GL_CW );
-	}
-
-	// Shader pre-cache
-	if ( config.GetPreloadShaders() ) {
-		ShaderManager::Instance().PreloadShaders();
 	}
 }
 
