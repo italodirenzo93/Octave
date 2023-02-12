@@ -114,7 +114,7 @@ inline void SetDefaultLighting( Shader& shader ) {
 }
 
 static inline glm::mat3 MakeNormalMatrix( const glm::mat4& model_matrix ) {
-	return glm::mat3( glm::transpose( glm::inverse( model_matrix ) ) );
+	return { glm::transpose( glm::inverse( model_matrix ) ) };
 }
 
 void ModelViewerSample::OnLoad() {
@@ -146,8 +146,24 @@ void ModelViewerSample::OnLoad() {
 	camera_.field_of_view_ = Config::Instance().GetFieldOfView();
 	camera_.position_ = glm::vec3( 0, 0, 7 );
 
-	model_ =
-		Model::LoadFromFile( "./resources/objects/MemoryCard/MemoryCard.dae" );
+	// Load model file or basic cube if not provided
+	if ( file_name_.empty() ) {
+		auto vbo = make_shared<VertexBuffer>();
+		auto ibo = make_shared<IndexBuffer>();
+		auto diffuse = make_shared<Texture>();
+
+		GeometricPrimitive::CreateCube( *vbo, *ibo );
+		diffuse->LoadFromFile( "./resources/textures/container.jpg" );
+
+		Mesh cube_mesh;
+		cube_mesh.SetVertexBuffer( vbo );
+		cube_mesh.SetIndexBuffer( ibo );
+		cube_mesh.SetTextures( { diffuse } );
+
+		model_.AddMesh( std::move( cube_mesh ) );
+	} else {
+		model_ = Model::LoadFromFile( file_name_ );
+	}
 	model_matrix_ = glm::identity<glm::mat4>();
 
 	// Load floor
