@@ -3,7 +3,7 @@
 #include "alCommon.hpp"
 
 #define STB_VORBIS_HEADER_ONLY
-#include "stb_vorbis.cpp"
+#include "stb_vorbis.c"
 
 namespace octave::audio {
 
