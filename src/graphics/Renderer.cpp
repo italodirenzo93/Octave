@@ -93,10 +93,6 @@ std::string Renderer::GetDescription() const noexcept {
 	return oss.str();
 }
 
-void Renderer::GetFramebufferSize( int& width, int& height ) const noexcept {
-	glfwGetFramebufferSize( window_.handle_, &width, &height );
-}
-
 void Renderer::SetShader( const Shader& shader ) noexcept {
 	glUseProgram( shader.id_ );
 }

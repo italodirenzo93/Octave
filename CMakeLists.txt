@@ -24,45 +24,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_C_STANDARD 17)
 
-# Re-evaluate this option later...
-set(BUILD_SHARED_LIBS OFF)
-set(LIBTYPE STATIC)
+add_subdirectory(dependencies)
 
-# GLFW
-set(GLFW_BUILD_DOCS OFF)
-set(GLFW_INSTALL OFF)
-set(GLFW_BUILD_TESTS OFF)
-set(GLFW_BUILD_EXAMPLES OFF)
-set(GLFW_USE_HYBRID_HPG ON)
-
-# Assimp
-set(ASSIMP_INSTALL OFF)
-set(ASSIMP_BUILD_TESTS OFF)
-set(ASSIMP_NO_EXPORT ON)
-set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF)
-set(ASSIMP_BUILD_COLLADA_IMPORTER ON)
-set(ASSIMP_BUILD_GLTF_IMPORTER ON)
-
-# OpenAL Soft
-set(ALSOFT_UTILS OFF)
-set(ALSOFT_EAX OFF)
-set(ALSOFT_EXAMPLES OFF)
-set(ALSOFT_INSTALL_EXAMPLES OFF)
-set(ALSOFT_INSTALL_UTILS OFF)
-set(ALSOFT_UPDATE_BUILD_VERSION OFF)
-
-# Subprojects
-add_subdirectory(dependencies/assimp)
-add_subdirectory(dependencies/glad)
-add_subdirectory(dependencies/glfw)
-add_subdirectory(dependencies/glm)
-add_subdirectory(dependencies/openal-soft)
-add_subdirectory(dependencies/simpleini)
-add_subdirectory(dependencies/stb_image)
-
+# Main executable
 add_executable(Octave "")
 add_subdirectory(src)
-target_link_libraries(Octave PRIVATE ${OPENGL_LIBRARIES} assimp glad glfw glm OpenAL simpleini stb_image)
+target_link_libraries(Octave PRIVATE ${OPENGL_LIBRARIES} assimp glad glfw glm ImGui OpenAL simpleini stb_image)
 
 # Visual Studio Startup Project
 if (WIN32)
