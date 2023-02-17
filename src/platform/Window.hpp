@@ -1,0 +1,46 @@
+#ifndef OCTAVE_WINDOW_H
+#define OCTAVE_WINDOW_H
+
+#include <string>
+#include <vector>
+
+namespace octave::platform {
+
+class Window {
+public:
+	Window();
+	explicit Window( const std::string& title );
+	Window( int width, int height, const std::string& title );
+	virtual ~Window() noexcept = default;
+
+	[[nodiscard]] virtual std::pair<int, int> GetSize() const noexcept = 0;
+	[[nodiscard]] virtual bool IsOpen() const noexcept = 0;
+
+	virtual Window& SetTitle( const std::string& title ) noexcept = 0;
+	virtual Window& SetSyncInterval( int interval ) noexcept = 0;
+
+	// Actions
+	virtual void PollEvents() const noexcept = 0;
+	virtual void Close() const noexcept = 0;
+
+	// Callbacks
+	using OnSizeChangedCallback = std::function<void( int, int )>;
+	Window& AddSizeChangedCallback( OnSizeChangedCallback callback ) noexcept {
+		cb_window_size_.emplace_back( std::move( callback ) );
+		return *this;
+	}
+
+	using OnCloseCallback = std::function<void( void )>;
+	Window& AddCloseCallback( OnCloseCallback callback ) noexcept {
+		cb_close_.emplace_back( std::move( callback ) );
+		return *this;
+	}
+
+protected:
+	std::vector<OnSizeChangedCallback> cb_window_size_;
+	std::vector<OnCloseCallback> cb_close_;
+};
+
+}  // namespace octave::platform
+
+#endif  // OCTAVE_WINDOW_H
