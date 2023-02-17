@@ -59,13 +59,9 @@ add_subdirectory(dependencies/openal-soft)
 add_subdirectory(dependencies/simpleini)
 add_subdirectory(dependencies/stb_image)
 
-# Set `source` variable to all .h(pp) and .cpp files in `src`
-file(GLOB_RECURSE source CONFIGURE_DEPENDS "src/*.h" "src/*.hpp" "src/*.c" "src/*.cpp")
-
-add_executable(Octave ${source})
+add_executable(Octave "")
+add_subdirectory(src)
 target_link_libraries(Octave PRIVATE ${OPENGL_LIBRARIES} assimp glad glfw glm OpenAL simpleini stb_image)
-target_include_directories(Octave PRIVATE)
-target_precompile_headers(Octave PRIVATE "src/CommonInclude.hpp")
 
 # Visual Studio Startup Project
 if (WIN32)
