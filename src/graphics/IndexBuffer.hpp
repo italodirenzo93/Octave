@@ -3,7 +3,7 @@
 
 #include "CommonInclude.hpp"
 
-namespace octave::graphics {
+namespace Octave::graphics {
 
 class IndexBuffer {
 	friend class Mesh;

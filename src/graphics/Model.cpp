@@ -6,7 +6,7 @@
 
 using namespace std;
 
-namespace octave::graphics {
+namespace Octave::graphics {
 
 static unordered_map<string, shared_ptr<Texture>> texture_cache;
 

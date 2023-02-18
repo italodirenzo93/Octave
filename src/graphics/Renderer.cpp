@@ -6,7 +6,7 @@
 
 using namespace std;
 
-namespace octave::graphics {
+namespace Octave::graphics {
 
 static inline GLenum PrimitiveToGLType( PrimitiveType type ) {
 	switch ( type ) {

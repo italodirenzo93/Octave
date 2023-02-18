@@ -1,6 +1,6 @@
 #include "Exception.hpp"
 
-namespace octave {
+namespace Octave {
 
 Exception::Exception() noexcept : message_( "Unknown Error" ) {
 }

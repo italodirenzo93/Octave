@@ -5,7 +5,7 @@
 
 class GLFWwindow;
 
-namespace octave::platform::glfw {
+namespace Octave::Impl {
 
 class WindowGLFW : public Window {
 public:

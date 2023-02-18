@@ -5,7 +5,7 @@
 #include "GLFWError.hpp"
 #include "WindowGLFW.hpp"
 
-namespace octave::platform::glfw {
+namespace Octave::Impl {
 
 PlatformGLFW::PlatformGLFW() {
 	if ( !glfwInit() ) {

@@ -4,7 +4,7 @@
 #include "Buffer.hpp"
 #include "CommonInclude.hpp"
 
-namespace octave::audio {
+namespace Octave::audio {
 
 enum class PlaybackState {
 	Initial,

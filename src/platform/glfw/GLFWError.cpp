@@ -2,7 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
-namespace octave::platform::glfw {
+namespace Octave::Impl {
 
 GLFWError::GLFWError() noexcept {
 	const char* description = nullptr;

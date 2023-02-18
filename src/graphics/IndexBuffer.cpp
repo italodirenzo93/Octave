@@ -2,7 +2,7 @@
 
 using namespace std;
 
-namespace octave::graphics {
+namespace Octave::graphics {
 
 static inline void CopyIndexBuffer( GLuint source, GLuint target ) {
 	GLsizei buffer_size;

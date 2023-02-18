@@ -17,7 +17,7 @@
 
 #include "Window.hpp"
 
-namespace octave::platform {
+namespace Octave {
 
 enum PlatformName { Windows, MacOs, Linux };
 

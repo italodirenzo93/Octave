@@ -3,7 +3,7 @@
 
 #include "CommonInclude.hpp"
 
-namespace octave::audio {
+namespace Octave::audio {
 
 class Buffer {
 	friend class Source;

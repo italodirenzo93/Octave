@@ -5,7 +5,7 @@
 #include <list>
 #include <memory>
 
-namespace octave::scene {
+namespace Octave::scene {
 
 class Object {
 public:

@@ -12,7 +12,7 @@
 
 using namespace std;
 
-namespace octave {
+namespace Octave {
 
 static bool b_is_initialized = false;
 

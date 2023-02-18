@@ -3,7 +3,7 @@
 
 #include "graphics/Window.hpp"
 
-namespace octave::input {
+namespace Octave::input {
 
 class Keyboard {
 public:

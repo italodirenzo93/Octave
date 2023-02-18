@@ -1,3 +1,3 @@
 #include "MeshComponent.hpp"
 
-namespace octave::scene {}  // namespace octave::scene
+namespace Octave::scene {}  // namespace octave::scene

@@ -3,14 +3,14 @@
 
 #include "CommonInclude.hpp"
 
-namespace octave::input {
+namespace Octave::input {
 class Keyboard;
 }
 
-namespace octave::graphics {
+namespace Octave::graphics {
 class Window {
 	friend class Renderer;
-	friend class octave::input::Keyboard;
+	friend class Octave::input::Keyboard;
 
 public:
 	Window();

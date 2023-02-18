@@ -5,7 +5,7 @@
 
 #include "CommonInclude.hpp"
 
-namespace octave {
+namespace Octave {
 class Config {
 public:
 	static Config& Instance() noexcept {

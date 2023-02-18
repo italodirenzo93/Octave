@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace octave::input {
+namespace Octave::input {
 
 class Gamepad {
 public:

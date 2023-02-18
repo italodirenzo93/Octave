@@ -1,8 +1,7 @@
 #include "Octave.hpp"
 
 using namespace std;
-using namespace octave;
-using namespace octave::platform;
+using namespace Octave;
 
 class SampleApplication : public Application {
 protected:
@@ -16,7 +15,7 @@ protected:
 		window_->AddCloseCallback( [this]() { Exit(); } );
 	}
 
-	void Render() override { window_->PollEvents(); }
+	void Update() override { window_->PollEvents(); }
 
 private:
 	unique_ptr<Window> window_;

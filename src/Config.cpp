@@ -9,7 +9,7 @@
 using namespace std;
 namespace fs = std::filesystem;
 
-namespace octave {
+namespace Octave {
 
 static constexpr const char* kConfigTemplate = "resources/config/Engine.ini";
 
