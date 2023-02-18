@@ -6,7 +6,7 @@
 #include "CommonInclude.hpp"
 #include "Mesh.hpp"
 
-namespace octave::graphics {
+namespace Octave::graphics {
 
 struct VertexPositionNormalTexture {
 	glm::vec3 position;

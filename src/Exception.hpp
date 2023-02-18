@@ -4,7 +4,7 @@
 #include <exception>
 #include <string>
 
-namespace octave {
+namespace Octave {
 
 class Exception : public std::exception {
 public:

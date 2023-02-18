@@ -10,7 +10,7 @@
 
 #include <iostream>
 
-namespace octave::audio::al {
+namespace Octave::audio::al {
 
 class OpenALError : public Exception {
 public:
@@ -80,7 +80,7 @@ inline void CheckErrors( const char* file, int line ) {
 
 #define AL_CALL( func ) \
 	func;               \
-	octave::audio::al::CheckErrors( __FILE__, __LINE__ )
+	Octave::audio::al::CheckErrors( __FILE__, __LINE__ )
 
 }  // namespace octave::audio::al
 

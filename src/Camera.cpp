@@ -1,6 +1,6 @@
 #include "Camera.hpp"
 
-namespace octave {
+namespace Octave {
 
 using namespace graphics;
 

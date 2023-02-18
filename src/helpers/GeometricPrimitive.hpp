@@ -4,7 +4,7 @@
 #include "graphics/IndexBuffer.hpp"
 #include "graphics/VertexBuffer.hpp"
 
-namespace octave::helpers {
+namespace Octave::helpers {
 
 class GeometricPrimitive {
 public:

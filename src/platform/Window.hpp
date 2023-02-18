@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace octave::platform {
+namespace Octave {
 
 struct WindowOptions {
 	bool is_fullscreen;

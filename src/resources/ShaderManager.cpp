@@ -6,7 +6,7 @@
 using namespace std;
 namespace fs = std::filesystem;
 
-namespace octave::resources {
+namespace Octave::resources {
 
 using namespace graphics;
 

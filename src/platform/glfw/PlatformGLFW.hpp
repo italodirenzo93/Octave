@@ -3,7 +3,7 @@
 
 #include "platform/Platform.hpp"
 
-namespace octave::platform::glfw {
+namespace Octave::Impl {
 
 class PlatformGLFW : public Platform {
 public:

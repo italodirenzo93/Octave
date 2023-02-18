@@ -5,7 +5,7 @@
 
 using namespace glm;
 
-namespace octave::scene {
+namespace Octave::scene {
 
 Object::Object() noexcept {
 	model_matrix_ = identity<mat4>();

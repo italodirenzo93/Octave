@@ -44,7 +44,7 @@
 #define SELF_REFERENCE_CHECK( other ) \
 	if ( &other == this ) return *this
 
-namespace octave::graphics::gl {
+namespace Octave::graphics::gl {
 
 class OpenGLError : public Exception {
 public:
@@ -120,7 +120,7 @@ inline void CheckErrors( const char* file, int line ) {
 
 #define GL_CALL( func ) \
 	func;               \
-	octave::graphics::gl::CheckErrors( __FILE__, __LINE__ )
+	Octave::graphics::gl::CheckErrors( __FILE__, __LINE__ )
 
 }  // namespace octave::graphics::gl
 

@@ -6,7 +6,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-namespace octave::platform::glfw {
+namespace Octave::Impl {
 
 WindowGLFW::WindowGLFW( const WindowOptions& options ) : Window( options ) {
 	// Set defaults as a baseline

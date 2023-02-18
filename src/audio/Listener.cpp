@@ -2,7 +2,7 @@
 
 #include "alCommon.hpp"
 
-namespace octave::audio {
+namespace Octave::audio {
 
 float Listener::GetGain() noexcept {
 	float gain;

@@ -1,6 +1,6 @@
 #include "Mesh.hpp"
 
-namespace octave::graphics {
+namespace Octave::graphics {
 using namespace std;
 
 static constexpr float kDefaultShininess = 32.0f;

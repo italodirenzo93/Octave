@@ -3,7 +3,7 @@
 
 #include "graphics/Mesh.hpp"
 
-namespace octave::scene {
+namespace Octave::scene {
 
 class MeshComponent {
 public:

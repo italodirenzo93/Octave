@@ -5,7 +5,7 @@
 
 #include "platform/Platform.hpp"
 
-namespace octave {
+namespace Octave {
 
 class Application {
 public:
@@ -20,7 +20,7 @@ public:
 	Application& operator=( Application&& other ) noexcept = delete;
 
 	// Getter/setter pairs
-	[[nodiscard]] platform::Platform& GetPlatform() const noexcept { return *platform_; }
+	[[nodiscard]] Platform& GetPlatform() const noexcept { return *platform_; }
 
 	// Methods
 	void Run();
@@ -32,10 +32,9 @@ protected:
 	// Methods
 	virtual void Initialize();
 	virtual void Update();
-	virtual void Render();
 
 	// Fields
-	std::unique_ptr<platform::Platform> platform_;
+	std::unique_ptr<Platform> platform_;
 
 private:
 	// Methods

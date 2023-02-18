@@ -7,7 +7,7 @@
 #include "VertexBuffer.hpp"
 #include "Window.hpp"
 
-namespace octave::graphics {
+namespace Octave::graphics {
 enum class PrimitiveType { kTriangleList, kTriangleStrip, kTriangleFan };
 
 class Renderer {

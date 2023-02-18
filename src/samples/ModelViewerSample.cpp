@@ -7,7 +7,7 @@
 
 using namespace std;
 
-namespace octave::samples {
+namespace Octave::samples {
 
 using namespace graphics;
 using namespace helpers;

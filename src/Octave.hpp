@@ -25,7 +25,7 @@
 
 // clang-format on
 
-namespace octave {
+namespace Octave {
 
 bool Up( int argc, char* argv[] );
 void Down();

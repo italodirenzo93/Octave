@@ -10,7 +10,7 @@
 
 using namespace std;
 
-namespace octave::graphics {
+namespace Octave::graphics {
 
 Shader::Shader( Shader&& other ) noexcept : id_( other.id_ ) {
 	other.id_ = 0;
