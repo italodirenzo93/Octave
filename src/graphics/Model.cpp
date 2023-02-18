@@ -6,7 +6,7 @@
 
 using namespace std;
 
-namespace Octave::graphics {
+namespace Octave {
 
 static unordered_map<string, shared_ptr<Texture>> texture_cache;
 
@@ -159,4 +159,4 @@ Model& Model::operator=( Model&& other ) noexcept {
 	return *this;
 }
 
-}  // namespace octave::graphics
+}  // namespace Octave

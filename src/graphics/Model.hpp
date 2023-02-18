@@ -6,7 +6,7 @@
 #include "CommonInclude.hpp"
 #include "Mesh.hpp"
 
-namespace Octave::graphics {
+namespace Octave {
 
 struct VertexPositionNormalTexture {
 	glm::vec3 position;
@@ -52,6 +52,6 @@ private:
 	NON_COPYABLE_CLASS( Model )
 };
 
-}  // namespace octave::graphics
+}  // namespace Octave
 
 #endif

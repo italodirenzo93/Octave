@@ -10,7 +10,7 @@
 
 using namespace std;
 
-namespace Octave::graphics {
+namespace Octave {
 
 Shader::Shader( Shader&& other ) noexcept : id_( other.id_ ) {
 	other.id_ = 0;
@@ -169,4 +169,4 @@ Shader& Shader::operator=( Shader&& other ) noexcept {
 	return *this;
 }
 
-}  // namespace octave::graphics
+}  // namespace Octave

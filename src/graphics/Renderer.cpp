@@ -6,7 +6,7 @@
 
 using namespace std;
 
-namespace Octave::graphics {
+namespace Octave {
 
 static inline GLenum PrimitiveToGLType( PrimitiveType type ) {
 	switch ( type ) {
@@ -102,4 +102,4 @@ void Renderer::SetViewport( int x, int y, int width, int height ) noexcept {
 	glViewport( x, y, width, height );
 }
 
-}  // namespace octave::graphics
+}  // namespace Octave

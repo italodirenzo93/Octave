@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace Octave::resources {
+namespace Octave {
 
 template <class TResource>
 class ResourceManager {
