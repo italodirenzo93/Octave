@@ -1,5 +1,7 @@
 #include "IndexBuffer.hpp"
 
+#include <glad/glad.h>
+
 using namespace std;
 
 namespace Octave {

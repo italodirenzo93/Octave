@@ -2,7 +2,7 @@
 #define OCTAVE_AUDIO_SOURCE_HPP
 
 #include "Buffer.hpp"
-#include "CommonInclude.hpp"
+#include "pch.hpp"
 
 namespace Octave::audio {
 

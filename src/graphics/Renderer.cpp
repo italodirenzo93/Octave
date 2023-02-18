@@ -1,5 +1,7 @@
 #include "Renderer.hpp"
 
+#include <glad/glad.h>
+
 #include <sstream>
 
 #include "Config.hpp"
@@ -54,10 +56,10 @@ void Renderer::Clear( bool color, bool depth, float r, float g, float b,
 
 void Renderer::DrawPrimitives( PrimitiveType type,
 							   const VertexBuffer& vbo ) const noexcept {
-	GL_CALL( glBindVertexArray( vbo.vao_ ) );
+	glBindVertexArray( vbo.vao_ );
 
-	GL_CALL( glDrawArrays( PrimitiveToGLType( type ), 0,
-						   static_cast<int>( vbo.GetVertexCount() ) ) );
+	glDrawArrays( PrimitiveToGLType( type ), 0,
+				  static_cast<int>( vbo.GetVertexCount() ) );
 
 	glBindVertexArray( 0 );
 }
@@ -65,12 +67,12 @@ void Renderer::DrawPrimitives( PrimitiveType type,
 void Renderer::DrawIndexedPrimitives( PrimitiveType type,
 									  const VertexBuffer& vbo,
 									  const IndexBuffer& ibo ) const noexcept {
-	GL_CALL( glBindVertexArray( vbo.vao_ ) );
-	GL_CALL( glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo.id_ ) );
+	glBindVertexArray( vbo.vao_ );
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo.id_ );
 
-	GL_CALL( glDrawElements( PrimitiveToGLType( type ),
-							 static_cast<int>( ibo.GetElementCount() ),
-							 GL_UNSIGNED_INT, nullptr ) );
+	glDrawElements( PrimitiveToGLType( type ),
+					static_cast<int>( ibo.GetElementCount() ), GL_UNSIGNED_INT,
+					nullptr );
 
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
 	glBindVertexArray( 0 );

@@ -1,7 +1,9 @@
 #ifndef OCTAVE_VERTEXBUFFER_HPP
 #define OCTAVE_VERTEXBUFFER_HPP
 
-#include "CommonInclude.hpp"
+#include "pch.hpp"
+
+#include <glad/glad.h>
 
 namespace Octave {
 

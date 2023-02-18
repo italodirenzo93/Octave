@@ -1,9 +1,13 @@
 #include "Texture.hpp"
 
+#include <glad/glad.h>
+#include <stb_image.h>
+
 #include "Exception.hpp"
 
-namespace Octave {
 using namespace std;
+
+namespace Octave {
 
 Texture::Texture() noexcept {
 	glGenTextures( 1, &id_ );

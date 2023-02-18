@@ -1,7 +1,7 @@
 #ifndef OCTAVE_TEXTURE_HPP
 #define OCTAVE_TEXTURE_HPP
 
-#include "CommonInclude.hpp"
+#include "pch.hpp"
 
 namespace Octave {
 
