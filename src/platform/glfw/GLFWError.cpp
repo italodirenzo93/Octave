@@ -1,10 +1,10 @@
-#include "GlfwError.hpp"
+#include "GLFWError.hpp"
 
 #include <GLFW/glfw3.h>
 
 namespace octave::platform::glfw {
 
-GlfwError::GlfwError() noexcept {
+GLFWError::GLFWError() noexcept {
 	const char* description = nullptr;
 	if ( glfwGetError( &description ) == GLFW_NO_ERROR ) {
 		message_ = "Unknown GLFW error";
