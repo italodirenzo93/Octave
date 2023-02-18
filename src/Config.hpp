@@ -3,7 +3,7 @@
 
 #include <SimpleIni.h>
 
-#include "CommonInclude.hpp"
+#include "pch.hpp"
 
 namespace Octave {
 class Config {

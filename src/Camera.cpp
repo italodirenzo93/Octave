@@ -2,8 +2,6 @@
 
 namespace Octave {
 
-using namespace graphics;
-
 Camera::Camera() noexcept {
 	field_of_view_ = 45.0f;
 	aspect_ratio_ = 16.0f / 9.0f;
@@ -103,4 +101,4 @@ void Camera::UpdateViewMatrix() noexcept {
 	matrix_view_ = glm::lookAt( position_, position_ + front_, up_ );
 }
 
-}  // namespace octave
+}  // namespace Octave

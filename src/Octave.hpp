@@ -22,13 +22,4 @@
 //#include "input/Gamepad.hpp"
 //#include "input/Keyboard.hpp"
 
-// clang-format on
-
-namespace Octave {
-
-bool Up( int argc, char* argv[] );
-void Down();
-
-}  // namespace octave
-
 #endif  // OCTAVE_OCTAVE_HPP

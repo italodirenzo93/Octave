@@ -1,8 +1,8 @@
 #ifndef OCTAVE_CAMERA_HPP
 #define OCTAVE_CAMERA_HPP
 
-#include "CommonInclude.hpp"
 #include "graphics/Shader.hpp"
+#include "pch.hpp"
 
 namespace Octave {
 
