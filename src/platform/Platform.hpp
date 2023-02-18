@@ -11,15 +11,11 @@
 #error "Unknown platform"
 #endif
 
-#include <cstdint>
-#include <memory>
-#include <string>
-
 #include "Window.hpp"
 
 namespace Octave {
 
-enum PlatformName { Windows, MacOs, Linux };
+enum PlatformName { Windows, Mac, Linux };
 
 class Platform {
 public:

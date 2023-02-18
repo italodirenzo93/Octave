@@ -33,7 +33,7 @@ PlatformName PlatformGLFW::GetName() const {
 #if defined( OCTAVE_PLATFORM_WINDOWS )
 	return PlatformName::Windows;
 #elif defined( OCTAVE_PLATFORM_MACOS )
-	return PlatformName::MacOs;
+	return PlatformName::Mac;
 #elif defined( OCTAVE_PLATFORM_LINUX )
 	return PlatformName::Linux;
 #else
