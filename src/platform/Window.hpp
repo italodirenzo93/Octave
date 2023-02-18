@@ -1,8 +1,7 @@
 #ifndef OCTAVE_WINDOW_H
 #define OCTAVE_WINDOW_H
 
-#include <string>
-#include <vector>
+#include "pch.hpp"
 
 namespace Octave {
 
