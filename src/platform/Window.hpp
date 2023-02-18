@@ -16,7 +16,6 @@ struct WindowOptions {
 
 class Window {
 public:
-	explicit Window( const WindowOptions& options ) {};
 	virtual ~Window() noexcept = default;
 
 	[[nodiscard]] virtual std::pair<int, int> GetSize() const noexcept = 0;
@@ -43,6 +42,8 @@ public:
 	}
 
 protected:
+	explicit Window( const WindowOptions& options ) {};
+
 	std::vector<OnSizeChangedCallback> cb_window_size_;
 	std::vector<OnCloseCallback> cb_close_;
 };

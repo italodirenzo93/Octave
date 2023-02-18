@@ -12,7 +12,10 @@
 #endif
 
 #include <cstdint>
+#include <memory>
 #include <string>
+
+#include "Window.hpp"
 
 namespace octave::platform {
 
@@ -21,10 +24,14 @@ enum PlatformName { Windows, MacOs, Linux };
 class Platform {
 public:
 	virtual ~Platform() = default;
+
 	[[nodiscard]] virtual PlatformName GetName() const = 0;
+
 	virtual double GetElapsedTime() = 0;
 	virtual uint64_t GetPerformanceCounter() = 0;
 	virtual uint64_t GetPerformanceFrequency() = 0;
+
+    virtual std::unique_ptr<Window> CreateWindow( const WindowOptions& options ) = 0;
 };
 
 }  // namespace octave::platform

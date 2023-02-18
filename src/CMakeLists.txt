@@ -7,7 +7,7 @@ add_subdirectory(resources)
 add_subdirectory(samples)
 add_subdirectory(scene)
 
-set(sources Camera.cpp Camera.hpp CommonInclude.hpp Config.cpp Config.hpp Exception.cpp Exception.hpp Main.cpp Octave.cpp Octave.hpp)
+set(sources Application.cpp Application.hpp Camera.cpp Camera.hpp CommonInclude.hpp Config.cpp Config.hpp Exception.cpp Exception.hpp Main.cpp Octave.cpp Octave.hpp)
 list(TRANSFORM sources PREPEND "src/")
 
 target_sources(Octave PRIVATE ${sources})
