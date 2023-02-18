@@ -15,7 +15,7 @@
 
 namespace Octave {
 
-enum PlatformName { Windows, Mac, Linux };
+enum class PlatformName { Windows, Mac, Linux };
 
 class Platform {
 public:
