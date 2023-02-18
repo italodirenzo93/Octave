@@ -5,7 +5,7 @@
 #include "Exception.hpp"
 #include "Texture.hpp"
 
-namespace Octave::graphics {
+namespace Octave {
 class Shader {
 	friend class Renderer;
 
@@ -54,6 +54,6 @@ private:
 
 	NON_COPYABLE_CLASS( Shader )
 };
-}  // namespace octave::graphics
+}  // namespace Octave
 
 #endif

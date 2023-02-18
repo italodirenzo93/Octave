@@ -8,7 +8,7 @@
 #include "Texture.hpp"
 #include "VertexBuffer.hpp"
 
-namespace Octave::graphics {
+namespace Octave {
 
 class Mesh {
 public:
@@ -42,6 +42,6 @@ public:
 	Mesh& operator=( Mesh&& other ) noexcept;
 };
 
-}  // namespace octave::graphics
+}  // namespace Octave
 
 #endif

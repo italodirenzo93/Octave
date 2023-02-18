@@ -6,9 +6,7 @@
 using namespace std;
 namespace fs = std::filesystem;
 
-namespace Octave::resources {
-
-using namespace graphics;
+namespace Octave {
 
 static ShaderManager::ResourcePtr LoadShaderProgram(
 	const fs::path& shader_directory, const string& shader ) {

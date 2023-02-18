@@ -1,8 +1,6 @@
 #include "GeometricPrimitive.hpp"
 
-namespace Octave::helpers {
-
-using namespace graphics;
+namespace Octave {
 
 GeometricPrimitive::VertexType::VertexType(
 	std::initializer_list<float> initializer_list ) {
@@ -62,7 +60,7 @@ void GeometricPrimitive::CreateCube( VertexBuffer& vbo, IndexBuffer& ibo ) {
 				   16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23 } );
 }
 
-void GeometricPrimitive::CreateQuad( graphics::VertexBuffer& vbo ) {
+void GeometricPrimitive::CreateQuad( VertexBuffer& vbo ) {
 	const VertexBuffer::VertexLayout layout{
 		{ LayoutSemantic::kPosition, 3, GL_FLOAT, false },
 		{ LayoutSemantic::kNormal, 3, GL_FLOAT, false },
@@ -83,7 +81,7 @@ void GeometricPrimitive::CreateQuad( graphics::VertexBuffer& vbo ) {
 
 static constexpr float kPlaneExtent = 10.0f;
 
-void GeometricPrimitive::CreatePlane( graphics::VertexBuffer& vbo ) {
+void GeometricPrimitive::CreatePlane( VertexBuffer& vbo ) {
 	const VertexBuffer::VertexLayout layout{
 		{ LayoutSemantic::kPosition, 3, GL_FLOAT, false },
 		{ LayoutSemantic::kNormal, 3, GL_FLOAT, false },

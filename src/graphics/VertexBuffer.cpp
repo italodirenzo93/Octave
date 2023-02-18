@@ -2,7 +2,7 @@
 
 using namespace std;
 
-namespace Octave::graphics {
+namespace Octave {
 // NOTE: This must be kept in sync with the input layout of the vertex shader!
 static const std::unordered_map<LayoutSemantic, uint32_t> kAttributeBindings{
 	{ LayoutSemantic::kPosition, 0 },
@@ -135,4 +135,4 @@ bool VertexBuffer::operator==( const VertexBuffer& other ) const noexcept {
 		   vertex_count_ == other.vertex_count_ && layout_ == other.layout_;
 }
 
-}  // namespace octave::graphics
+}  // namespace Octave
