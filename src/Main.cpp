@@ -4,6 +4,9 @@ using namespace std;
 using namespace Octave;
 
 class SampleApplication : public Application {
+public:
+	SampleApplication( int argc, char* argv[] ) : Application( argc, argv ) {}
+
 protected:
 	void Initialize() override {
 		WindowOptions options = {};
@@ -25,10 +28,8 @@ private:
 };
 
 int main( int argc, char* argv[] ) {
-	unique_ptr<Application> app;
-
 	try {
-		app = make_unique<SampleApplication>();
+		unique_ptr<Application> app( new SampleApplication( argc, argv ) );
 		app->Run();
 	} catch ( const std::exception& e ) {
 		cerr << "Critical Error: " << e.what() << " ...exiting" << endl;
