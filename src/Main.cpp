@@ -15,7 +15,10 @@ protected:
 		window_->AddCloseCallback( [this]() { Exit(); } );
 	}
 
-	void Update() override { window_->PollEvents(); }
+	void Update() override {
+		window_->SwapBuffers();
+		window_->PollEvents();
+	}
 
 private:
 	unique_ptr<Window> window_;
