@@ -5,9 +5,9 @@
 
 namespace octave::platform::glfw {
 
-class GlfwError : public Exception {
+class GLFWError : public Exception {
 public:
-	GlfwError() noexcept;
+	GLFWError() noexcept;
 };
 
 }  // namespace octave::platform::glfw

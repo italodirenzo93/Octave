@@ -1,7 +1,7 @@
-set(sources Platform.hpp Window.cpp Window.hpp)
+set(sources Platform.hpp Window.hpp)
 
 # GLFW
-list(APPEND sources glfw/PlatformGlfw.cpp glfw/PlatformGlfw.hpp glfw/GlfwError.cpp glfw/GlfwError.hpp glfw/GlfwWindow.cpp glfw/GlfwWindow.hpp)
+list(APPEND sources glfw/PlatformGLFW.cpp glfw/PlatformGLFW.hpp glfw/GLFWError.cpp glfw/GLFWError.hpp glfw/WindowGLFW.cpp glfw/WindowGLFW.hpp)
 
 list(TRANSFORM sources PREPEND "src/platform/")
 
