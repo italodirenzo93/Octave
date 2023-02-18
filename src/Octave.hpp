@@ -12,16 +12,15 @@
 #include "graphics/Shader.hpp"
 #include "graphics/Texture.hpp"
 #include "graphics/VertexBuffer.hpp"
-#include "graphics/Window.hpp"
 
-#include "resources//ShaderManager.hpp"
+#include "resources/ShaderManager.hpp"
 
-#include "audio/Buffer.hpp"
-#include "audio/Listener.hpp"
-#include "audio/Source.hpp"
+//#include "audio/Buffer.hpp"
+//#include "audio/Listener.hpp"
+//#include "audio/Source.hpp"
 
-#include "input/Gamepad.hpp"
-#include "input/Keyboard.hpp"
+//#include "input/Gamepad.hpp"
+//#include "input/Keyboard.hpp"
 
 // clang-format on
 

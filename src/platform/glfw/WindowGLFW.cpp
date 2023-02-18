@@ -1,10 +1,12 @@
 #include "WindowGLFW.hpp"
 
-#include "Config.hpp"
-#include "GLFWError.hpp"
-
+// clang-format off
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+// clang-format on
+
+#include "Config.hpp"
+#include "GLFWError.hpp"
 
 namespace Octave::Impl {
 
@@ -111,6 +113,10 @@ void WindowGLFW::Close() const noexcept {
 	glfwSetWindowShouldClose( window_, GLFW_TRUE );
 }
 
+void WindowGLFW::SwapBuffers() noexcept {
+	glfwSwapBuffers( window_ );
+}
+
 void WindowGLFW::WindowSizeCallback( GLFWwindow* window, int width,
 									 int height ) noexcept {
 	const auto c_window =
@@ -132,4 +138,4 @@ void WindowGLFW::CloseCallback( GLFWwindow* window ) noexcept {
 	}
 }
 
-}  // namespace octave::platform::glfw
+}  // namespace Octave::Impl

@@ -17,6 +17,7 @@ public:
 	Window& SetSyncInterval( int interval ) noexcept override;
 	void PollEvents() const noexcept override;
 	void Close() const noexcept override;
+	void SwapBuffers() noexcept override;
 
 private:
 	GLFWwindow* window_ = nullptr;
