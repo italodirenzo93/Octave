@@ -10,6 +10,6 @@ public:
 	GLFWError() noexcept;
 };
 
-}  // namespace octave::platform::glfw
+}  // namespace Octave::Impl
 
 #endif  // OCTAVE_GLFWERROR_HPP

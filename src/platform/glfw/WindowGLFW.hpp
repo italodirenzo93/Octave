@@ -27,6 +27,6 @@ private:
 	static void CloseCallback( GLFWwindow* window ) noexcept;
 };
 
-}  // namespace octave::platform::glfw
+}  // namespace Octave::Impl
 
 #endif  // OCTAVE_WINDOWGLFW_HPP

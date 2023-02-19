@@ -4,6 +4,8 @@
 
 namespace Octave {
 
+Application::Application() : Application( 0, nullptr ) {}
+
 Application::Application( int argc, char* argv[] ) : is_running_( true ) {
 	platform_ = std::make_unique<Impl::PlatformGLFW>();
 }

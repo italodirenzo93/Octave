@@ -11,6 +11,10 @@ struct WindowOptions {
 	int width;
 	int height;
 	std::string title;
+
+	WindowOptions() noexcept;
+	WindowOptions( int width, int height, std::string title, bool is_fullscreen = false,
+				   bool is_borderless = false ) noexcept;
 };
 
 class Window {
