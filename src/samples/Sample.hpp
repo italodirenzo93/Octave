@@ -1,39 +1,29 @@
 #ifndef OCTAVE_SAMPLE_HPP
 #define OCTAVE_SAMPLE_HPP
 
+#include "Application.hpp"
+#include "platform/Window.hpp"
 #include "Camera.hpp"
 #include "graphics/Renderer.hpp"
-#include "graphics/Window.hpp"
 #include "helpers/StepTimer.hpp"
 #include "pch.hpp"
 
-namespace Octave::samples {
+namespace Octave::Samples {
 
-class Sample {
-public:
-	Sample() = delete;
-	explicit Sample( const std::shared_ptr<graphics::Window>& window ) noexcept;
-	virtual ~Sample() noexcept = default;
-
-	virtual void OnLoad() {}
-	virtual void OnUpdate( const helpers::StepTimer& timer ) {}
-	virtual void OnRender() {}
-	virtual void OnUnload() {}
-
-	void Run();
-	void Exit();
-
+class Sample : public Application {
 protected:
-	helpers::StepTimer step_timer_;
-	DebugCamera camera_;
-	std::shared_ptr<graphics::Window> window_;
-	graphics::Renderer renderer_;
-	bool should_quit_ = false;
+	void Initialize() override;
+	void Update() override;
 
-private:
-	NON_COPYABLE_OR_MOVABLE_CLASS( Sample )
+	virtual void OnUpdate() = 0;
+	virtual void OnRender() = 0;
+
+	StepTimer step_timer_;
+	DebugCamera camera_;
+	std::unique_ptr<Window> window_;
+	std::unique_ptr<Renderer> renderer_;
 };
 
-}  // namespace octave::samples
+}  // namespace Octave::Samples
 
 #endif  // OCTAVE_SAMPLE_HPP

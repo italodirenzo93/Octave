@@ -1,27 +1,33 @@
 #include "Sample.hpp"
 
-namespace Octave::samples {
+using namespace std;
 
-Sample::Sample( const std::shared_ptr<graphics::Window>& window ) noexcept
-	: window_( window ), renderer_( *window ) {
-	std::function<void()> close_callback = [this] { Exit(); };
-	window_->AddCloseCallback( close_callback );
+namespace Octave::Samples {
+
+void Sample::Initialize() {
+	window_ = platform_->CreateWindow( WindowOptions() );
+	window_->AddCloseCallback( [this]() { Exit(); } );
+
+	renderer_ = make_unique<Renderer>();
+	const auto [default_width, default_height] = window_->GetSize();
+	renderer_->SetViewport( 0, 0, default_width, default_height );
+
+	window_->AddSizeChangedCallback( [this]( int width, int height ) {
+		if ( width > 0 && height > 0 ) {
+			renderer_->SetViewport( 0, 0, width, height );
+			camera_.width_ = static_cast<float>( width );
+			camera_.height_ = static_cast<float>( height );
+		}
+	} );
 }
 
-void Sample::Run() {
-	OnLoad();
+void Sample::Update() {
+	step_timer_.Tick( [this] { OnUpdate(); } );
+	OnRender();
 
-	while ( !should_quit_ ) {
-		step_timer_.Tick( [&] { OnUpdate( step_timer_ ); } );
-		OnRender();
-		window_->PollEvents();
-	}
-
-	OnUnload();
+	window_->SwapBuffers();
+	window_->PollEvents();
 }
 
-void Sample::Exit() {
-	should_quit_ = true;
-}
 
-}  // namespace octave::samples
+}  // namespace octave::Samples
