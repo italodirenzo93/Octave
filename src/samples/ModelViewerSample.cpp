@@ -1,17 +1,12 @@
 #include "ModelViewerSample.hpp"
 
-#include <memory>
 
 #include "Config.hpp"
 #include "helpers/GeometricPrimitive.hpp"
 
 using namespace std;
 
-namespace Octave::samples {
-
-using namespace graphics;
-using namespace helpers;
-using namespace input;
+namespace Octave::Samples {
 
 static void DebugCameraControls( const Keyboard& keyboard, DebugCamera& camera,
 								 float camera_speed, float delta ) {
@@ -112,25 +107,19 @@ inline void SetDefaultLighting( Shader& shader ) {
 	shader.SetFloat( "uPointLights[0].quadratic", 0.032f );
 }
 
-static inline glm::mat3 MakeNormalMatrix( const glm::mat4& model_matrix ) {
+static glm::mat3 MakeNormalMatrix( const glm::mat4& model_matrix ) {
 	return { glm::transpose( glm::inverse( model_matrix ) ) };
 }
 
-void ModelViewerSample::OnLoad() {
-	cout << renderer_.GetDescription() << endl;
+void ModelViewerSample::Initialize() {
+	Sample::Initialize();
+
+	cout << renderer_->GetDescription() << endl;
 
 	if ( Gamepad::IsPresent( 0 ) ) {
 		pad_ = make_unique<Gamepad>( 0 );
 		cout << "Gamepad: " << pad_->GetName() << endl;
 	}
-
-	window_->AddSizeChangedCallback( [this]( int w, int h ) {
-		if ( w > 0 && h > 0 ) {
-			renderer_.SetViewport( 0, 0, w, h );
-			camera_.width_ = static_cast<float>( w );
-			camera_.height_ = static_cast<float>( h );
-		}
-	} );
 
 	keyboard_ = make_unique<Keyboard>( *window_ );
 
@@ -170,20 +159,21 @@ void ModelViewerSample::OnLoad() {
 	model_matrix_ = glm::identity<glm::mat4>();
 
 	// Load floor
-	GeometricPrimitive::CreatePlane( floor_vbo_ );
-	floor_texture_diffuse_.LoadFromFile(
+	floor_vbo_ = make_unique<VertexBuffer>();
+	floor_texture_diffuse_ = make_unique<Texture>();
+	floor_texture_specular_ = make_unique<Texture>();
+
+	GeometricPrimitive::CreatePlane( *floor_vbo_ );
+	floor_texture_diffuse_->LoadFromFile(
 		"./resources/textures/wood_diffuse.png" );
-	floor_texture_specular_.LoadFromFile(
+	floor_texture_specular_->LoadFromFile(
 		"./resources/textures/wood_specular.png" );
 
 	floor_position_ = glm::vec3( 0, -3, 0 );
 }
 
-void ModelViewerSample::OnUnload() {
-}
-
-void ModelViewerSample::OnUpdate( const StepTimer& timer ) {
-	const auto delta = static_cast<float>( timer.GetElapsedSeconds() );
+void ModelViewerSample::OnUpdate( ) {
+	const auto delta = static_cast<float>( step_timer_.GetElapsedSeconds() );
 
 	if ( keyboard_->IsKeyDown( GLFW_KEY_ESCAPE ) ||
 		 ( pad_ && pad_->IsButtonDown( GLFW_GAMEPAD_BUTTON_BACK ) ) ) {
@@ -201,9 +191,9 @@ void ModelViewerSample::OnUpdate( const StepTimer& timer ) {
 }
 
 void ModelViewerSample::OnRender() {
-	renderer_.Clear( true, true, 0.1f, 0.1f, 0.1f );
+	renderer_->Clear( true, true, 0.1f, 0.1f, 0.1f );
 
-	renderer_.SetShader( *shader_ );
+	renderer_->SetShader( *shader_ );
 	SetDefaultLighting( *shader_ );
 
 	{
@@ -213,23 +203,21 @@ void ModelViewerSample::OnRender() {
 		shader_->SetMat3( "uMatNormal", MakeNormalMatrix( model_matrix_ ) );
 
 		shader_->SetVec3( "uViewPos", camera_.position_ );
-		model_.Draw( *shader_, renderer_ );
+		model_.Draw( *shader_, *renderer_ );
 	}
 
 	// Floor
 	{
-		shader_->SetTexture( "uTextures", 0, floor_texture_diffuse_ );
-		shader_->SetTexture( "uTextures", 1, floor_texture_specular_ );
+		shader_->SetTexture( "uTextures", 0, *floor_texture_diffuse_ );
+		shader_->SetTexture( "uTextures", 1, *floor_texture_specular_ );
 
 		auto model = glm::identity<glm::mat4>();
 		model = glm::translate( model, floor_position_ );
 		shader_->SetMat4( "uMatModel", model );
 		shader_->SetMat3( "uMatNormal", MakeNormalMatrix( model ) );
 
-		renderer_.DrawPrimitives( PrimitiveType::kTriangleList, floor_vbo_ );
+		renderer_->DrawPrimitives( PrimitiveType::kTriangleList, *floor_vbo_ );
 	}
-
-	renderer_.Present();
 }
 
 }  // namespace octave::samples

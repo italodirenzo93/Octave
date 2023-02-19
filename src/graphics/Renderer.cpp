@@ -10,7 +10,7 @@ using namespace std;
 
 namespace Octave {
 
-static inline GLenum PrimitiveToGLType( PrimitiveType type ) {
+static GLenum PrimitiveToGLType( PrimitiveType type ) {
 	switch ( type ) {
 		case PrimitiveType::kTriangleList:
 			return GL_TRIANGLES;
