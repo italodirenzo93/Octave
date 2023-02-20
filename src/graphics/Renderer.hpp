@@ -8,8 +8,6 @@
 
 namespace Octave {
 
-enum class PrimitiveType { kTriangleList, kTriangleStrip, kTriangleFan };
-
 class Renderer {
 public:
 	Renderer() noexcept;
@@ -18,10 +16,9 @@ public:
 	void Clear( bool color = true, bool depth = true, float r = 0.0f,
 				float g = 0.0f, float b = 0.0f, float a = 1.0f ) const noexcept;
 
-	void DrawPrimitives( PrimitiveType type,
-						 const VertexBuffer& vbo ) const noexcept;
-	void DrawIndexedPrimitives( PrimitiveType type, const VertexBuffer& vbo,
-								const IndexBuffer& ibo ) const noexcept;
+	void Draw( const VertexBuffer& vbo ) const noexcept;
+	void DrawIndexed( const VertexBuffer& vbo,
+					  const IndexBuffer& ibo ) const noexcept;
 
 	[[nodiscard]] std::string GetDescription() const noexcept;
 

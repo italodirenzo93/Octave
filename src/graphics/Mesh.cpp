@@ -56,8 +56,7 @@ void Mesh::Draw( Shader& shader, const Renderer& renderer ) const {
 	// Set shininess
 	shader.SetFloat( "uShininess", shininess_ );
 
-	renderer.DrawIndexedPrimitives( PrimitiveType::kTriangleList, *vbo_,
-									*ibo_ );
+	renderer.DrawIndexed( *vbo_, *ibo_ );
 }
 
 Mesh& Mesh::SetVertexBuffer(
