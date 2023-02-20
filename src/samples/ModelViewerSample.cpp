@@ -1,6 +1,5 @@
 #include "ModelViewerSample.hpp"
 
-
 #include "Config.hpp"
 #include "helpers/GeometricPrimitive.hpp"
 
@@ -8,58 +7,63 @@ using namespace std;
 
 namespace Octave::Samples {
 
-static void DebugCameraControls( const Keyboard& keyboard, DebugCamera& camera,
-								 float camera_speed, float delta ) {
+void ModelViewerSample::DebugCameraControls( DebugCamera& camera,
+											 float camera_speed,
+											 float delta ) noexcept {
+	const auto& keyboard = GetInput();
+
 	// Strafe Left
-	if ( keyboard.IsKeyDown( GLFW_KEY_A ) ) {
+	if ( keyboard.IsKeyDown( *window_, Key::A ) ) {
 		camera.position_ -=
 			glm::normalize( glm::cross( camera.front_, camera.up_ ) ) *
 			camera_speed * delta;
 	}
 	// Strafe right
-	if ( keyboard.IsKeyDown( GLFW_KEY_D ) ) {
+	if ( keyboard.IsKeyDown( *window_, Key::D ) ) {
 		camera.position_ +=
 			glm::normalize( glm::cross( camera.front_, camera.up_ ) ) *
 			camera_speed * delta;
 	}
 	// Forward
-	if ( keyboard.IsKeyDown( GLFW_KEY_W ) ) {
+	if ( keyboard.IsKeyDown( *window_, Key::W ) ) {
 		camera.position_ += camera_speed * delta * camera.front_;
 	}
 	// Backward
-	if ( keyboard.IsKeyDown( GLFW_KEY_S ) ) {
+	if ( keyboard.IsKeyDown( *window_, Key::S ) ) {
 		camera.position_ -= camera_speed * delta * camera.front_;
 	}
 	// Up
-	if ( keyboard.IsKeyDown( GLFW_KEY_E ) ) {
+	if ( keyboard.IsKeyDown( *window_, Key::E ) ) {
 		camera.position_ += camera_speed * delta * camera.up_;
 	}
 	// Down
-	if ( keyboard.IsKeyDown( GLFW_KEY_Q ) ) {
+	if ( keyboard.IsKeyDown( *window_, Key::Q ) ) {
 		camera.position_ -= camera_speed * delta * camera.up_;
 	}
 
 	// Turn left
 	const float turn_speed = camera_speed * 3.0f;
-	if ( keyboard.IsKeyDown( GLFW_KEY_LEFT ) ) {
+	if ( keyboard.IsKeyDown( *window_, Key::Left ) ) {
 		camera.yaw_ -= turn_speed * delta;
 	}
 	// Turn right
-	if ( keyboard.IsKeyDown( GLFW_KEY_RIGHT ) ) {
+	if ( keyboard.IsKeyDown( *window_, Key::Right ) ) {
 		camera.yaw_ += turn_speed * delta;
 	}
 	// Look up
-	if ( keyboard.IsKeyDown( GLFW_KEY_UP ) ) {
+	if ( keyboard.IsKeyDown( *window_, Key::Up ) ) {
 		camera.pitch_ += turn_speed * delta;
 	}
 	// Look down
-	if ( keyboard.IsKeyDown( GLFW_KEY_DOWN ) ) {
+	if ( keyboard.IsKeyDown( *window_, Key::Down ) ) {
 		camera.pitch_ -= turn_speed * delta;
 	}
 }
 
-static void DebugCameraControls( const Gamepad& gamepad, DebugCamera& camera,
-								 float camera_speed, float delta ) {
+void ModelViewerSample::DebugCameraControls( const Gamepad& gamepad,
+											 DebugCamera& camera,
+											 float camera_speed,
+											 float delta ) noexcept {
 	const auto [left_x, left_y] = gamepad.GetLeftStick();
 
 	// Move
@@ -116,12 +120,10 @@ void ModelViewerSample::Initialize() {
 
 	cout << renderer_->GetDescription() << endl;
 
-	if ( Gamepad::IsPresent( 0 ) ) {
-		pad_ = make_unique<Gamepad>( 0 );
+	pad_ = input_->GetGamepad( 0 );
+	if ( pad_ != nullptr ) {
 		cout << "Gamepad: " << pad_->GetName() << endl;
 	}
-
-	keyboard_ = make_unique<Keyboard>( *window_ );
 
 	if ( Config::Instance().GetPreloadShaders() ) {
 		shaders_.PreloadShaders();
@@ -172,15 +174,15 @@ void ModelViewerSample::Initialize() {
 	floor_position_ = glm::vec3( 0, -3, 0 );
 }
 
-void ModelViewerSample::OnUpdate( ) {
+void ModelViewerSample::OnUpdate() {
 	const auto delta = static_cast<float>( step_timer_.GetElapsedSeconds() );
 
-	if ( keyboard_->IsKeyDown( GLFW_KEY_ESCAPE ) ||
-		 ( pad_ && pad_->IsButtonDown( GLFW_GAMEPAD_BUTTON_BACK ) ) ) {
+	if ( input_->IsKeyDown( *window_, Key::Escape ) ||
+		 ( pad_ && pad_->IsButtonDown( GamepadButton::Select ) ) ) {
 		Exit();
 	}
 
-	DebugCameraControls( *keyboard_, camera_, 25.0f, delta );
+	DebugCameraControls( camera_, 25.0f, delta );
 
 	if ( pad_ ) {
 		DebugCameraControls( *pad_, camera_, 25.0f, delta );
@@ -220,4 +222,4 @@ void ModelViewerSample::OnRender() {
 	}
 }
 
-}  // namespace octave::samples
+}  // namespace Octave::Samples

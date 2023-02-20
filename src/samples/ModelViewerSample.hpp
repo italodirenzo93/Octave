@@ -4,7 +4,6 @@
 #include "Sample.hpp"
 #include "graphics/Model.hpp"
 #include "input/Gamepad.hpp"
-#include "input/Keyboard.hpp"
 #include "resources/ShaderManager.hpp"
 
 namespace Octave::Samples {
@@ -16,10 +15,14 @@ public:
 	void OnRender() override;
 
 private:
+	void DebugCameraControls( DebugCamera& camera, float camera_speed,
+							  float delta ) noexcept;
+	void DebugCameraControls( const Gamepad& gamepad, DebugCamera& camera,
+							  float camera_speed, float delta ) noexcept;
+
 	std::string file_name_;
 
 	std::shared_ptr<Shader> shader_;
-	std::unique_ptr<Keyboard> keyboard_;
 	std::unique_ptr<Gamepad> pad_;
 
 	ShaderManager shaders_;
@@ -32,6 +35,6 @@ private:
 	glm::vec3 floor_position_;
 };
 
-}  // namespace octave::samples
+}  // namespace Octave::Samples
 
 #endif  // OCTAVE_MODELVIEWERSAMPLE_HPP

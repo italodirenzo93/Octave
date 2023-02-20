@@ -5,30 +5,34 @@
 
 namespace Octave {
 
+enum class GamepadButton {
+	A,
+	B,
+	X,
+	Y,
+	LB,
+	RB,
+	Up,
+	Down,
+	Left,
+	Right,
+	Start,
+	Select,
+	LeftStick,
+	RightStick
+};
+
 class Gamepad {
 public:
-	explicit Gamepad( int player_index = 0 ) noexcept;
-	Gamepad( Gamepad&& other ) noexcept = default;
-	~Gamepad() noexcept = default;
+	virtual ~Gamepad() noexcept = default;
 
-	[[nodiscard]] std::string GetName() const noexcept;
-	[[nodiscard]] std::string GetGUID() const noexcept;
-
-	[[nodiscard]] std::pair<float, float> GetLeftStick() const noexcept;
-	[[nodiscard]] std::pair<float, float> GetRightStick() const noexcept;
-	[[nodiscard]] bool IsButtonDown( int button ) const noexcept;
-
-	[[nodiscard]] static bool IsPresent( int player_index ) noexcept;
-
-private:
-	int player_index_;
-
-public:
-	Gamepad& operator=( Gamepad&& other ) noexcept = default;
-
-public:
-	Gamepad( const Gamepad& ) = delete;
-	Gamepad& operator=( const Gamepad& ) = delete;
+	[[nodiscard]] virtual std::string GetName() const noexcept = 0;
+	[[nodiscard]] virtual std::pair<float, float> GetLeftStick()
+		const noexcept = 0;
+	[[nodiscard]] virtual std::pair<float, float> GetRightStick()
+		const noexcept = 0;
+	[[nodiscard]] virtual bool IsButtonDown(
+		GamepadButton button ) const noexcept = 0;
 };
 
 }  // namespace Octave
