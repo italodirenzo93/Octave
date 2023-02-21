@@ -18,8 +18,8 @@ protected:
 	virtual void OnUpdate() = 0;
 	virtual void OnRender() = 0;
 
-	StepTimer step_timer_;
 	DebugCamera camera_;
+	std::unique_ptr<StepTimer> step_timer_;
 	std::unique_ptr<Window> window_;
 	std::unique_ptr<Renderer> renderer_;
 };

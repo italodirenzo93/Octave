@@ -175,7 +175,7 @@ void ModelViewerSample::Initialize() {
 }
 
 void ModelViewerSample::OnUpdate() {
-	const auto delta = static_cast<float>( step_timer_.GetElapsedSeconds() );
+	const auto delta = static_cast<float>( step_timer_->GetElapsedSeconds() );
 
 	if ( input_->IsKeyDown( *window_, Key::Escape ) ||
 		 ( pad_ && pad_->IsButtonDown( GamepadButton::Select ) ) ) {

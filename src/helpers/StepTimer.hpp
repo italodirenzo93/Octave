@@ -1,16 +1,16 @@
 #ifndef OCTAVE_STEPTIMER_HPP
 #define OCTAVE_STEPTIMER_HPP
 
-#include <GLFW/glfw3.h>
-#include <functional>
+#include "platform/Platform.hpp"
 
 namespace Octave {
 
 // Helper class for animation and simulation timing.
 class StepTimer {
 public:
-	StepTimer() noexcept( false )
-		: m_elapsedTicks( 0 ),
+	StepTimer( const Platform& platform ) noexcept( false )
+		: platform_(platform),
+		  m_elapsedTicks( 0 ),
 		  m_totalTicks( 0 ),
 		  m_leftOverTicks( 0 ),
 		  m_frameCount( 0 ),
@@ -19,8 +19,8 @@ public:
 		  m_qpcSecondCounter( 0 ),
 		  m_isFixedTimeStep( false ),
 		  m_targetElapsedTicks( TicksPerSecond / 60 ) {
-		m_qpcFrequency = glfwGetTimerFrequency();
-		m_qpcLastTime = glfwGetTimerValue();
+		m_qpcFrequency = platform_.GetPerformanceFrequency();
+		m_qpcLastTime = platform_.GetPerformanceCounter();
 
 		// Initialize max delta to 1/10 of a second.
 		m_qpcMaxDelta = static_cast<uint64_t>( m_qpcFrequency / 10 );
@@ -86,6 +86,8 @@ public:
 	void Tick( const std::function<void()>& update );
 
 private:
+	const Platform& platform_;
+
 	// Source timing data uses QPC units.
 	uint64_t m_qpcFrequency;
 	uint64_t m_qpcLastTime;
