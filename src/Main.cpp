@@ -4,9 +4,10 @@
 using namespace std;
 using namespace Octave;
 
-int main() {
+int main( int argc, char* argv[] ) {
 	try {
-		unique_ptr<Application> app( new Samples::ModelViewerSample() );
+		string file_name = argc > 1 ? argv[1] : "";
+		unique_ptr<Application> app( new Samples::ModelViewerSample( file_name ) );
 		app->Run();
 	} catch ( const std::exception& e ) {
 		cerr << "Critical Error: " << e.what() << " ...exiting" << endl;

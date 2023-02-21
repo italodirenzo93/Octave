@@ -10,6 +10,9 @@ namespace Octave::Samples {
 
 class ModelViewerSample : public Sample {
 public:
+	explicit ModelViewerSample( std::string file_name ) noexcept
+		: file_name_( std::move( file_name ) ) {}
+
 	void Initialize() override;
 	void OnUpdate() override;
 	void OnRender() override;
