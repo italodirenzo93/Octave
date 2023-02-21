@@ -20,6 +20,7 @@ Application::~Application() noexcept {
 void Application::Run() {
 	Initialize();
 	while ( is_running_ ) {
+		platform_->PollEvents();
 		Update();
 	}
 }

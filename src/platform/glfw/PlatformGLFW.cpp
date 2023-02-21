@@ -49,6 +49,10 @@ PlatformName PlatformGLFW::GetName() const {
 	}
 }
 
+void PlatformGLFW::PollEvents() noexcept {
+	glfwPollEvents();
+}
+
 std::unique_ptr<Window> PlatformGLFW::CreateWindow(
 	const WindowOptions& options ) {
 	return std::make_unique<WindowGLFW>( options );

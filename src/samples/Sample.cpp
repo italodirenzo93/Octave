@@ -26,8 +26,7 @@ void Sample::Update() {
 	OnRender();
 
 	window_->SwapBuffers();
-	window_->PollEvents();
 }
 
 
-}  // namespace octave::Samples
+}  // namespace Octave::Samples

@@ -27,9 +27,12 @@ public:
 	virtual uint64_t GetPerformanceCounter() = 0;
 	virtual uint64_t GetPerformanceFrequency() = 0;
 
-    virtual std::unique_ptr<Window> CreateWindow( const WindowOptions& options ) = 0;
+	virtual void PollEvents() noexcept = 0;
+
+	virtual std::unique_ptr<Window> CreateWindow(
+		const WindowOptions& options ) = 0;
 };
 
-}  // namespace octave::platform
+}  // namespace Octave
 
 #endif  // OCTAVE_PLATFORM_HPP
