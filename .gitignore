@@ -5,3 +5,8 @@ imgui.ini
 build
 out
 cmake-build-*
+
+# Meson
+subprojects/packagecache
+subprojects/glfw-3.3.8
+subprojects/glm-0.9.9.8

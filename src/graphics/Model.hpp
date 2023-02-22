@@ -1,7 +1,7 @@
 #ifndef OCTAVE_MODEL_HPP
 #define OCTAVE_MODEL_HPP
 
-#include <assimp/scene.h>
+// #include <assimp/scene.h>
 
 #include "Mesh.hpp"
 #include "pch.hpp"
