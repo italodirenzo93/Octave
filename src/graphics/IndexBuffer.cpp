@@ -1,3 +1,4 @@
+#include "pch/pch.hpp"
 #include "IndexBuffer.hpp"
 
 #include <glad/glad.h>

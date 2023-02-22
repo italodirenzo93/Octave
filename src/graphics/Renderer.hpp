@@ -25,7 +25,11 @@ public:
 	void SetShader( const Shader& shader ) noexcept;
 	void SetViewport( int x, int y, int width, int height ) noexcept;
 
-	NON_COPYABLE_OR_MOVABLE_CLASS( Renderer )
+public:
+	Renderer( const Renderer& ) = delete;
+	Renderer( Renderer&& ) = delete;
+	Renderer& operator=( const Renderer& ) = delete;
+	Renderer& operator=( Renderer&& ) = delete;
 };
 }  // namespace Octave
 

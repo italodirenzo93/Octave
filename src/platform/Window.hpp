@@ -1,7 +1,9 @@
-#ifndef OCTAVE_WINDOW_H
-#define OCTAVE_WINDOW_H
+#ifndef OCTAVE_WINDOW_HPP
+#define OCTAVE_WINDOW_HPP
 
-#include "pch.hpp"
+#include <functional>
+#include <string>
+#include <vector>
 
 namespace Octave {
 
@@ -51,6 +53,6 @@ protected:
 	std::vector<OnCloseCallback> cb_close_;
 };
 
-}  // namespace octave::platform
+}  // namespace Octave
 
-#endif  // OCTAVE_WINDOW_H
+#endif  // OCTAVE_WINDOW_HPP

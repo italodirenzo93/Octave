@@ -1,7 +1,7 @@
 #ifndef OCTAVE_INDEXBUFFER_HPP
 #define OCTAVE_INDEXBUFFER_HPP
 
-#include "pch.hpp"
+#include <vector>
 
 namespace Octave {
 

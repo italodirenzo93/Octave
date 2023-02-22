@@ -2,7 +2,6 @@
 #define OCTAVE_APPLICATION_HPP
 
 // clang-format off
-#include "pch.hpp"
 #include "input/InputSystem.hpp"
 #include "platform/Platform.hpp"
 // clang-format on
@@ -42,7 +41,10 @@ private:
 	bool is_running_;
 
 public:
-	NON_COPYABLE_OR_MOVABLE_CLASS( Application )
+	Application( const Application& ) = delete;
+	Application( Application&& ) = delete;
+	Application& operator=( const Application& ) = delete;
+	Application& operator=( Application&& ) = delete;
 };
 
 // To be implemented by the client application

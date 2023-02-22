@@ -1,3 +1,4 @@
+#include "pch/pch.hpp"
 #include "Shader.hpp"
 
 #include <glad/glad.h>

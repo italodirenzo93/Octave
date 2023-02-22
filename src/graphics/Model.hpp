@@ -4,7 +4,6 @@
 // #include <assimp/scene.h>
 
 #include "Mesh.hpp"
-#include "pch.hpp"
 
 namespace Octave {
 
@@ -48,8 +47,9 @@ private:
 public:
 	Model& operator=( Model&& other ) noexcept;
 
-private:
-	NON_COPYABLE_CLASS( Model )
+public:
+	Model( const Model& ) = delete;
+	Model& operator=( const Model& ) = delete;
 };
 
 }  // namespace Octave

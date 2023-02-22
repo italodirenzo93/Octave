@@ -1,8 +1,10 @@
 #ifndef OCTAVE_CAMERA_HPP
 #define OCTAVE_CAMERA_HPP
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "graphics/Shader.hpp"
-#include "pch.hpp"
 
 namespace Octave {
 
@@ -54,7 +56,11 @@ private:
 	void UpdateProjectionMatrix() noexcept;
 	void UpdateViewMatrix() noexcept;
 
-	NON_COPYABLE_OR_MOVABLE_CLASS( Camera )
+public:
+	Camera( const Camera& ) = delete;
+	Camera( Camera&& ) = delete;
+	Camera& operator=( const Camera& ) = delete;
+	Camera& operator=( Camera&& ) = delete;
 };
 
 

@@ -1,6 +1,9 @@
 #ifndef OCTAVE_GEOMETRICPRIMITIVE_HPP
 #define OCTAVE_GEOMETRICPRIMITIVE_HPP
 
+#include <glm/glm.hpp>
+#include <glm/gtx/common.hpp>
+
 #include "graphics/IndexBuffer.hpp"
 #include "graphics/VertexBuffer.hpp"
 

@@ -1,9 +1,13 @@
 #ifndef OCTAVE_SHADER_HPP
 #define OCTAVE_SHADER_HPP
 
+#include <filesystem>
+#include <unordered_map>
+
+#include <glm/glm.hpp>
+
 #include "Exception.hpp"
 #include "Texture.hpp"
-#include "pch.hpp"
 
 namespace Octave {
 class Shader {
@@ -52,8 +56,11 @@ private:
 
 	int GetUniform( const std::string& name ) noexcept;
 
-	NON_COPYABLE_CLASS( Shader )
+public:
+	Shader( const Shader& ) = delete;
+	Shader& operator=( const Shader& ) = delete;
 };
+
 }  // namespace Octave
 
 #endif

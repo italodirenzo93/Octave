@@ -1,3 +1,4 @@
+#include "pch/pch.hpp"
 #include "ShaderManager.hpp"
 
 #include <regex>
