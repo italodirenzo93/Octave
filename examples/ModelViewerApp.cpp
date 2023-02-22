@@ -1,4 +1,5 @@
 #include "common/Sample.hpp"
+#include <EntryPoint.hpp>
 
 using namespace std;
 using namespace Octave;
@@ -248,14 +249,7 @@ void ModelViewerSample::OnRender() {
 	}
 }
 
-int main(int argc, char* argv[]) {
-	try {
-		string file_name = argc > 1 ? argv[1] : "";
-		auto app = make_unique<ModelViewerSample>(file_name);
-		app->Run();
-	} catch (const exception& e) {
-		cout << "Exception: " << e.what() << endl;
-		return 1;
-	}
-	return 0;
+unique_ptr<Octave::Application> Octave::CreateApplication( int argc, char* argv[] ) {
+	string filename = argc > 1 ? argv[1] : "";
+	return make_unique<ModelViewerSample>( filename );
 }
