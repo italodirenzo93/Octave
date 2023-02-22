@@ -30,14 +30,6 @@ source += [
 	'graphics/VertexBuffer.hpp'
 ]
 
-# Audio
-# source += [
-# 	'audio/Buffer.cpp',
-# 	'audio/Listener.cpp',
-# 	'audio/Source.cpp',
-# 	'audio/stb_vorbis.cpp',
-# ]
-
 # Helpers
 source += [
 	'helpers/GeometricPrimitive.cpp',
@@ -84,7 +76,7 @@ stb_image_dep = subproject('stb_image').get_variable('stb_image_dep')
 glfw3_dep = dependency('glfw3')
 glm_dep = dependency('glm')
 
-octave = library(
+octave = static_library(
 	'octave',
 	source,
 	include_directories: include_directories(''),

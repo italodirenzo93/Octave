@@ -1,10 +1,7 @@
+#include "pch/pch.hpp"
 #include "Config.hpp"
 
-#include <SimpleIni.h>
-
 #include <regex>
-
-#include "pch/pch.hpp"
 
 using namespace std;
 namespace fs = std::filesystem;

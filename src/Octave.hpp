@@ -28,4 +28,8 @@
 #include "helpers/GeometricPrimitive.hpp"
 #include "helpers/StepTimer.hpp"
 
+#if defined( _WIN32 ) && defined( CreateWindow )
+#undef CreateWindow
+#endif
+
 #endif  // OCTAVE_OCTAVE_HPP

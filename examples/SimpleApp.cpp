@@ -1,6 +1,7 @@
+// clang-format off
 #include <Octave.hpp>
 #include <EntryPoint.hpp>
-
+// clang-format on
 #include <iostream>
 #include <memory>
 
@@ -25,6 +26,7 @@ private:
 	unique_ptr<Octave::Renderer> m_renderer;
 };
 
-unique_ptr<Octave::Application> Octave::CreateApplication( int argc, char* argv[] ) {
+unique_ptr<Octave::Application> Octave::CreateApplication( int argc,
+														   char* argv[] ) {
 	return make_unique<SimpleApp>();
 }
