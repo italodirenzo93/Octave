@@ -1,0 +1,7 @@
+BasedOnStyle: Google
+Language: Cpp
+DerivePointerAlignment: false
+MaxEmptyLinesToKeep: 1
+IndentWidth: 4
+TabWidth: 4
+SpacesInParentheses: true
