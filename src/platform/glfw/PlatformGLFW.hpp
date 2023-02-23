@@ -11,9 +11,9 @@ public:
 	~PlatformGLFW() noexcept override;
 
 	[[nodiscard]] PlatformName GetName() const override;
-	double GetElapsedTime() override;
-	uint64_t GetPerformanceCounter() override;
-	uint64_t GetPerformanceFrequency() override;
+	[[nodiscard]] double GetElapsedTime() const override;
+	[[nodiscard]] uint64_t GetPerformanceCounter() const override;
+	[[nodiscard]] uint64_t GetPerformanceFrequency() const override;
 
 	void PollEvents() noexcept override;
 

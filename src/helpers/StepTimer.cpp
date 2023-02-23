@@ -3,7 +3,7 @@
 namespace Octave {
 
 void StepTimer::ResetElapsedTime() noexcept {
-	m_qpcLastTime = glfwGetTimerValue();
+	m_qpcLastTime = platform_.GetPerformanceCounter();
 
 	m_leftOverTicks = 0;
 	m_framesPerSecond = 0;
@@ -13,7 +13,7 @@ void StepTimer::ResetElapsedTime() noexcept {
 
 void StepTimer::Tick( const std::function<void()>& update ) {
 	// Query the current time.
-	const auto currentTime = glfwGetTimerValue();
+	const auto currentTime = platform_.GetPerformanceCounter();
 
 	auto timeDelta = static_cast<uint64_t>( currentTime - m_qpcLastTime );
 

@@ -17,15 +17,15 @@ PlatformGLFW::~PlatformGLFW() noexcept {
 	glfwTerminate();
 }
 
-double PlatformGLFW::GetElapsedTime() {
+double PlatformGLFW::GetElapsedTime() const {
 	return glfwGetTime();
 }
 
-uint64_t PlatformGLFW::GetPerformanceCounter() {
+uint64_t PlatformGLFW::GetPerformanceCounter() const {
 	return glfwGetTimerValue();
 }
 
-uint64_t PlatformGLFW::GetPerformanceFrequency() {
+uint64_t PlatformGLFW::GetPerformanceFrequency() const {
 	return glfwGetTimerFrequency();
 }
 

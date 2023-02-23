@@ -23,9 +23,9 @@ public:
 
 	[[nodiscard]] virtual PlatformName GetName() const = 0;
 
-	virtual double GetElapsedTime() = 0;
-	virtual uint64_t GetPerformanceCounter() = 0;
-	virtual uint64_t GetPerformanceFrequency() = 0;
+	[[nodiscard]] virtual double GetElapsedTime() const = 0;
+	[[nodiscard]] virtual uint64_t GetPerformanceCounter() const = 0;
+	[[nodiscard]] virtual uint64_t GetPerformanceFrequency() const = 0;
 
 	virtual void PollEvents() noexcept = 0;
 

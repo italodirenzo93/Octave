@@ -5,6 +5,8 @@ using namespace std;
 namespace Octave::Samples {
 
 void Sample::Initialize() {
+	step_timer_ = make_unique<StepTimer>( *platform_ );
+
 	window_ = platform_->CreateWindow( WindowOptions() );
 	window_->AddCloseCallback( [this]() { Exit(); } );
 
@@ -22,7 +24,7 @@ void Sample::Initialize() {
 }
 
 void Sample::Update() {
-	step_timer_.Tick( [this] { OnUpdate(); } );
+	step_timer_->Tick( [this] { OnUpdate(); } );
 	OnRender();
 
 	window_->SwapBuffers();
