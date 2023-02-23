@@ -107,7 +107,7 @@ bool Config::IsBorderless() const noexcept {
 
 int Config::GetSyncInterval() const noexcept {
 	const long sync =
-		ini_.GetLongValue( "Video", "bSyncInterval", kDefaultSyncInterval );
+		ini_.GetLongValue( "Video", "iSyncInterval", kDefaultSyncInterval );
 	return static_cast<int>( sync );
 }
 
@@ -115,7 +115,7 @@ std::vector<std::string> Config::GetShaderList() const noexcept {
 	vector<string> shader_list;
 
 	const string val =
-		ini_.GetValue( "Renderer", "bShaderList", kDefaultShaderList );
+		ini_.GetValue( "Renderer", "sShaderList", kDefaultShaderList );
 
 	const regex expr( "," );
 	sregex_token_iterator iter( val.begin(), val.end(), expr, -1 );
@@ -129,7 +129,7 @@ std::vector<std::string> Config::GetShaderList() const noexcept {
 }
 
 std::filesystem::path Config::GetShaderDirectory() const noexcept {
-	return ini_.GetValue( "Renderer", "bShaderDirectory",
+	return ini_.GetValue( "Renderer", "sShaderDirectory",
 						  kDefaultShaderDirectory );
 }
 
@@ -140,7 +140,7 @@ bool Config::GetPreloadShaders() const noexcept {
 
 float Config::GetFieldOfView() const noexcept {
 	const auto fov =
-		ini_.GetDoubleValue( "Renderer", "bFieldOfView", kDefaultFieldOfView );
+		ini_.GetDoubleValue( "Renderer", "fFieldOfView", kDefaultFieldOfView );
 	return static_cast<float>( fov );
 }
 
