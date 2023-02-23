@@ -135,10 +135,6 @@ void Window::Close() const noexcept {
 
 void Window::WindowSizeCallback( GLFWwindow* window, int width,
 								 int height ) noexcept {
-	// TODO: this function call should live elsewhere as its not the Window
-	// class' job
-	glViewport( 0, 0, width, height );
-
 	const auto c_window =
 		static_cast<Window*>( glfwGetWindowUserPointer( window ) );
 	if ( c_window ) {
