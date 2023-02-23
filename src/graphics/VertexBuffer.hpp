@@ -5,7 +5,6 @@
 #include "VertexArrayLayout.hpp"
 
 namespace graphics {
-
 class VertexBuffer {
     friend class Mesh;
 
@@ -18,9 +17,14 @@ public:
     uint32_t GetVertexCount() const { return vertex_count_; }
 
     template <typename Vertex>
-    void SetData( const VertexArrayLayout& layout, std::initializer_list<Vertex> vertices );
+    std::vector<Vertex> GetData() const;
+
     template <typename Vertex>
-    void SetData( const VertexArrayLayout& layout, const std::vector<Vertex>& vertices );
+    void SetData( const VertexArrayLayout& layout,
+                  std::initializer_list<Vertex> vertices );
+    template <typename Vertex>
+    void SetData( const VertexArrayLayout& layout,
+                  const std::vector<Vertex>& vertices );
 
 private:
     uint32_t id_ = 0;
@@ -31,8 +35,24 @@ public:
     VertexBuffer& operator=( VertexBuffer&& other ) noexcept;
 
 private:
-    static void SetVertexAttributes( const VertexArrayLayout& layout, size_t stride );
+    static void SetVertexAttributes( const VertexArrayLayout& layout,
+                                     size_t stride );
 };
+
+template <typename Vertex>
+std::vector<Vertex> VertexBuffer::GetData() const {
+    std::vector<Vertex> data( vertex_count_ );
+
+    glBindBuffer( GL_ARRAY_BUFFER, id_ );
+
+    glGetBufferSubData( GL_ARRAY_BUFFER, 0,
+                        static_cast<int>( vertex_count_ * sizeof( Vertex ) ),
+                        data.data() );
+
+    glBindBuffer( GL_ARRAY_BUFFER, 0 );
+
+    return data;
+}
 
 template <typename Vertex>
 void VertexBuffer::SetData( const VertexArrayLayout& layout,
@@ -41,15 +61,15 @@ void VertexBuffer::SetData( const VertexArrayLayout& layout,
 
     // Set buffer data
     glBufferData(
-        GL_ARRAY_BUFFER, static_cast<int>( vertices.size() * sizeof( Vertex ) ),
-        reinterpret_cast<const void*>( vertices.begin() ), GL_STATIC_DRAW );
+        GL_ARRAY_BUFFER, static_cast<int>(vertices.size() * sizeof( Vertex )),
+        reinterpret_cast<const void*>(vertices.begin()), GL_STATIC_DRAW );
 
     // Set up layout
     SetVertexAttributes( layout, sizeof( Vertex ) );
 
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
 
-	vertex_count_ = static_cast<uint32_t>( vertices.size() );
+    vertex_count_ = static_cast<uint32_t>(vertices.size());
 }
 
 template <typename Vertex>
@@ -59,17 +79,16 @@ void VertexBuffer::SetData( const VertexArrayLayout& layout,
 
     // Set buffer data
     glBufferData(
-        GL_ARRAY_BUFFER, static_cast<int>( vertices.size() * sizeof( Vertex ) ),
-        reinterpret_cast<const void*>( vertices.data() ), GL_STATIC_DRAW );
+        GL_ARRAY_BUFFER, static_cast<int>(vertices.size() * sizeof( Vertex )),
+        reinterpret_cast<const void*>(vertices.data()), GL_STATIC_DRAW );
 
     // Set up layout
     SetVertexAttributes( layout, sizeof( Vertex ) );
 
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
 
-	vertex_count_ = static_cast<uint32_t>( vertices.size() );
+    vertex_count_ = static_cast<uint32_t>(vertices.size());
 }
-
-}  // namespace graphics
+} // namespace graphics
 
 #endif

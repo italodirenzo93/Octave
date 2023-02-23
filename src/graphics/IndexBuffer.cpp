@@ -1,5 +1,7 @@
 #include "IndexBuffer.hpp"
 
+using namespace std;
+
 namespace graphics {
 IndexBuffer::IndexBuffer() {
     glGenBuffers( 1, &id_ );
@@ -30,6 +32,20 @@ IndexBuffer::IndexBuffer( IndexBuffer&& other ) noexcept {
 
 IndexBuffer::~IndexBuffer() {
     glDeleteBuffers( 1, &id_ );
+}
+
+std::vector<uint32_t> IndexBuffer::GetData() const {
+    vector<uint32_t> data( element_count_ );
+
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, id_ );
+
+	glGetBufferSubData( GL_ELEMENT_ARRAY_BUFFER, 0,
+                        static_cast<int>( element_count_ * sizeof( uint32_t ) ),
+                        data.data() );
+
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
+
+	return data;
 }
 
 void IndexBuffer::SetData(

@@ -9,8 +9,10 @@ struct VertexPositionColor {
     glm::vec3 color;
 
     VertexPositionColor() = default;
+
     VertexPositionColor( const glm::vec3& pos, const glm::vec3& col )
-        : position( pos ), color( col ) {}
+        : position( pos ), color( col ) {
+    }
 };
 
 int main() {
@@ -18,22 +20,21 @@ int main() {
     graphics::Renderer renderer;
     cout << renderer.GetDescription() << endl;
 
-    graphics::VertexArrayLayout vao;
-    vao.AddBindings( { { graphics::POSITION, 3, GL_FLOAT, false },
-                       { graphics::COLOR, 3, GL_FLOAT, false } } );
+    graphics::VertexArrayLayout vao{{graphics::POSITION, 3, GL_FLOAT, false},
+                                    {graphics::COLOR, 3, GL_FLOAT, false}};
 
     graphics::VertexBuffer vbo;
     vbo.SetData( vao, {
-                          VertexPositionColor( glm::vec3( 0.0f, 1.0f, 0.0f ),
-                                               glm::vec3( 1.0f, 0.0f, 0.0f ) ),
-                          VertexPositionColor( glm::vec3( -1.0f, -1.0f, 0.0f ),
-                                               glm::vec3( 0.0f, 1.0f, 0.0f ) ),
-                          VertexPositionColor( glm::vec3( 1.0f, -1.0f, 0.0f ),
-                                               glm::vec3( 0.0f, 0.0f, 1.0f ) ),
-                      } );
+                     VertexPositionColor( glm::vec3( 0.0f, 1.0f, 0.0f ),
+                                          glm::vec3( 1.0f, 0.0f, 0.0f ) ),
+                     VertexPositionColor( glm::vec3( -1.0f, -1.0f, 0.0f ),
+                                          glm::vec3( 0.0f, 1.0f, 0.0f ) ),
+                     VertexPositionColor( glm::vec3( 1.0f, -1.0f, 0.0f ),
+                                          glm::vec3( 0.0f, 0.0f, 1.0f ) ),
+                 } );
 
     // Main loop
-    while ( renderer.IsWindowOpen() ) {
+    while (renderer.IsWindowOpen()) {
         renderer.Clear( true, 0.1f, 0.1f, 0.1f );
 
         // TODO: Draw scene here

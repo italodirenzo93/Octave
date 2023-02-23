@@ -63,7 +63,7 @@ VertexBuffer& VertexBuffer::operator=( const VertexBuffer& other ) {
     glBindBuffer( GL_COPY_READ_BUFFER, other.id_ );
     glBindBuffer( GL_COPY_WRITE_BUFFER, id_ );
 
-    glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, other.vertex_count_);
+    glCopyBufferSubData( GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, other.vertex_count_ );
 
     glBindBuffer( GL_COPY_READ_BUFFER, 0 );
     glBindBuffer( GL_COPY_WRITE_BUFFER, 0 );
