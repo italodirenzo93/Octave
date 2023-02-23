@@ -5,7 +5,6 @@
 #include "Config.hpp"
 #include "GeometricPrimitive.hpp"
 #include "graphics/ShaderManager.hpp"
-#include "input/Gamepad.hpp"
 
 using namespace std;
 
@@ -89,8 +88,8 @@ void ModelViewerSample::OnLoad() {
 	cout << renderer_.GetDescription() << endl;
 
 	if ( Gamepad::IsPresent( 0 ) ) {
-		Gamepad pad( 0 );
-		cout << "Gamepad: " << pad.GetName() << endl;
+		pad_ = make_unique<Gamepad>( 0 );
+		cout << "Gamepad: " << pad_->GetName() << endl;
 	}
 
 	window_->AddSizeChangedCallback( [this]( int w, int h ) {
@@ -134,7 +133,8 @@ void ModelViewerSample::OnUnload() {
 void ModelViewerSample::OnUpdate( const StepTimer& timer ) {
 	const auto delta = static_cast<float>( timer.GetElapsedSeconds() );
 
-	if ( keyboard_->IsKeyDown( GLFW_KEY_ESCAPE ) ) {
+	if ( keyboard_->IsKeyDown( GLFW_KEY_ESCAPE ) ||
+		 ( pad_ && pad_->IsButtonDown( GLFW_GAMEPAD_BUTTON_BACK ) ) ) {
 		Exit();
 	}
 
