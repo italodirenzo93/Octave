@@ -118,53 +118,54 @@ inline void SetDefaultLighting( Shader& shader ) {
 	shader.SetFloat( "uPointLights[0].quadratic", 0.032f );
 }
 
-void DebugCameraControls( const Keyboard& keyboard, Camera& camera,
+void DebugCameraControls( const Keyboard& keyboard, DebugCamera& camera,
 						  float camera_speed, float delta ) {
-	auto translation = glm::vec3( 0.0f );
 	// Strafe Left
 	if ( keyboard.IsKeyDown( GLFW_KEY_A ) ) {
-		translation.x = -camera_speed * delta;
+		camera.position_ -=
+			glm::normalize( glm::cross( camera.front_, camera.up_ ) ) *
+			camera_speed * delta;
 	}
 	// Strafe right
 	if ( keyboard.IsKeyDown( GLFW_KEY_D ) ) {
-		translation.x = camera_speed * delta;
+		camera.position_ +=
+			glm::normalize( glm::cross( camera.front_, camera.up_ ) ) *
+			camera_speed * delta;
 	}
 	// Forward
 	if ( keyboard.IsKeyDown( GLFW_KEY_W ) ) {
-		translation.z = camera_speed * delta;
+		camera.position_ += camera_speed * delta * camera.front_;
 	}
 	// Backward
 	if ( keyboard.IsKeyDown( GLFW_KEY_S ) ) {
-		translation.z = -camera_speed * delta;
+		camera.position_ -= camera_speed * delta * camera.front_;
 	}
 	// Up
 	if ( keyboard.IsKeyDown( GLFW_KEY_E ) ) {
-		translation.y = camera_speed * delta;
+		camera.position_ += camera_speed * delta * camera.up_;
 	}
 	// Down
 	if ( keyboard.IsKeyDown( GLFW_KEY_Q ) ) {
-		translation.y = -camera_speed * delta;
+		camera.position_ -= camera_speed * delta * camera.up_;
 	}
 
-	auto euler_angles = glm::zero<glm::vec3>();
 	// Turn left
+	const float turn_speed = camera_speed * 3.0f;
 	if ( keyboard.IsKeyDown( GLFW_KEY_LEFT ) ) {
-		euler_angles.y = -camera_speed * delta;
+		camera.yaw_ -= turn_speed * delta;
 	}
 	// Turn right
 	if ( keyboard.IsKeyDown( GLFW_KEY_RIGHT ) ) {
-		euler_angles.y = camera_speed * delta;
+		camera.yaw_ += turn_speed * delta;
 	}
 	// Look up
 	if ( keyboard.IsKeyDown( GLFW_KEY_UP ) ) {
-		euler_angles.x = camera_speed * delta;
+		camera.pitch_ += turn_speed * delta;
 	}
 	// Look down
 	if ( keyboard.IsKeyDown( GLFW_KEY_DOWN ) ) {
-		euler_angles.x = -camera_speed * delta;
+		camera.pitch_ -= turn_speed * delta;
 	}
-	camera.Translate( translation );
-	camera.Rotate( euler_angles );
 }
 
 int main( int argc, char* argv[] ) {
@@ -194,11 +195,11 @@ int main( int argc, char* argv[] ) {
 			model.AddMesh( LoadCube() );
 		}
 
-		Camera camera;
-		camera.SetPosition( 0.0f, 0.0f, 10.0f );
-		camera.SetFieldOfView( Config::Instance().GetFieldOfView() );
-		camera.SetAspectRatio( static_cast<float>( width ) /
-							   static_cast<float>( height ) );
+		DebugCamera camera;
+		camera.position_ = glm::vec3( 0, 0, 10 );
+		camera.field_of_view_ = Config::Instance().GetFieldOfView();
+		camera.width_ = static_cast<float>( width );
+		camera.height_ = static_cast<float>( height );
 
 		auto model_matrix = glm::identity<glm::mat4>();
 
@@ -212,9 +213,8 @@ int main( int argc, char* argv[] ) {
 
 		// Update camera aspect when window size is changed
 		window.AddSizeChangedCallback( [&camera]( int w, int h ) {
-			const float aspect =
-				static_cast<float>( w ) / static_cast<float>( h );
-			camera.SetAspectRatio( aspect );
+			camera.width_ = static_cast<float>( w );
+			camera.height_ = static_cast<float>( h );
 		} );
 
 		Keyboard keyboard( window );
@@ -257,7 +257,7 @@ int main( int argc, char* argv[] ) {
 
 			shader->SetMat4( "uMatProjection", camera.GetProjectionMatrix() );
 			shader->SetMat4( "uMatView", camera.GetViewMatrix() );
-			shader->SetVec3( "uViewPos", camera.GetPosition() );
+			shader->SetVec3( "uViewPos", camera.position_ );
 
 			// Clear the viewport
 			renderer.Clear( true, true, 0.1f, 0.1f, 0.1f );

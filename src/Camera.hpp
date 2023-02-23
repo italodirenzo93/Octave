@@ -57,6 +57,44 @@ private:
 	NON_COPYABLE_OR_MOVABLE_CLASS( Camera )
 };
 
+
+class DebugCamera {
+public:
+	// Projection variables
+	float field_of_view_ = 45.0f;
+	float width_ = 0.0f;
+	float height_ = 0.0f;
+	float clip_near_ = 0.1f;
+	float clip_far_ = 100.0f;
+
+	// View variables
+	glm::vec3 position_ = glm::vec3( 0, 0, 3 );
+	glm::vec3 front_ = glm::vec3( 0, 0, -1 );
+	glm::vec3 up_ = glm::vec3( 0, 1, 0 );
+	float yaw_ = -90;
+	float pitch_ = 0.0f;
+
+	[[nodiscard]] glm::mat4 GetProjectionMatrix() const noexcept {
+		return glm::perspectiveFov( glm::radians( field_of_view_ ), width_,
+									height_, clip_near_, clip_far_ );
+	}
+
+	[[nodiscard]] glm::mat4 GetViewMatrix() noexcept {
+		pitch_ = glm::clamp( pitch_, -89.0f, 89.0f );
+
+		glm::vec3 front( 0.0f );
+
+		front.x = cos( glm::radians( yaw_ ) ) * cos( glm::radians( pitch_ ) );
+		front.y = sin( glm::radians( pitch_ ) );
+		front.z = sin( glm::radians( yaw_ ) ) * cos( glm::radians( pitch_ ) );
+
+		front_ = glm::normalize( front );
+
+		return glm::lookAt( position_, position_ + front_, up_ );
+	}
+};
+
+
 }  // namespace octave
 
 #endif
