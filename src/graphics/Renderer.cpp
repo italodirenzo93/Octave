@@ -21,7 +21,7 @@ static inline GLenum PrimitiveToGLType( PrimitiveType type ) {
 	return 0;
 }
 
-Renderer::Renderer( const Window& window ) noexcept : window_( window ) {
+Renderer::Renderer() noexcept {
 	const Config& config = Config::Instance();
 
 	// Always enabled
@@ -50,10 +50,6 @@ void Renderer::Clear( bool color, bool depth, float r, float g, float b,
 	}
 
 	glClear( clear_flags );
-}
-
-void Renderer::Present() const noexcept {
-	glfwSwapBuffers( window_.handle_ );
 }
 
 void Renderer::DrawPrimitives( PrimitiveType type,
