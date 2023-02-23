@@ -19,7 +19,7 @@ void main() {
 
 	VertexColor = aColor;
 
-	VertexNormal = aNormal;
+	VertexNormal = mat3( transpose( inverse( uMatModel) ) ) * aNormal;
 
 	TexCoord = aTexCoord;
 

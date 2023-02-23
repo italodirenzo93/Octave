@@ -226,7 +226,6 @@ int main( int argc, char* argv[] ) {
 			floor.textures.emplace_back( texture );
 		}
 		floor.position = glm::vec3( 0.0f, -3.0f, 0.0f );
-		floor.scale = glm::vec3( 10, 0, 10 );
 
 		// Main loop
 		while ( window.IsOpen() ) {

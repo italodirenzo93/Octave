@@ -81,22 +81,26 @@ void GeometricPrimitive::CreateQuad( graphics::VertexBuffer& vbo ) {
 	// clang-format on
 }
 
+static constexpr float kPlaneExtent = 10.0f;
+
 void GeometricPrimitive::CreatePlane( graphics::VertexBuffer& vbo ) {
 	const VertexBuffer::VertexLayout layout{
 		{ LayoutSemantic::kPosition, 3, GL_FLOAT, false },
 		{ LayoutSemantic::kNormal, 3, GL_FLOAT, false },
 		{ LayoutSemantic::kTexCoord, 2, GL_FLOAT, false } };
 
+	constexpr glm::vec3 normal_vector( 0.0f, 1.0f, 0.0f );
+
 	// clang-format off
 	vbo.SetData(layout, {
 		// pos // tex
-		VertexType::PositionNormalTexture(glm::vec3 (-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 0.0f)), //Back left
-		VertexType::PositionNormalTexture(glm::vec3(1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 0.0f)), // Back right
-		VertexType::PositionNormalTexture(glm::vec3(-1.0f, 0.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f)), // Front left
+		VertexType::PositionNormalTexture(glm::vec3 (-kPlaneExtent, 0.0f, -kPlaneExtent), normal_vector, glm::vec2(0.0f, 0.0f)), //Back left
+		VertexType::PositionNormalTexture(glm::vec3(kPlaneExtent, 0.0f, -kPlaneExtent), normal_vector, glm::vec2(kPlaneExtent, 0.0f)), // Back right
+		VertexType::PositionNormalTexture(glm::vec3(-kPlaneExtent, 0.0f, kPlaneExtent), normal_vector, glm::vec2(0.0f, kPlaneExtent)), // Front left
 
-		VertexType::PositionNormalTexture(glm::vec3(1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f),glm::vec2(1.0f, 0.0f)),
-		VertexType::PositionNormalTexture(glm::vec3(1.0f, 0.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f)),
-		VertexType::PositionNormalTexture(glm::vec3(-1.0f, 0.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f)),
+		VertexType::PositionNormalTexture(glm::vec3(kPlaneExtent, 0.0f, -kPlaneExtent), normal_vector,glm::vec2(kPlaneExtent, 0.0f)),
+		VertexType::PositionNormalTexture(glm::vec3(kPlaneExtent, 0.0f, kPlaneExtent), normal_vector, glm::vec2(kPlaneExtent, kPlaneExtent)),
+		VertexType::PositionNormalTexture(glm::vec3(-kPlaneExtent, 0.0f, kPlaneExtent), normal_vector, glm::vec2(0.0f, kPlaneExtent)),
 	});
 	// clang-format on
 }
