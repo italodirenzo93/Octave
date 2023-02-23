@@ -8,6 +8,19 @@
 namespace graphics {
 using namespace std;
 
+inline GLenum PrimitiveToGLType( PrimitiveType type ) {
+    switch (type) {
+        case PrimitiveType::kTriangleList:
+            return GL_TRIANGLES;
+        case PrimitiveType::kTriangleStrip:
+            return GL_TRIANGLE_STRIP;
+        case PrimitiveType::kTriangleFan:
+            return GL_TRIANGLE_FAN;
+    }
+
+    return 0;
+}
+
 #ifdef __DEBUG__
 void APIENTRY DebugOutputCallback( GLenum source, GLenum type, unsigned int id,
                                    GLenum severity, GLsizei length,
@@ -143,20 +156,24 @@ void Renderer::Present() const {
     glfwSwapBuffers( window_.handle_ );
 }
 
-void Renderer::DrawPrimitives( const VertexBuffer& vbo ) const {
+void Renderer::DrawPrimitives( PrimitiveType type,
+                               const VertexBuffer& vbo ) const {
     glBindVertexArray( vbo.vao_ );
 
-    glDrawArrays( GL_TRIANGLES, 0, static_cast<int>(vbo.GetVertexCount()) );
+    glDrawArrays( PrimitiveToGLType( type ), 0,
+                  static_cast<int>(vbo.GetVertexCount()) );
 
     glBindVertexArray( 0 );
 }
 
-void Renderer::DrawIndexedPrimitives( const VertexBuffer& vbo,
+void Renderer::DrawIndexedPrimitives( PrimitiveType type,
+                                      const VertexBuffer& vbo,
                                       const IndexBuffer& ibo ) const {
     glBindVertexArray( vbo.vao_ );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo.id_ );
 
-    glDrawElements( GL_TRIANGLES, static_cast<int>(ibo.GetElementCount()),
+    glDrawElements( PrimitiveToGLType( type ),
+                    static_cast<int>(ibo.GetElementCount()),
                     GL_UNSIGNED_INT, nullptr );
 
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );

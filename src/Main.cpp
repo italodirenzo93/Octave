@@ -64,7 +64,7 @@ int main() {
         shader->SetMat4( "uMatView", view );
         shader->SetMat4( "uMatModel", model );
 
-        renderer.DrawIndexedPrimitives( vbo, ibo );
+        renderer.DrawIndexedPrimitives( PrimitiveType::kTriangleList, vbo, ibo );
 
         renderer.Present();
 
