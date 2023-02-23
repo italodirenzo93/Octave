@@ -3,25 +3,26 @@
 using namespace graphics;
 
 GeometricPrimitive::VertexType::VertexType(
-    std::initializer_list<float> initializerList ) {
-    assert( initializerList.size() == 8 );
-    auto it = initializerList.begin();
-    while ( it != initializerList.end() ) {
-        position.x = *( it++ );
-        position.y = *( it++ );
-        position.z = *( it++ );
+    std::initializer_list<float> initializer_list ) {
+    assert( initializer_list.size() == 8 );
 
-        normal.x = *( it++ );
-        normal.y = *( it++ );
-        normal.z = *( it++ );
+    auto it = initializer_list.begin();
+    
+    position.x = *( it++ );
+    position.y = *( it++ );
+    position.z = *( it++ );
 
-        tex_coord.x = *( it++ );
-        tex_coord.y = *( it++ );
-    }
+    normal.x = *( it++ );
+    normal.y = *( it++ );
+    normal.z = *( it++ );
+
+    tex_coord.x = *( it++ );
+    tex_coord.y = *( it++ );
 }
 
 void GeometricPrimitive::CreateCube( VertexArrayLayout& vao, VertexBuffer& vbo,
                                      IndexBuffer& ibo ) {
+    vao.ClearBindings();
     vao.AddBindings( { { POSITION, 3, GL_FLOAT, false },
                        { NORMAL, 3, GL_FLOAT, false },
                        { TEXCOORD, 2, GL_FLOAT, false } } );
