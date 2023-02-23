@@ -8,30 +8,34 @@ const map<LayoutSemantic, uint32_t> VertexArrayLayout::bindings_{
     {POSITION, 0}, {COLOR, 1}, {TEXCOORD, 2}, {NORMAL, 3}};
 
 VertexArrayLayout::VertexArrayLayout() {
-    glGenVertexArrays( 1, &vao_ );
+    glGenVertexArrays( 1, &id_ );
 }
 
 VertexArrayLayout::VertexArrayLayout( const VertexArrayLayout& other ) {
-    glGenVertexArrays( 1, &vao_ );
+    glGenVertexArrays( 1, &id_ );
 
     layout_bindings_ = other.layout_bindings_;
 }
 
 VertexArrayLayout::VertexArrayLayout( VertexArrayLayout&& other ) noexcept {
-    vao_ = other.vao_;
+    id_ = other.id_;
     layout_bindings_ = std::move( other.layout_bindings_ );
 
-    other.vao_ = 0;
+    other.id_ = 0;
 }
 
 VertexArrayLayout::VertexArrayLayout(
     std::initializer_list<LayoutBinding> initializer )
     : layout_bindings_( initializer.begin(), initializer.end() ) {
-    glGenVertexArrays( 1, &vao_ );
+    glGenVertexArrays( 1, &id_ );
 }
 
 VertexArrayLayout::~VertexArrayLayout() {
-    glDeleteVertexArrays( 1, &vao_ );
+    glDeleteVertexArrays( 1, &id_ );
+}
+
+void VertexArrayLayout::ClearBindings() {
+    layout_bindings_.clear();
 }
 
 VertexArrayLayout& VertexArrayLayout::AddBinding(
@@ -47,9 +51,15 @@ VertexArrayLayout& VertexArrayLayout::AddBinding(
     return *this;
 }
 
+VertexArrayLayout& VertexArrayLayout::AddBindings( std::initializer_list<LayoutBinding> initializerList ) {
+    layout_bindings_.insert(layout_bindings_.end(), initializerList );
+
+    return *this;
+}
+
 VertexArrayLayout& VertexArrayLayout::operator=(
     const VertexArrayLayout& other ) {
-    glGenVertexArrays( 1, &vao_ );
+    glGenVertexArrays( 1, &id_ );
 
     layout_bindings_ = other.layout_bindings_;
 
@@ -58,10 +68,10 @@ VertexArrayLayout& VertexArrayLayout::operator=(
 
 VertexArrayLayout& VertexArrayLayout::operator=(
     VertexArrayLayout&& other ) noexcept {
-    vao_ = other.vao_;
+    id_ = other.id_;
     layout_bindings_ = std::move( other.layout_bindings_ );
 
-    other.vao_ = 0;
+    other.id_ = 0;
 
     return *this;
 }

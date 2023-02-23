@@ -5,3 +5,4 @@ MaxEmptyLinesToKeep: 1
 IndentWidth: 4
 TabWidth: 4
 SpacesInParentheses: true
+AllowShortFunctionsOnASingleLine: InlineOnly
