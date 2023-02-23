@@ -22,6 +22,9 @@ public:
     Camera& SetFieldOfView( float fov ) noexcept;
     Camera& SetAspectRatio( float aspect ) noexcept;
 
+    void Translate( float x = 0.0f, float y = 0.0f, float z = 0.0f ) noexcept;
+    void Translate( const glm::vec3& translation ) noexcept;
+
 private:
      glm::vec3 position_;
      glm::vec3 front_;

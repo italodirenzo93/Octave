@@ -7,7 +7,7 @@ using namespace graphics;
 Camera::Camera() noexcept {
     field_of_view_ = 45.0f;
     aspect_ratio_ = 16.0f / 9.0f;
-    position_ = glm::vec3(0.0f);
+    position_ = glm::vec3( 0.0f );
 
     front_ = glm::vec3( 0.0f, 0.0f, -1.0f );
     up_ = world_up_;
@@ -20,7 +20,7 @@ Camera::Camera() noexcept {
     UpdateViewMatrix();
 }
 
-Camera& Camera::SetPosition( float x, float y, float z) noexcept {
+Camera& Camera::SetPosition( float x, float y, float z ) noexcept {
     position_ = glm::vec3( x, y, z );
     UpdateViewMatrix();
     return *this;
@@ -44,9 +44,20 @@ Camera& Camera::SetAspectRatio( float aspect ) noexcept {
     return *this;
 }
 
+void Camera::Translate( float x, float y, float z ) noexcept {
+    Translate( glm::vec3( x, y, z ) );
+}
+
+void Camera::Translate( const glm::vec3& translation ) noexcept {
+    if ( translation != glm::zero<glm::vec3>() ) {
+        position_ += translation;
+        UpdateViewMatrix();
+    }
+}
+
 void Camera::UpdateProjectionMatrix() noexcept {
-    matrix_projection_= glm::perspective( glm::radians( field_of_view_ ), aspect_ratio_,
-                      0.1f, 100.0f );
+    matrix_projection_ = glm::perspective( glm::radians( field_of_view_ ),
+                                           aspect_ratio_, 0.1f, 100.0f );
 }
 
 void Camera::UpdateViewMatrix() noexcept {

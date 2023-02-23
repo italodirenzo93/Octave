@@ -9,10 +9,12 @@
 #include "graphics/Mesh.hpp"
 #include "graphics/Renderer.hpp"
 #include "graphics/ShaderManager.hpp"
+#include "input/Keyboard.hpp"
 
 using namespace std;
 using namespace octave;
 using namespace octave::graphics;
+using namespace octave::input;
 
 struct VertexPositionNormalTexture {
     glm::vec3 position;
@@ -127,11 +129,12 @@ Mesh LoadMesh( const filesystem::path& path ) {
         }
 
         // Normal map
-//        if ( material->GetTextureCount( aiTextureType_NORMALS ) > 0 ) {
-//            textures[2] = load_texture( aiTextureType_NORMALS );
-//        } else {
-//            cout << "No normal map texture to load" << endl;
-//        }
+        //        if ( material->GetTextureCount( aiTextureType_NORMALS ) > 0 )
+        //        {
+        //            textures[2] = load_texture( aiTextureType_NORMALS );
+        //        } else {
+        //            cout << "No normal map texture to load" << endl;
+        //        }
 
         // Shininess
         float shininess;
@@ -201,8 +204,9 @@ int main( int argc, char* argv[] ) {
         }
 
         Camera camera;
-        camera.SetPosition( 0.0f, 0.0f, 5.0f );
+        camera.SetPosition( 0.0f, 0.0f, 7.0f );
         camera.SetFieldOfView( Config::Instance().GetFieldOfView() );
+        camera.SetAspectRatio( static_cast<float>( width ) / static_cast<float>( height ) );
 
         auto model = glm::identity<glm::mat4>();
         model = glm::rotate( model, glm::radians( 90.0f ),
@@ -220,9 +224,13 @@ int main( int argc, char* argv[] ) {
 
         // Update camera aspect when window size is changed
         window.AddSizeChangedCallback( [&camera]( int w, int h ) {
-            const float aspect = static_cast<float>( w ) / static_cast<float>( h );
+            const float aspect =
+                static_cast<float>( w ) / static_cast<float>( h );
             camera.SetAspectRatio( aspect );
         } );
+
+        Keyboard keyboard( window );
+        const float camera_speed = 25.0f;
 
         // Main loop
         while ( window.IsOpen() ) {
@@ -233,6 +241,21 @@ int main( int argc, char* argv[] ) {
             // Rotate the model around its Y-axis
             model = glm::rotate( model, glm::radians( delta * 25 ),
                                  glm::vec3( 0.0f, 0.0f, 1.0f ) );
+
+            auto translation = glm::vec3( 0.0f );
+            if ( keyboard.IsKeyDown( GLFW_KEY_A ) ) {
+                translation.x = -camera_speed * delta;
+            }
+            if ( keyboard.IsKeyDown( GLFW_KEY_D ) ) {
+                translation.x = camera_speed * delta;
+            }
+            if ( keyboard.IsKeyDown( GLFW_KEY_W ) ) {
+                translation.z = -camera_speed * delta;
+            }
+            if ( keyboard.IsKeyDown( GLFW_KEY_S ) ) {
+                translation.z = camera_speed * delta;
+            }
+            camera.Translate( translation );
 
             shader->SetMat4( "uMatProjection", camera.GetProjectionMatrix() );
             shader->SetMat4( "uMatView", camera.GetViewMatrix() );
