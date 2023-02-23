@@ -14,6 +14,8 @@ public:
 	double GetElapsedTime() override;
 	uint64_t GetPerformanceCounter() override;
 	uint64_t GetPerformanceFrequency() override;
+
+	std::unique_ptr<Window> CreateWindow( const WindowOptions& options ) override;
 };
 
 }  // namespace octave::platform::glfw

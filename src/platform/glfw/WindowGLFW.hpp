@@ -3,8 +3,7 @@
 
 #include "platform/Window.hpp"
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+class GLFWwindow;
 
 namespace octave::platform::glfw {
 

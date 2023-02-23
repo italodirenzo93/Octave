@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 
 #include "GLFWError.hpp"
+#include "WindowGLFW.hpp"
 
 namespace octave::platform::glfw {
 
@@ -38,6 +39,11 @@ PlatformName PlatformGLFW::GetName() const {
 #else
 #error "Unknown platform"
 #endif
+}
+
+std::unique_ptr<Window> PlatformGLFW::CreateWindow(
+	const WindowOptions& options ) {
+	return std::make_unique<WindowGLFW>( options );
 }
 
 }  // namespace octave::platform::glfw

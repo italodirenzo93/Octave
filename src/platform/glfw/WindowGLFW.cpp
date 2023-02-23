@@ -3,6 +3,9 @@
 #include "Config.hpp"
 #include "GLFWError.hpp"
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 namespace octave::platform::glfw {
 
 WindowGLFW::WindowGLFW( const WindowOptions& options ) : Window( options ) {

@@ -3,6 +3,8 @@
 
 // clang-format off
 
+#include "Application.hpp"
+
 #include "graphics/IndexBuffer.hpp"
 #include "graphics/Mesh.hpp"
 #include "graphics/Model.hpp"
