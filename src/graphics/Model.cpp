@@ -8,9 +8,10 @@ using namespace std;
 
 namespace octave::graphics {
 
-//static map<string, shared_ptr<Texture>> texture_cache;
+static map<string, shared_ptr<Texture>> texture_cache;
 
-static Mesh ProcessMesh( const string& directory, aiMesh* mesh, const aiScene* scene ) {
+static Mesh ProcessMesh( const string& directory, aiMesh* mesh,
+						 const aiScene* scene ) {
 	Mesh ret_mesh;
 
 	vector<VertexPositionNormalTexture> vertices;
@@ -59,11 +60,17 @@ static Mesh ProcessMesh( const string& directory, aiMesh* mesh, const aiScene* s
 			material->GetTexture( type, 0, &str );
 
 			filesystem::path texture_path = str.C_Str();
+			const auto full_path = directory / texture_path;
+
+			const auto iter = texture_cache.find( full_path );
+			if ( iter != texture_cache.end() ) {
+				return iter->second;
+			}
 
 			auto texture = make_shared<Texture>();
 			try {
-				texture->LoadFromFile(
-					( directory / texture_path.filename() ).string() );
+				texture->LoadFromFile( full_path );
+				texture_cache[full_path] = texture;
 			} catch ( const Exception& e ) {
 				cerr << "Error loading model texture : " << e.what() << endl;
 			}
@@ -103,8 +110,8 @@ static Mesh ProcessMesh( const string& directory, aiMesh* mesh, const aiScene* s
 	return ret_mesh;
 }
 
-static void ProcessNode( const string& directory, vector<Mesh>& meshes, aiNode* node,
-						 const aiScene* scene ) {
+static void ProcessNode( const string& directory, vector<Mesh>& meshes,
+						 aiNode* node, const aiScene* scene ) {
 	for ( uint32_t i = 0; i < node->mNumMeshes; i++ ) {
 		auto mesh = scene->mMeshes[node->mMeshes[i]];
 		meshes.emplace_back( ProcessMesh( directory, mesh, scene ) );
@@ -123,7 +130,8 @@ Model::Model( Model&& other ) noexcept {
 	meshes_ = std::move( other.meshes_ );
 }
 
-void Model::Draw( const Shader& shader, const Renderer& renderer ) const noexcept {
+void Model::Draw( const Shader& shader,
+				  const Renderer& renderer ) const noexcept {
 	for ( const auto& mesh : meshes_ ) {
 		mesh.Draw( shader, renderer );
 	}
@@ -132,7 +140,7 @@ void Model::Draw( const Shader& shader, const Renderer& renderer ) const noexcep
 Model Model::LoadFromFile( const std::filesystem::path& path ) {
 	Assimp::Importer importer;
 	const auto scene = importer.ReadFile(
-		path.string(), aiProcess_Triangulate | aiProcess_FlipWindingOrder );
+		path.string(), aiProcess_Triangulate | aiProcess_FlipWindingOrder | aiProcess_FlipUVs );
 
 	if ( !scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
 		 !scene->mRootNode ) {

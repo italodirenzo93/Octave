@@ -175,8 +175,6 @@ int main( int argc, char* argv[] ) {
 							   static_cast<float>( height ) );
 
 		auto model_matrix = glm::identity<glm::mat4>();
-		model_matrix = glm::rotate( model_matrix, glm::radians( 90.0f ),
-									glm::vec3( 1.0f, 0.0f, 0.0f ) );
 
 		const auto shader = ShaderManager::Instance().Get( "basic" );
 		if ( !shader ) {
@@ -213,7 +211,7 @@ int main( int argc, char* argv[] ) {
 			// Draw scene
 			model_matrix =
 				glm::rotate( model_matrix, glm::radians( delta * 25.0f ),
-							 glm::vec3( 0.0f, 0.0f, 1.0f ) );
+							 glm::vec3( 0.0f, 1.0f, 0.0f ) );
 			shader->SetMat4( "uMatModel", model_matrix );
 			model.Draw( *shader, renderer );
 
