@@ -66,7 +66,7 @@ Window::Window( int width, int height, const string& title ) {
     glfwSetWindowUserPointer( handle_, this );
 
     // Set callback wrapper functions
-    glfwSetWindowSizeCallback( handle_, WindowSizeCallback );
+    glfwSetFramebufferSizeCallback( handle_, WindowSizeCallback );
 
     // Initialize Open GL extension loader
     if ( !gladLoadGLLoader(
@@ -113,10 +113,15 @@ void Window::GetSize( int& width, int& height ) const noexcept {
 
 void Window::WindowSizeCallback( GLFWwindow* window, int width,
                                  int height ) noexcept {
+	// TODO: this function call should live elsewhere as its not the Window class' job
+    glViewport( 0, 0, width, height );
+
     const auto c_window =
-        reinterpret_cast<Window*>( glfwGetWindowUserPointer( window ) );
-    if ( c_window && c_window->cb_window_size_ ) {
-        c_window->cb_window_size_( width, height );
+        static_cast<Window*>( glfwGetWindowUserPointer( window ) );
+    if ( c_window ) {
+        for ( const auto& callback : c_window->cb_window_size_) {
+            callback( width, height );
+        }
     }
 }
 

@@ -3,7 +3,7 @@
 namespace octave::graphics {
 // NOTE: This must be kept in sync with the input layout of the vertex shader!
 static const std::map<LayoutSemantic, uint32_t> kAttributeBindings{
-    { POSITION, 0 }, { COLOR, 1 }, { TEXCOORD, 2 }, { NORMAL, 3 } };
+    { LayoutSemantic::kPosition, 0 }, { LayoutSemantic::kColor, 1 }, { LayoutSemantic::kTexCoord, 2 }, { LayoutSemantic::kNormal, 3 } };
 
 VertexBuffer::VertexBuffer() noexcept {
     glGenBuffers( 1, &vbo_ );

@@ -136,10 +136,6 @@ Renderer::Renderer( const Window& window ) noexcept
     }
 }
 
-void Renderer::ResizeFramebuffer( int width, int height ) const {
-    glViewport( 0, 0, width, height );
-}
-
 void Renderer::Clear( bool depth, float r, float g, float b, float a ) const noexcept {
     int clear_flags = GL_COLOR_BUFFER_BIT;
 
@@ -199,5 +195,9 @@ void Renderer::GetFramebufferSize( int& width, int& height ) const noexcept {
 
 void Renderer::SetShader( const Shader& shader ) noexcept {
     glUseProgram( shader.id_ );
+}
+
+void Renderer::FramebufferSizeCallback( GLFWwindow* window, int width, int height ) {
+    glViewport( 0, 0, width, height );
 }
 } // namespace octave::graphics

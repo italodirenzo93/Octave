@@ -4,7 +4,6 @@
 #include "CommonInclude.hpp"
 
 namespace octave::graphics {
-
 class Window {
     friend class Renderer;
 
@@ -26,21 +25,21 @@ public:
     void Maximize() const noexcept;
     void Restore() const noexcept;
 
-    using OnSizeChangedCallback = std::function<void(int, int)>;
-    void SetSizeChangedCallback(OnSizeChangedCallback callback) noexcept {
-        cb_window_size_ = std::move( callback );
+    using OnSizeChangedCallback = std::function<void( int, int )>;
+    void AddSizeChangedCallback( OnSizeChangedCallback callback ) noexcept {
+        cb_window_size_.emplace_back( std::move( callback ) );
     }
 
 private:
     GLFWwindow* handle_ = nullptr;
 
     // Callbacks
-    OnSizeChangedCallback cb_window_size_;
-    static void WindowSizeCallback(GLFWwindow* window, int width, int height) noexcept;
+    std::vector<OnSizeChangedCallback> cb_window_size_;
+    static void WindowSizeCallback( GLFWwindow* window, int width,
+                                    int height ) noexcept;
 
     NON_COPYABLE_OR_MOVABLE_CLASS( Window )
 };
-
 } // namespace octave::graphics
 
 #endif
