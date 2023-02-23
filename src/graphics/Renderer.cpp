@@ -110,7 +110,7 @@ Renderer::Renderer( const Window& window ) noexcept : window_( window ) {
 	glEnable( GL_DEPTH_TEST );
 	glEnable( GL_CULL_FACE );
 
-	glClearDepthf( 1.0f );
+	glClearDepth( 1.0f );
 	glCullFace( GL_BACK );
 	glFrontFace( GL_CW );
 
@@ -147,7 +147,7 @@ void Renderer::Clear( bool color, bool depth, float r, float g, float b,
 
 	if ( depth ) {
 		clear_flags |= GL_DEPTH_BUFFER_BIT;
-		glClearDepthf( 1.0f );
+		glClearDepth( 1.0f );
 	}
 
 	glClear( clear_flags );
