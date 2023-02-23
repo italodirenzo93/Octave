@@ -1,6 +1,7 @@
 #include "Gamepad.hpp"
 
 #include <GLFW/glfw3.h>
+#include <cassert>
 
 using namespace std;
 
