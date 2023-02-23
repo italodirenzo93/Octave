@@ -3,7 +3,6 @@
 #include <memory>
 
 #include "Config.hpp"
-#include "graphics/ShaderManager.hpp"
 #include "helpers/GeometricPrimitive.hpp"
 
 using namespace std;
@@ -135,7 +134,11 @@ void ModelViewerSample::OnLoad() {
 
 	keyboard_ = make_unique<Keyboard>( *window_ );
 
-	shader_ = ShaderManager::Instance().Get( "basic" );
+	if ( Config::Instance().GetPreloadShaders() ) {
+		shaders_.PreloadShaders();
+	}
+
+	shader_ = shaders_.Get( "basic" );
 	if ( !shader_ ) {
 		throw Exception( "Shader program not found" );
 	}
