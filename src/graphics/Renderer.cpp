@@ -213,6 +213,19 @@ bool IsWindowOpen() {
     return g_window != nullptr && !glfwWindowShouldClose( g_window );
 }
 
+std::string GetRendererInfo() {
+    ostringstream oss;
+
+    // Print OpenGL context information
+    oss << "OpenGL Context Version: " << glGetString( GL_VERSION ) << endl
+        << "GLSL Version: " << glGetString( GL_SHADING_LANGUAGE_VERSION )
+        << endl
+        << "GPU Vendor: " << glGetString( GL_VENDOR ) << endl
+        << "GPU Model: " << glGetString( GL_RENDERER ) << endl;
+
+    return oss.str();
+}
+
 void Clear( bool depth, float r, float g, float b, float a ) {
     int clear_flags = GL_COLOR_BUFFER_BIT;
 
@@ -232,16 +245,12 @@ void Present() {
     }
 }
 
-std::string GetRendererInfo() {
-    ostringstream oss;
+void DrawPrimitives( const VertexArrayLayout& vao, const VertexBuffer& vbo ) {
+    glBindVertexArray( vao.GetId() );
 
-    // Print OpenGL context information
-    oss << "OpenGL Context Version: " << glGetString( GL_VERSION ) << endl
-        << "GLSL Version: " << glGetString( GL_SHADING_LANGUAGE_VERSION )
-        << endl
-        << "GPU Vendor: " << glGetString( GL_VENDOR ) << endl
-        << "GPU Model: " << glGetString( GL_RENDERER ) << endl;
+    glDrawArrays( GL_TRIANGLES, 0, static_cast<int>( vbo.GetVertexCount() ) );
 
-    return oss.str();
+    glBindVertexArray( 0 );
 }
+
 }  // namespace graphics

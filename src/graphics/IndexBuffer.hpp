@@ -6,16 +6,18 @@
 namespace graphics {
 
 class IndexBuffer {
+    friend class Mesh;
+
 public:
     IndexBuffer();
     IndexBuffer( const IndexBuffer& other );
     IndexBuffer( IndexBuffer&& other ) noexcept;
     ~IndexBuffer();
 
-    uint32_t GetId() const { return id_; }
     uint32_t GetSize() const { return element_count_; }
 
-    void SetData(std::initializer_list<uint32_t> initializerList);
+    void SetData(std::initializer_list<uint32_t> initializerList) const;
+    void SetData(const std::vector<uint32_t>& indices) const;
 
 private:
     uint32_t id_ = 0;

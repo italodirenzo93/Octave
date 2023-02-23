@@ -53,25 +53,23 @@ void Mesh::draw( const Shader& program ) const {
     }
     glActiveTexture( GL_TEXTURE0 );
 
-    vao_.Bind();
-    ibo_.Bind();
+    glBindVertexArray( vao_.id_ );
+    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo_.id_ );
 
     glDrawElements( GL_TRIANGLES, static_cast<int>(indices_.size()),
                     GL_UNSIGNED_INT, nullptr );
-	
-    ibo_.Unbind();
-    vao_.Unbind();
+
+    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo_.id_ );
+    glBindVertexArray( 0 );
 }
 
 void Mesh::SetupMesh() {
-    vbo_.SetData( vertices_ );
-    ibo_.SetData( indices_ );
-
     vao_.AddBinding( {POSITION, 3, GL_FLOAT, false} )
-         .AddBinding( {TEXCOORD, 2, GL_FLOAT, false} )
-         .AddBinding( {NORMAL, 3, GL_FLOAT, false} );
+        .AddBinding( {TEXCOORD, 2, GL_FLOAT, false} )
+        .AddBinding( {NORMAL, 3, GL_FLOAT, false} );
 
-    vao_.MapToBuffer( vbo_ );
+    vbo_.SetData( vao_, vertices_ );
+    ibo_.SetData( indices_ );
 }
 
 Mesh& Mesh::operator=( const Mesh& other ) {
