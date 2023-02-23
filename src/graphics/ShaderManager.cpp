@@ -44,8 +44,8 @@ void ShaderManager::PreloadShaders() noexcept {
 		}
 
 		try {
-			auto program = make_shared<Shader>(
-				vertex_path.string().c_str(), fragment_path.string().c_str() );
+			auto program = make_shared<Shader>();
+			program->CompileFromFile( vertex_path, fragment_path );
 
 			shaders_.emplace( shader, std::move( program ) );
 		} catch ( const Shader::CompileError& e ) {
@@ -90,9 +90,8 @@ shared_ptr<Shader> ShaderManager::Get( const string& name ) noexcept {
 		}
 
 		try {
-			shader = make_shared<Shader>( vertex_path.string().c_str(),
-										  fragment_path.string().c_str() );
-
+			shader = make_shared<Shader>();
+			shader->CompileFromFile( vertex_path, fragment_path );
 			shaders_[name] = shader;
 		} catch ( const Shader::CompileError& e ) {
 			cerr << "Shader compilation error: " << e.what() << endl;
