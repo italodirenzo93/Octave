@@ -3,6 +3,7 @@
 
 #include "CommonInclude.hpp"
 #include "Exception.hpp"
+#include "Texture.hpp"
 
 namespace graphics {
 class Shader {
@@ -32,6 +33,7 @@ public:
     void SetMat4( const std::string& name, const glm::mat4& value ) const;
     void SetVec3( const std::string& name, const glm::vec3& value ) const;
     void SetVec3( const std::string& name, float x, float y, float z ) const;
+    void SetTexture( const std::string& name, int index, const Texture& texture ) const;
 
 private:
     uint32_t id_ = 0;

@@ -7,6 +7,7 @@ namespace graphics {
 
 class Texture {
     friend class Renderer;
+    friend class Shader;
 
 public:
     Texture() noexcept;

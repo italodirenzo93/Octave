@@ -20,39 +20,11 @@ Mesh::Mesh( Mesh&& other ) noexcept {
     texture_ = std::move( other.texture_ );
 }
 
-void Mesh::Draw( Renderer& renderer ) const {
-    //    uint32_t diffuse_nr = 1;
-    //    uint32_t specular_nr = 1;
-    //    for (size_t i = 0; i < textures_.size(); i++) {
-    //        glActiveTexture( GL_TEXTURE0 + static_cast<int>(i) );
-    //        // activate the proper texture unit
-    //        string name = "uMaterial.";
-    //        name += textures_[i].type;
-    //
-    //        if (textures_[i].type == "texture_diffuse")
-    //            name += to_string( diffuse_nr++ );
-    //        else if (textures_[i].type == "texture_specular")
-    //            name += to_string( specular_nr++ );
-    //
-    //        program.SetInt( name, static_cast<int>(i) );
-    //        glBindTexture( GL_TEXTURE_2D, textures_[i].id );
-    //    }
-    //    glActiveTexture( GL_TEXTURE0 );
-    //
-    //    glBindVertexArray( vbo_.vao_ );
-    //    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo_.id_ );
-    //
-    //    glDrawElements( GL_TRIANGLES,
-    //    static_cast<int>(ibo_.GetElementCount()),
-    //                    GL_UNSIGNED_INT, nullptr );
-    //
-    //    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo_.id_ );
-    //    glBindVertexArray( 0 );
-
+void Mesh::Draw( const Shader& shader, Renderer& renderer ) const {
     assert( vbo_.GetVertexCount() > 0 );
     assert( ibo_.GetElementCount() > 0 );
 
-    renderer.SetTexture( texture_ );
+    shader.SetTexture( "uTextures", 0, texture_ );
     renderer.DrawIndexedPrimitives( PrimitiveType::kTriangleList, vbo_, ibo_ );
 }
 

@@ -18,7 +18,7 @@ public:
     Mesh( Mesh&& other ) noexcept;
     ~Mesh() = default;
 
-    void Draw( Renderer& renderer ) const;
+    void Draw( const Shader& shader, Renderer& renderer ) const;
 
 private:
     VertexBuffer vbo_;
