@@ -3,8 +3,10 @@
 
 #include <assimp/Importer.hpp>
 
+#include "Octave.hpp"
 #include "Camera.hpp"
 #include "Config.hpp"
+#include "StepTimer.hpp"
 #include "GeometricPrimitive.hpp"
 #include "graphics/Mesh.hpp"
 #include "graphics/Renderer.hpp"
@@ -179,11 +181,8 @@ inline void SetDefaultLighting( const Shader& shader ) {
 }
 
 int main( int argc, char* argv[] ) {
-    // Initialize GLFW library
-    if ( !glfwInit() ) {
-        cout << "Failed to initialize GLFW... exiting" << endl;
-        return EXIT_FAILURE;
-    }
+    // Initialize engine
+    octave::Up();
 
     try {
         Window window;
@@ -232,30 +231,62 @@ int main( int argc, char* argv[] ) {
         Keyboard keyboard( window );
         const float camera_speed = 25.0f;
 
+        StepTimer step_timer;
+
         // Main loop
         while ( window.IsOpen() ) {
-            const auto now = static_cast<float>( glfwGetTime() );
-            const float delta = now - last_frame_time;
-            last_frame_time = now;
+            step_timer.Tick();
+            const auto delta = step_timer.GetDeltaTime();
 
             // Rotate the model around its Y-axis
             model = glm::rotate( model, glm::radians( delta * 25 ),
                                  glm::vec3( 0.0f, 0.0f, 1.0f ) );
 
             auto translation = glm::vec3( 0.0f );
+            // Strafe Left
             if ( keyboard.IsKeyDown( GLFW_KEY_A ) ) {
                 translation.x = -camera_speed * delta;
             }
+            // Strafe right
             if ( keyboard.IsKeyDown( GLFW_KEY_D ) ) {
                 translation.x = camera_speed * delta;
             }
+            // Forward
             if ( keyboard.IsKeyDown( GLFW_KEY_W ) ) {
                 translation.z = -camera_speed * delta;
             }
+            // Backward
             if ( keyboard.IsKeyDown( GLFW_KEY_S ) ) {
                 translation.z = camera_speed * delta;
             }
+            // Up
+            if ( keyboard.IsKeyDown( GLFW_KEY_E ) ) {
+                translation.y = camera_speed * delta;
+            }
+            // Down
+            if ( keyboard.IsKeyDown( GLFW_KEY_Q ) ) {
+                translation.y = -camera_speed * delta;
+            }
+
+            auto euler_angles = glm::zero<glm::vec3>();
+            // Turn left
+            if ( keyboard.IsKeyDown( GLFW_KEY_LEFT ) ) {
+                euler_angles.y = -camera_speed * delta;
+            }
+            // Turn right
+            if ( keyboard.IsKeyDown( GLFW_KEY_RIGHT ) ) {
+                euler_angles.y = camera_speed * delta;
+            }
+            // Look up
+            if ( keyboard.IsKeyDown( GLFW_KEY_UP ) ) {
+                euler_angles.x = camera_speed * delta;
+            }
+            // Look down
+            if ( keyboard.IsKeyDown( GLFW_KEY_DOWN ) ) {
+                euler_angles.x = -camera_speed * delta;
+            }
             camera.Translate( translation );
+            camera.Rotate( euler_angles );
 
             shader->SetMat4( "uMatProjection", camera.GetProjectionMatrix() );
             shader->SetMat4( "uMatView", camera.GetViewMatrix() );
@@ -275,10 +306,10 @@ int main( int argc, char* argv[] ) {
     } catch ( const std::exception& e ) {
         cerr << "Critical Error: " << e.what() << " ...exiting" << endl;
 
-        glfwTerminate();
+        octave::Down();
         return EXIT_FAILURE;
     }
 
-    glfwTerminate();
+    octave::Down();
     return EXIT_SUCCESS;
 }

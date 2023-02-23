@@ -3,19 +3,21 @@
 
 #include "CommonInclude.hpp"
 
+namespace octave::input {
+class Keyboard;
+}
+
 namespace octave::graphics {
 class Window {
     friend class Renderer;
+    friend class octave::input::Keyboard;
 
 public:
-    Window();
-    explicit Window( const std::string& title );
-    Window( int width, int height, const std::string& title );
+     Window();
+     explicit Window( const std::string& title );
+     Window( int width, int height, const std::string& title );
     ~Window() noexcept;
 
-    // TODO: I don't feel great about this but since friend classes cannot be declared
-    //       in other namespaces, I need this as an escape hatch for other subsystems
-    [[nodiscard]] GLFWwindow* GetWindowPointer() const noexcept { return handle_; }
     void GetSize( int& width, int& height ) const noexcept;
 
     [[nodiscard]] bool IsOpen() const noexcept;
