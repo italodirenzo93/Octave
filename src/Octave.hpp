@@ -6,6 +6,7 @@
 #include "Application.hpp"
 #include "Exception.hpp"
 #include "Config.hpp"
+#include "Camera.hpp"
 
 #include "platform/Platform.hpp"
 #include "platform/Window.hpp"
@@ -23,6 +24,9 @@
 
 #include "resources/ResourceManager.hpp"
 #include "resources/ShaderManager.hpp"
+
+#include "helpers/GeometricPrimitive.hpp"
+#include "helpers/StepTimer.hpp"
 
 //#include "audio/Buffer.hpp"
 //#include "audio/Listener.hpp"

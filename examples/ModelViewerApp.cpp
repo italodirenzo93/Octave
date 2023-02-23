@@ -1,11 +1,37 @@
-#include "ModelViewerSample.hpp"
-
-#include "Config.hpp"
-#include "helpers/GeometricPrimitive.hpp"
+#include "common/Sample.hpp"
 
 using namespace std;
+using namespace Octave;
 
-namespace Octave::Samples {
+class ModelViewerSample : public Sample {
+public:
+	explicit ModelViewerSample( std::string file_name ) noexcept
+		: file_name_( std::move( file_name ) ) {}
+
+	void Initialize() override;
+	void OnUpdate() override;
+	void OnRender() override;
+
+private:
+	void DebugCameraControls( Octave::DebugCamera& camera, float camera_speed,
+							  float delta ) noexcept;
+	void DebugCameraControls( const Octave::Gamepad& gamepad, Octave::DebugCamera& camera,
+							  float camera_speed, float delta ) noexcept;
+
+	std::string file_name_;
+
+	std::shared_ptr<Octave::Shader> shader_;
+	std::unique_ptr<Octave::Gamepad> pad_;
+
+	Octave::ShaderManager shaders_;
+
+	Octave::Model model_;
+	glm::mat4 model_matrix_;
+
+	std::unique_ptr<Octave::VertexBuffer> floor_vbo_;
+	std::unique_ptr<Octave::Texture> floor_texture_diffuse_, floor_texture_specular_;
+	glm::vec3 floor_position_;
+};
 
 void ModelViewerSample::DebugCameraControls( DebugCamera& camera,
 											 float camera_speed,
@@ -222,4 +248,14 @@ void ModelViewerSample::OnRender() {
 	}
 }
 
-}  // namespace Octave::Samples
+int main(int argc, char* argv[]) {
+	try {
+		string file_name = argc > 1 ? argv[1] : "";
+		auto app = make_unique<ModelViewerSample>(file_name);
+		app->Run();
+	} catch (const exception& e) {
+		cout << "Exception: " << e.what() << endl;
+		return 1;
+	}
+	return 0;
+}

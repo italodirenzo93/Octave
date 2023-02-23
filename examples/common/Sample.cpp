@@ -1,8 +1,7 @@
 #include "Sample.hpp"
 
 using namespace std;
-
-namespace Octave::Samples {
+using namespace Octave;
 
 void Sample::Initialize() {
 	step_timer_ = make_unique<StepTimer>( *platform_ );
@@ -29,6 +28,3 @@ void Sample::Update() {
 
 	window_->SwapBuffers();
 }
-
-
-}  // namespace Octave::Samples
