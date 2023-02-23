@@ -24,7 +24,8 @@ class Config {
     // Video
     [[nodiscard]] int GetFramebufferWidth() const noexcept;
     [[nodiscard]] int GetFramebufferHeight() const noexcept;
-    [[nodiscard]] bool GetIsFullscreen() const noexcept;
+    [[nodiscard]] bool IsFullscreen() const noexcept;
+    [[nodiscard]] bool IsMaximized() const noexcept;
     [[nodiscard]] int GetSyncInterval() const noexcept;
 
     // Renderer

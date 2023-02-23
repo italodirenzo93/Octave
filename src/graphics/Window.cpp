@@ -32,9 +32,23 @@ Window::Window( int width, int height, const string& title ) {
 
     const Config& config = Config::Instance();
 
+    // Fullscreen
     GLFWmonitor* monitor = nullptr;
-    if ( config.GetIsFullscreen() ) {
+    if ( config.IsFullscreen() ) {
         monitor = glfwGetPrimaryMonitor();
+
+        const auto vidmode = glfwGetVideoMode( monitor );
+        width = vidmode->width;
+        height = vidmode->height;
+
+        glfwWindowHint( GLFW_RED_BITS, vidmode->redBits );
+        glfwWindowHint( GLFW_GREEN_BITS, vidmode->greenBits );
+        glfwWindowHint( GLFW_BLUE_BITS, vidmode->blueBits );
+        glfwWindowHint( GLFW_REFRESH_RATE, vidmode->refreshRate );
+    }
+
+    if ( config.IsMaximized() ) {
+        glfwWindowHint( GLFW_MAXIMIZED, GLFW_TRUE );
     }
 
     // Create window
@@ -51,7 +65,8 @@ Window::Window( int width, int height, const string& title ) {
     // so we can access in from our callback functions
     glfwSetWindowUserPointer( handle_, this );
 
-    glfwSetWindowSizeCallback(handle_, WindowSizeCallback);
+    // Set callback wrapper functions
+    glfwSetWindowSizeCallback( handle_, WindowSizeCallback );
 
     // Initialize Open GL extension loader
     if ( !gladLoadGLLoader(
@@ -72,12 +87,34 @@ bool Window::IsOpen() const noexcept {
     return !glfwWindowShouldClose( handle_ );
 }
 
+bool Window::IsMinimized() const noexcept {
+    return glfwGetWindowAttrib( handle_, GLFW_ICONIFIED ) == GLFW_TRUE;
+}
+
+bool Window::IsMaximized() const noexcept {
+    return glfwGetWindowAttrib( handle_, GLFW_MAXIMIZED ) == GLFW_TRUE;
+}
+
+void Window::Minimize() const noexcept {
+    glfwIconifyWindow( handle_ );
+}
+
+void Window::Maximize() const noexcept {
+    glfwMaximizeWindow( handle_ );
+}
+
+void Window::Restore() const noexcept {
+    glfwRestoreWindow( handle_ );
+}
+
 void Window::GetSize( int& width, int& height ) const noexcept {
     glfwGetWindowSize( handle_, &width, &height );
 }
 
-void Window::WindowSizeCallback(GLFWwindow* window, int width, int height) noexcept {
-    auto c_window = reinterpret_cast<Window*>( glfwGetWindowUserPointer( window ) );
+void Window::WindowSizeCallback( GLFWwindow* window, int width,
+                                 int height ) noexcept {
+    const auto c_window =
+        reinterpret_cast<Window*>( glfwGetWindowUserPointer( window ) );
     if ( c_window && c_window->cb_window_size_ ) {
         c_window->cb_window_size_( width, height );
     }
