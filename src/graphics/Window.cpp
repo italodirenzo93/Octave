@@ -9,7 +9,7 @@
 
 using namespace std;
 
-namespace octave::graphics {
+namespace Octave::graphics {
 
 #ifdef OCTAVE_DEBUG
 static void GLAPIENTRY DebugOutputCallback( GLenum source, GLenum type,

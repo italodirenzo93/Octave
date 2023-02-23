@@ -8,7 +8,7 @@
 #include "Texture.hpp"
 #include "VertexBuffer.hpp"
 
-namespace octave::graphics {
+namespace Octave::graphics {
 
 class Mesh {
 public:

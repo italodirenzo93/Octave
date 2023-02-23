@@ -7,7 +7,7 @@
 #include "graphics/Renderer.hpp"
 #include "graphics/Window.hpp"
 
-namespace octave::samples {
+namespace Octave::samples {
 
 class Sample {
 public:

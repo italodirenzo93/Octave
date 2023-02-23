@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <functional>
 
-namespace octave::helpers {
+namespace Octave::helpers {
 
 // Helper class for animation and simulation timing.
 class StepTimer {

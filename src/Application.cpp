@@ -2,10 +2,10 @@
 
 #include "platform/glfw/PlatformGLFW.hpp"
 
-namespace octave {
+namespace Octave {
 
 Application::Application() : is_running_( true ) {
-	platform_ = std::make_unique<platform::glfw::PlatformGLFW>();
+	platform_ = std::make_unique<Impl::PlatformGLFW>();
 }
 
 Application::~Application() noexcept {
@@ -16,7 +16,6 @@ void Application::Run() {
 	Initialize();
 	while ( is_running_ ) {
 		Update();
-		Render();
 	}
 }
 
@@ -28,9 +27,6 @@ void Application::Initialize() {
 }
 
 void Application::Update() {
-}
-
-void Application::Render() {
 }
 
 }  // namespace octave

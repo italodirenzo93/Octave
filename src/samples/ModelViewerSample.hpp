@@ -9,7 +9,7 @@
 #include "input/Keyboard.hpp"
 #include "resources/ShaderManager.hpp"
 
-namespace octave::samples {
+namespace Octave::samples {
 
 class ModelViewerSample : public Sample {
 public:

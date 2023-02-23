@@ -2,7 +2,7 @@
 
 #include "Exception.hpp"
 
-namespace octave::graphics {
+namespace Octave::graphics {
 using namespace std;
 
 Texture::Texture() noexcept {

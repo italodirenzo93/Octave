@@ -3,7 +3,7 @@
 
 #include "Exception.hpp"
 
-namespace octave::platform::glfw {
+namespace Octave::Impl {
 
 class GLFWError : public Exception {
 public:

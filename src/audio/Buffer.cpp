@@ -5,7 +5,7 @@
 #define STB_VORBIS_HEADER_ONLY
 #include "stb_vorbis.c"
 
-namespace octave::audio {
+namespace Octave::audio {
 
 Buffer::Buffer() {
 	alGenBuffers( 1, &id_ );

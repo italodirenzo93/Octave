@@ -4,7 +4,7 @@
 #include "CommonInclude.hpp"
 #include "graphics/Shader.hpp"
 
-namespace octave {
+namespace Octave {
 
 class Camera {
 public:

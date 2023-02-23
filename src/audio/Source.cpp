@@ -4,7 +4,7 @@
 
 #include "alCommon.hpp"
 
-namespace octave::audio {
+namespace Octave::audio {
 
 Source::Source() {
 	alGenSources( 1, &id_ );

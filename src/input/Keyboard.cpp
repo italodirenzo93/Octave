@@ -1,6 +1,6 @@
 #include "Keyboard.hpp"
 
-namespace octave::input {
+namespace Octave::input {
 
 Keyboard::Keyboard( const graphics::Window& window ) noexcept
 	: window_( window ) {

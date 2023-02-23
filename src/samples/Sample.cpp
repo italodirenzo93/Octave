@@ -1,6 +1,6 @@
 #include "Sample.hpp"
 
-namespace octave::samples {
+namespace Octave::samples {
 
 Sample::Sample( const std::shared_ptr<graphics::Window>& window ) noexcept
 	: window_( window ), renderer_( *window ) {
