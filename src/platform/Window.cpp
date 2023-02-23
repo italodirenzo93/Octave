@@ -21,9 +21,9 @@ WindowOptions::WindowOptions( int width, int height, std::string title,
 							  bool is_fullscreen, bool is_borderless ) noexcept
 	: width( width ),
 	  height( height ),
-	  title( std::move( title ) ),
 	  is_fullscreen( is_fullscreen ),
-	  is_borderless( is_borderless ) {
+	  is_borderless( is_borderless ),
+	  title( std::move( title ) ) {
 }
 
 std::unique_ptr<Window> Window::Create( const WindowOptions& options ) {

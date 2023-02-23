@@ -12,10 +12,7 @@ insert_final_newline = true
 tab_width = 4
 trim_trailing_whitespace = true
 
-[*.cpp,*.hpp,*.h,*.c]
-indent_style = tab
-
-[*.json]
+[*.{json,md}]
 indent_style = space
 indent_size = 2
 

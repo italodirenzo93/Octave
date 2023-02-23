@@ -8,10 +8,10 @@
 namespace Octave {
 
 struct WindowOptions {
-	bool is_fullscreen;
-	bool is_borderless;
 	int width;
 	int height;
+	bool is_fullscreen;
+	bool is_borderless;
 	std::string title;
 
 	WindowOptions() noexcept;
