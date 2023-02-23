@@ -4,23 +4,37 @@ using namespace std;
 
 namespace octave::graphics {
 
+static inline void CopyIndexBuffer( GLuint source, GLuint target ) {
+	GLsizei buffer_size;
+
+	glBindBuffer( GL_COPY_READ_BUFFER, source );
+	glGetBufferParameteriv( GL_COPY_READ_BUFFER, GL_BUFFER_SIZE, &buffer_size );
+
+	glBindBuffer( GL_COPY_WRITE_BUFFER, target );
+	glBufferData( GL_COPY_WRITE_BUFFER, buffer_size, nullptr, GL_STATIC_DRAW );
+
+	glCopyBufferSubData( GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0,
+						 buffer_size );
+
+	glBindBuffer( GL_COPY_READ_BUFFER, 0 );
+	glBindBuffer( GL_COPY_WRITE_BUFFER, 0 );
+}
+
 IndexBuffer::IndexBuffer() noexcept {
 	glGenBuffers( 1, &id_ );
 }
 
 IndexBuffer::IndexBuffer( const IndexBuffer& other ) noexcept {
+	glPushDebugGroup( GL_DEBUG_SOURCE_APPLICATION, 0, -1,
+					  "Index buffer copy constructor" );
+
 	glGenBuffers( 1, &id_ );
 
-	glBindBuffer( GL_COPY_READ_BUFFER, other.id_ );
-	glBindBuffer( GL_COPY_WRITE_BUFFER, id_ );
-
-	glCopyBufferSubData( GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0,
-						 other.element_count_ );
-
-	glBindBuffer( GL_COPY_READ_BUFFER, 0 );
-	glBindBuffer( GL_COPY_WRITE_BUFFER, 0 );
+	CopyIndexBuffer( other.id_, id_ );
 
 	element_count_ = other.element_count_;
+
+	glPopDebugGroup();
 }
 
 IndexBuffer::IndexBuffer( IndexBuffer&& other ) noexcept {
@@ -80,18 +94,16 @@ void IndexBuffer::SetData( const std::vector<uint32_t>& indices ) noexcept {
 IndexBuffer& IndexBuffer::operator=( const IndexBuffer& other ) noexcept {
 	SELF_REFERENCE_CHECK( other );
 
+	glPushDebugGroup( GL_DEBUG_SOURCE_APPLICATION, 0, -1,
+					  "Index buffer copy assignment" );
+
 	glGenBuffers( 1, &id_ );
 
-	glBindBuffer( GL_COPY_READ_BUFFER, other.id_ );
-	glBindBuffer( GL_COPY_WRITE_BUFFER, id_ );
-
-	glCopyBufferSubData( GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0,
-						 other.element_count_ );
-
-	glBindBuffer( GL_COPY_READ_BUFFER, 0 );
-	glBindBuffer( GL_COPY_WRITE_BUFFER, 0 );
+	CopyIndexBuffer( other.id_, id_ );
 
 	element_count_ = other.element_count_;
+
+	glPopDebugGroup();
 
 	return *this;
 }
