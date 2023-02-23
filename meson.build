@@ -1,5 +1,11 @@
 project('Octave', ['cpp', 'c'], version: '0.0.0', default_options: ['cpp_std=c++17'])
 
+is_debug = get_option('debug')
+
+if is_debug
+	add_project_arguments('-DOCTAVE_DEBUG', language: 'cpp')
+endif
+
 sys_os = host_machine.system()
 
 # Platform defines
