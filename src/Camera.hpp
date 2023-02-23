@@ -9,7 +9,7 @@ namespace octave {
 class Camera {
 public:
 	Camera() noexcept;
-	~Camera() = default;
+	~Camera() noexcept = default;
 
 	[[nodiscard]] glm::mat4 GetProjectionMatrix() const noexcept {
 		return matrix_projection_;
@@ -46,7 +46,7 @@ private:
 	float aspect_ratio_;
 	float clip_near_, clip_far_;
 
-	float pitch_, yaw_, roll_;
+	float pitch_, yaw_;
 
 	glm::mat4 matrix_projection_;
 	glm::mat4 matrix_view_;

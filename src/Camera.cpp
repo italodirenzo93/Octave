@@ -17,7 +17,6 @@ Camera::Camera() noexcept {
 
 	yaw_ = -90.0f;
 	pitch_ = 0.0f;
-	roll_ = 0.0f;
 
 	matrix_projection_ = glm::identity<glm::mat4>();
 	matrix_view_ = glm::identity<glm::mat4>();
