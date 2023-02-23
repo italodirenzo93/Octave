@@ -78,9 +78,7 @@ void IndexBuffer::SetData( const std::vector<uint32_t>& indices ) noexcept {
 }
 
 IndexBuffer& IndexBuffer::operator=( const IndexBuffer& other ) noexcept {
-    if ( &other == this ) {
-        return *this;
-    }
+    SELF_REFERENCE_CHECK( other );
 
     glGenBuffers( 1, &id_ );
 
