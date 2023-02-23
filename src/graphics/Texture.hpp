@@ -25,6 +25,8 @@ private:
 public:
     Texture& operator=( Texture&& other ) noexcept;
 
+    bool operator==( const Texture& other ) const noexcept;
+
 private:
     NON_COPYABLE_CLASS( Texture )
 };

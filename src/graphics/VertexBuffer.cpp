@@ -3,7 +3,7 @@
 namespace graphics {
 // NOTE: This must be kept in sync with the input layout of the vertex shader!
 static const std::map<LayoutSemantic, uint32_t> kAttributeBindings{
-    {POSITION, 0}, {COLOR, 1}, {TEXCOORD, 2}, {NORMAL, 3}};
+    { POSITION, 0 }, { COLOR, 1 }, { TEXCOORD, 2 }, { NORMAL, 3 } };
 
 VertexBuffer::VertexBuffer() noexcept {
     glGenBuffers( 1, &vbo_ );
@@ -23,7 +23,7 @@ VertexBuffer::VertexBuffer( const VertexBuffer& other ) noexcept {
     glBindBuffer( GL_COPY_READ_BUFFER, 0 );
     glBindBuffer( GL_COPY_WRITE_BUFFER, 0 );
 
-    if (!other.layout_.empty()) {
+    if ( !other.layout_.empty() ) {
         SetVertexAttributes( layout_, layout_.size() * sizeof( layout_[0] ) );
     }
 
@@ -55,16 +55,16 @@ void VertexBuffer::SetVertexAttributes( const VertexLayout& layout,
 
     size_t offset_in_bytes = 0;
 
-    for (auto& binding : layout) {
+    for ( auto& binding : layout ) {
         auto iter = kAttributeBindings.find( binding.semantic );
-        if (iter == kAttributeBindings.end()) continue;
+        if ( iter == kAttributeBindings.end() ) continue;
 
         const uint32_t binding_point = iter->second;
 
         glVertexAttribPointer(
-            binding_point, static_cast<int>(binding.size), binding.type,
-            binding.normalized, static_cast<int>(stride),
-            reinterpret_cast<const void*>(offset_in_bytes) );
+            binding_point, static_cast<int>( binding.size ), binding.type,
+            binding.normalized, static_cast<int>( stride ),
+            reinterpret_cast<const void*>( offset_in_bytes ) );
         glEnableVertexAttribArray( binding_point );
 
         offset_in_bytes +=
@@ -77,6 +77,10 @@ void VertexBuffer::SetVertexAttributes( const VertexLayout& layout,
 }
 
 VertexBuffer& VertexBuffer::operator=( const VertexBuffer& other ) noexcept {
+    if ( &other == this ) {
+        return *this;
+    }
+
     glGenBuffers( 1, &vbo_ );
 
     glBindBuffer( GL_COPY_READ_BUFFER, other.vbo_ );
@@ -88,7 +92,7 @@ VertexBuffer& VertexBuffer::operator=( const VertexBuffer& other ) noexcept {
     glBindBuffer( GL_COPY_READ_BUFFER, 0 );
     glBindBuffer( GL_COPY_WRITE_BUFFER, 0 );
 
-    if (!other.layout_.empty()) {
+    if ( !other.layout_.empty() ) {
         SetVertexAttributes( layout_, layout_.size() * sizeof( layout_[0] ) );
     }
 
@@ -112,4 +116,10 @@ VertexBuffer& VertexBuffer::operator=( VertexBuffer&& other ) noexcept {
 
     return *this;
 }
-} // namespace graphics
+
+bool VertexBuffer::operator==( const VertexBuffer& other ) const noexcept {
+    return vbo_ == other.vbo_ && vao_ == other.vao_ &&
+           vertex_count_ == other.vertex_count_ && layout_ == other.layout_;
+}
+
+}  // namespace graphics

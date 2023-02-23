@@ -11,11 +11,11 @@ public:
     Window();
     explicit Window( const std::string& title );
     Window( int width, int height, const std::string& title );
-    ~Window();
+    ~Window() noexcept;
 
     void PollEvents() const noexcept;
 
-    bool IsOpen() const noexcept;
+    [[nodiscard]] bool IsOpen() const noexcept;
 	void GetSize( int& width, int& height ) const noexcept;
 
     using OnSizeChangedCallback = std::function<void(int, int)>;

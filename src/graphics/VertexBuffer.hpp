@@ -44,7 +44,7 @@ public:
 
 	using VertexLayout = std::vector<LayoutBinding>;
 
-    uint32_t GetVertexCount() const noexcept { return vertex_count_; }
+    [[nodiscard]] uint32_t GetVertexCount() const noexcept { return vertex_count_; }
 
     template <typename Vertex>
     std::vector<Vertex> GetData() const noexcept;
@@ -65,6 +65,8 @@ private:
 public:
     VertexBuffer& operator=( const VertexBuffer& other ) noexcept;
     VertexBuffer& operator=( VertexBuffer&& other ) noexcept;
+
+    bool operator==( const VertexBuffer& other ) const noexcept;
 
 private:
     void SetVertexAttributes( const VertexLayout& layout,
