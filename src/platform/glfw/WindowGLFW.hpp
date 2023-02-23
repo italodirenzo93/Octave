@@ -1,15 +1,17 @@
-#ifndef OCTAVE_GLFWWINDOW_HPP
-#define OCTAVE_GLFWWINDOW_HPP
-
-#include <GLFW/glfw3.h>
+#ifndef OCTAVE_WINDOWGLFW_HPP
+#define OCTAVE_WINDOWGLFW_HPP
 
 #include "platform/Window.hpp"
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 namespace octave::platform::glfw {
 
-class GLFWWindow : public Window {
+class WindowGLFW : public Window {
 public:
-	GLFWWindow( int width, int height, const std::string& title );
+	explicit WindowGLFW( const WindowOptions& options );
+	~WindowGLFW() noexcept override;
 	[[nodiscard]] std::pair<int, int> GetSize() const noexcept override;
 	[[nodiscard]] bool IsOpen() const noexcept override;
 	Window& SetTitle( const std::string& title ) noexcept override;
@@ -18,9 +20,13 @@ public:
 	void Close() const noexcept override;
 
 private:
-	::GLFWwindow* window_ = nullptr;
+	GLFWwindow* window_ = nullptr;
+
+	static void WindowSizeCallback( GLFWwindow* window, int width,
+									int height ) noexcept;
+	static void CloseCallback( GLFWwindow* window ) noexcept;
 };
 
 }  // namespace octave::platform::glfw
 
-#endif  // OCTAVE_GLFWWINDOW_HPP
+#endif  // OCTAVE_WINDOWGLFW_HPP

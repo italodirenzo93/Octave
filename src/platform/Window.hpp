@@ -6,11 +6,17 @@
 
 namespace octave::platform {
 
+struct WindowOptions {
+	bool is_fullscreen;
+	bool is_borderless;
+	int width;
+	int height;
+	std::string title;
+};
+
 class Window {
 public:
-	Window();
-	explicit Window( const std::string& title );
-	Window( int width, int height, const std::string& title );
+	explicit Window( const WindowOptions& options ) {};
 	virtual ~Window() noexcept = default;
 
 	[[nodiscard]] virtual std::pair<int, int> GetSize() const noexcept = 0;

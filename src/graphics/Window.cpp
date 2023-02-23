@@ -11,7 +11,7 @@ using namespace std;
 
 namespace octave::graphics {
 
-#ifdef __DEBUG__
+#ifdef OCTAVE_DEBUG
 static void GLAPIENTRY DebugOutputCallback( GLenum source, GLenum type,
 											unsigned int id, GLenum severity,
 											GLsizei length, const char* message,
@@ -113,7 +113,7 @@ Window::Window( int width, int height, const string& title ) {
 	glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
 	glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE );
 
-#ifdef __DEBUG__
+#ifdef OCTAVE_DEBUG
 	glfwWindowHint( GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE );
 #endif
 
@@ -173,7 +173,7 @@ Window::Window( int width, int height, const string& title ) {
 		throw Exception( "Unable to initialize GLAD OpenGL extension loader" );
 	}
 
-#ifdef __DEBUG__
+#ifdef OCTAVE_DEBUG
 	// Configure debug callback if we got a debug context
 	int gl_context_flags;
 	glGetIntegerv( GL_CONTEXT_FLAGS, &gl_context_flags );

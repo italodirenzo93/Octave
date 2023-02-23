@@ -5,7 +5,7 @@ set(IS_DEBUG_BUILD CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 # Indication to the code that this is a debug build
 if (${IS_DEBUG_BUILD})
-    add_compile_definitions(__DEBUG__)
+    add_compile_definitions(OCTAVE_DEBUG)
 endif ()
 
 # OpenGL

@@ -5,12 +5,12 @@
 
 namespace octave::platform::glfw {
 
-class PlatformGlfw : public Platform {
+class PlatformGLFW : public Platform {
 public:
-	PlatformGlfw();
-	~PlatformGlfw() noexcept override;
+	PlatformGLFW();
+	~PlatformGLFW() noexcept override;
 
-	[[nodiscard]] std::string GetName() override;
+	[[nodiscard]] PlatformName GetName() const override;
 	double GetElapsedTime() override;
 	uint64_t GetPerformanceCounter() override;
 	uint64_t GetPerformanceFrequency() override;
