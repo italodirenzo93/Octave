@@ -2,7 +2,6 @@
 #define GEOMETRICPRIMITIVE_HPP
 
 #include "graphics/IndexBuffer.hpp"
-#include "graphics/VertexArrayLayout.hpp"
 #include "graphics/VertexBuffer.hpp"
 
 class GeometricPrimitive {
@@ -17,8 +16,7 @@ public:
     };
 
 
-    static void CreateCube( graphics::VertexArrayLayout& vao,
-                            graphics::VertexBuffer& vbo,
+    static void CreateCube( graphics::VertexBuffer& vbo,
                             graphics::IndexBuffer& ibo );
 };
 

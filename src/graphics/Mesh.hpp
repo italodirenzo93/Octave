@@ -3,7 +3,6 @@
 
 #include "CommonInclude.hpp"
 #include "Shader.hpp"
-#include "VertexArrayLayout.hpp"
 #include "VertexBuffer.hpp"
 #include "IndexBuffer.hpp"
 
@@ -37,7 +36,6 @@ public:
     void draw( const Shader& program ) const;
 
 private:
-    VertexArrayLayout vao_;
     VertexBuffer vbo_;
     IndexBuffer ibo_;
 

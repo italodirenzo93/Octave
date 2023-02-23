@@ -143,18 +143,17 @@ void Renderer::Present() const {
     glfwSwapBuffers( window_.handle_ );
 }
 
-void Renderer::DrawPrimitives( const VertexArrayLayout& vao,
-                               const VertexBuffer& vbo ) const {
-    glBindVertexArray( vao.id_ );
+void Renderer::DrawPrimitives( const VertexBuffer& vbo ) const {
+    glBindVertexArray( vbo.vao_ );
 
     glDrawArrays( GL_TRIANGLES, 0, static_cast<int>(vbo.GetVertexCount()) );
 
     glBindVertexArray( 0 );
 }
 
-void Renderer::DrawIndexedPrimitives( const VertexArrayLayout& vao,
+void Renderer::DrawIndexedPrimitives( const VertexBuffer& vbo,
                                       const IndexBuffer& ibo ) const {
-    glBindVertexArray( vao.id_ );
+    glBindVertexArray( vbo.vao_ );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo.id_ );
 
     glDrawElements( GL_TRIANGLES, static_cast<int>(ibo.GetElementCount()),
