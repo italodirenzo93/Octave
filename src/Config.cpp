@@ -2,12 +2,13 @@
 
 #include <SimpleIni.h>
 
+#include <regex>
+
 #include "CommonInclude.hpp"
 
 using namespace std;
 namespace fs = std::filesystem;
 
-namespace config {
 static constexpr const char* kConfigTemplate = "resources/config/Engine.ini";
 
 // Video
@@ -22,21 +23,6 @@ static constexpr const char* kDefaultShaderList =
 static constexpr const char* kDefaultShaderDirectory = "resources/shaders";
 static constexpr bool kDefaultPreloadShaders = false;
 
-static CSimpleIniA ini;
-
-inline bool EnsureKeyExists( const string& section, const string& key ) {
-    if ( !ini.KeyExists( section.c_str(), key.c_str() ) ) {
-        cout << "Configuration value [" << section << "]/" << key
-             << " not found" << endl;
-        return false;
-    }
-
-    return true;
-}
-
-#define ENSURE_KEY_EXISTS( section, key ) \
-    if ( !EnsureKeyExists( section, key ) ) return false
-
 static void SetDefaultConfig( CSimpleIniA& config ) {
     config.SetLongValue( "Video", "FramebufferWidth", kDefaultWidth );
     config.SetLongValue( "Video", "FramebufferHeight", kDefaultHeight );
@@ -48,7 +34,9 @@ static void SetDefaultConfig( CSimpleIniA& config ) {
     config.SetBoolValue( "Renderer", "PreloadShaders", kDefaultPreloadShaders );
 }
 
-bool Initialize() {
+unique_ptr<Config> Config::instance_ = nullptr;
+
+Config::Config() {
     SI_Error result;
 
     static constexpr const char* configFile = "Engine.ini";
@@ -56,63 +44,85 @@ bool Initialize() {
     // Check for config file
     if ( fs::exists( configFile ) ) {
         // Try to load it
-        result = ini.LoadFile( configFile );
+        result = ini_.LoadFile( configFile );
         if ( result < 0 ) {
             cout << "Could not read configuration file... using default "
                     "configuration"
                  << endl;
-            SetDefaultConfig( ini );
+            SetDefaultConfig( ini_ );
         }
     } else {
         // Try to copy template
         if ( !fs::copy_file( kConfigTemplate, configFile ) ) {
             // Could not copy template, set built-in defaults
-            SetDefaultConfig( ini );
-            result = ini.SaveFile( configFile );
+            SetDefaultConfig( ini_ );
+            result = ini_.SaveFile( configFile );
             if ( result < 0 ) {
                 cout << "Could not write default configuration file..." << endl;
             }
         } else {
-            result = ini.LoadFile( configFile );
+            result = ini_.LoadFile( configFile );
             if ( result < 0 ) {
                 cout << "Could not read configuration file... using default "
                         "configuration"
                      << endl;
-                SetDefaultConfig( ini );
+                SetDefaultConfig( ini_ );
             }
         }  // copy file
     }      // config file exists
 
     assert( result == SI_OK );
-
-    return true;
 }
 
-void Reset() { ini.Reset(); }
-
-bool TryGetInt( const string& section, const string& key, int& value ) {
-    ENSURE_KEY_EXISTS( section, key );
-
-    value =
-        static_cast<int>( ini.GetLongValue( section.c_str(), key.c_str() ) );
-
-    return true;
+void Config::Reset() {
+    ini_.Reset();
 }
 
-bool TryGetString( const string& section, const string& key, string& value ) {
-    ENSURE_KEY_EXISTS( section, key );
-
-    value = ini.GetValue( section.c_str(), key.c_str(), nullptr );
-
-    return true;
+int Config::GetFramebufferWidth() const {
+    const long width =
+        ini_.GetLongValue( "Video", "FramebufferWidth", kDefaultWidth );
+    return static_cast<int>( width );
 }
 
-bool TryGetBool( const std::string& section, const std::string& key,
-                 bool& value ) {
-    ENSURE_KEY_EXISTS( section, key );
-
-    value = ini.GetBoolValue( section.c_str(), key.c_str() );
-
-    return true;
+int Config::GetFramebufferHeight() const {
+    const long height =
+        ini_.GetLongValue( "Video", "FramebufferHeight", kDefaultHeight );
+    return static_cast<int>( height );
 }
-}  // namespace config
+
+bool Config::GetIsFullscreen() const {
+    return ini_.GetBoolValue( "Video", "IsFullscreen", kDefaultFullscreen );
+}
+
+int Config::GetSyncInterval() const {
+    const long sync =
+        ini_.GetLongValue( "Video", "SyncInterval", kDefaultSyncInterval );
+    return static_cast<int>( sync );
+}
+
+std::vector<std::string> Config::GetShaderList() const {
+    vector<string> shader_list;
+
+    const string val =
+        ini_.GetValue( "Renderer", "ShaderList", kDefaultShaderList );
+
+    const regex expr( "," );
+    sregex_token_iterator iter( val.begin(), val.end(), expr, -1 );
+    const sregex_token_iterator end;
+
+    while ( iter != end ) {
+        shader_list.emplace_back( *iter++ );
+    }
+
+    return shader_list;
+}
+
+std::filesystem::path Config::GetShaderDirectory() const {
+    return ini_.GetValue( "Renderer", "ShaderDirectory",
+                          kDefaultShaderDirectory );
+}
+
+bool Config::GetPreloadShaders() const {
+    return ini_.GetBoolValue( "Renderer", "PreloadShaders",
+                              kDefaultPreloadShaders );
+}

@@ -5,32 +5,18 @@
 using namespace std;
 namespace fs = std::filesystem;
 
-static constexpr const char* kDefaultShaderDirectory = "resources/shaders";
-
 namespace graphics {
 unique_ptr<ShaderManager> ShaderManager::instance_ = nullptr;
 
 ShaderManager::ShaderManager() {
 	// Read shader list
-    string shader_list;
-    if (config::TryGetString( "Renderer", "ShaderList", shader_list )) {
-        regex expr( "," );
-        sregex_token_iterator iter( shader_list.begin(), shader_list.end(),
-                                    expr, -1 );
-        sregex_token_iterator end;
-
-        while (iter != end) {
-            shader_list_.emplace_back( *iter++ );
-        }
-    } else {
+    shader_list_ = Config::Instance().GetShaderList();
+    if (shader_list_.empty()) {
         cout << "No shaders listed for compilation..." << endl;
     }
 
 	// Read shader directory
-	string dir = kDefaultShaderDirectory;
-    config::TryGetString( "Renderer", "ShaderDirectory", dir );
-
-	shader_directory_ = dir;
+	shader_directory_ = Config::Instance().GetShaderDirectory();
 }
 
 void ShaderManager::PreloadShaders() {
