@@ -17,7 +17,7 @@ static constexpr const char* kConfigTemplate = "resources/config/Engine.ini";
 static constexpr int kDefaultWidth = 1280;
 static constexpr int kDefaultHeight = 720;
 static constexpr bool kDefaultIsFullscreen = false;
-static constexpr bool kDefaultIsMaximized = false;
+static constexpr bool kDefaultIsBorderless = false;
 static constexpr int kDefaultSyncInterval = 1;
 
 // Renderer
@@ -30,6 +30,7 @@ static void SetDefaultConfig( CSimpleIniA& config ) {
     config.SetLongValue( "Video", "FramebufferWidth", kDefaultWidth );
     config.SetLongValue( "Video", "FramebufferHeight", kDefaultHeight );
     config.SetBoolValue( "Video", "IsFullscreen", kDefaultIsFullscreen );
+    config.SetBoolValue( "Video", "IsBorderless", kDefaultIsBorderless );
     config.SetLongValue( "Video", "SyncInterval", kDefaultSyncInterval );
 
     config.SetValue( "Renderer", "ShaderList", kDefaultShaderList );
@@ -97,8 +98,8 @@ bool Config::IsFullscreen() const noexcept {
     return ini_.GetBoolValue( "Video", "IsFullscreen", kDefaultIsFullscreen );
 }
 
-bool Config::IsMaximized() const noexcept {
-    return ini_.GetBoolValue( "Video", "IsMaximized", kDefaultIsMaximized );
+bool Config::IsBorderless() const noexcept {
+    return ini_.GetBoolValue( "Video", "IsBorderless", kDefaultIsBorderless );
 }
 
 int Config::GetSyncInterval() const noexcept {

@@ -16,7 +16,10 @@ Window::Window( const std::string& title )
 }
 
 Window::Window( int width, int height, const string& title ) {
-    // Set window hints
+    // Set defaults as a baseline
+    glfwDefaultWindowHints();
+
+    // Open GL context hints
 #ifdef __APPLE__
     glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
     glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
@@ -34,10 +37,11 @@ Window::Window( int width, int height, const string& title ) {
 
     // Fullscreen
     GLFWmonitor* monitor = nullptr;
-    if ( config.IsFullscreen() ) {
-        monitor = glfwGetPrimaryMonitor();
 
-        const auto vidmode = glfwGetVideoMode( monitor );
+    if (config.IsFullscreen()) {
+        const auto primary_monitor = glfwGetPrimaryMonitor();
+        const auto vidmode = glfwGetVideoMode( primary_monitor );
+
         width = vidmode->width;
         height = vidmode->height;
 
@@ -45,10 +49,13 @@ Window::Window( int width, int height, const string& title ) {
         glfwWindowHint( GLFW_GREEN_BITS, vidmode->greenBits );
         glfwWindowHint( GLFW_BLUE_BITS, vidmode->blueBits );
         glfwWindowHint( GLFW_REFRESH_RATE, vidmode->refreshRate );
+
+        monitor = primary_monitor; // passing a monitor to glfwCreateWindow enabled fullscreen mode
     }
 
-    if ( config.IsMaximized() ) {
-        glfwWindowHint( GLFW_MAXIMIZED, GLFW_TRUE );
+    if ( config.IsBorderless() ) {
+        glfwWindowHint( GLFW_DECORATED, GLFW_FALSE );
+        monitor = nullptr; // window is the size of the monitor but not true fullscreen
     }
 
     // Create window
