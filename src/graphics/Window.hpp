@@ -1,5 +1,5 @@
-#ifndef WINDOW_HPP
-#define WINDOW_HPP
+#ifndef OCTAVE_WINDOW_HPP
+#define OCTAVE_WINDOW_HPP
 
 #include "CommonInclude.hpp"
 

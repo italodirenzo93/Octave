@@ -1,5 +1,5 @@
-#ifndef TEXTURE_HPP
-#define TEXTURE_HPP
+#ifndef OCTAVE_TEXTURE_HPP
+#define OCTAVE_TEXTURE_HPP
 
 #include "CommonInclude.hpp"
 

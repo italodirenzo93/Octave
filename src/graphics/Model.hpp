@@ -1,5 +1,5 @@
-#ifndef MODEL_HPP
-#define MODEL_HPP
+#ifndef OCTAVE_MODEL_HPP
+#define OCTAVE_MODEL_HPP
 
 #include <assimp/scene.h>
 

@@ -1,5 +1,5 @@
-#ifndef CAMERA_HPP
-#define CAMERA_HPP
+#ifndef OCTAVE_CAMERA_HPP
+#define OCTAVE_CAMERA_HPP
 
 #include "CommonInclude.hpp"
 #include "graphics/Shader.hpp"

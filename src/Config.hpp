@@ -1,5 +1,5 @@
-#ifndef CONFIG_HPP
-#define CONFIG_HPP
+#ifndef OCTAVE_CONFIG_HPP
+#define OCTAVE_CONFIG_HPP
 
 #include <SimpleIni.h>
 
