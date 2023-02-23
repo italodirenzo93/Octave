@@ -2,6 +2,7 @@
 .vscode
 .idea
 imgui.ini
+/Engine.ini
 build
 out
 cmake-build-*
