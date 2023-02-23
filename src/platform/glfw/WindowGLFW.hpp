@@ -3,7 +3,7 @@
 
 #include "platform/Window.hpp"
 
-class GLFWwindow;
+struct GLFWwindow;
 
 namespace Octave::Impl {
 
