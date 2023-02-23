@@ -45,6 +45,9 @@ public:
 	NON_COPYABLE_OR_MOVABLE_CLASS( Application )
 };
 
+// To be implemented by the client application
+std::unique_ptr<Application> CreateApplication( int argc, char* argv[] );
+
 }  // namespace Octave
 
 #endif

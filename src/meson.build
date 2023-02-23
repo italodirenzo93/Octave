@@ -8,6 +8,7 @@ source = [
 	'Camera.hpp',
 	'Config.cpp',
 	'Config.hpp',
+	'EntryPoint.hpp',
 	'Exception.cpp',
 	'Exception.hpp',
 	'Octave.hpp'
