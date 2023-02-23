@@ -19,10 +19,9 @@ void main() {
 
 	VertexColor = aColor;
 
-    mat4 normal_matrix = transpose( inverse( uMatModel ) );
-    VertexNormal = mat3( normal_matrix ) * aNormal;
+	VertexNormal = aNormal;
 
 	TexCoord = aTexCoord;
 
-    FragPosition = vec3( uMatModel * vec4( aPos, 1.0) );
+	FragPosition = vec3( uMatModel * vec4( aPos, 1.0) );
 }
