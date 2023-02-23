@@ -20,7 +20,7 @@ public:
 	Mesh( Mesh&& other ) noexcept;
 	~Mesh() = default;
 
-	void Draw( const Shader& shader, const Renderer& renderer ) const;
+	void Draw( Shader& shader, const Renderer& renderer ) const;
 
 	Mesh& SetVertexBuffer( const std::shared_ptr<VertexBuffer>& vbo ) noexcept;
 	Mesh& SetIndexBuffer( const std::shared_ptr<IndexBuffer>& ibo ) noexcept;

@@ -62,7 +62,7 @@ Mesh LoadCube() {
 	return { vbo, ibo, textures };
 }
 
-inline void SetDefaultLighting( const Shader& shader ) {
+inline void SetDefaultLighting( Shader& shader ) {
 	const glm::vec3 direction( 0.5f, 0.0f, -0.5f );
 	const glm::vec3 ambient( 0.2f );
 	const glm::vec3 diffuse( 0.5f );

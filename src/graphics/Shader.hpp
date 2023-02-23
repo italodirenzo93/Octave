@@ -27,14 +27,14 @@ public:
 	Shader( Shader&& other ) noexcept;
 	~Shader() noexcept;
 
-	void SetBool( const std::string& name, bool value ) const;
-	void SetInt( const std::string& name, int value ) const;
-	void SetFloat( const std::string& name, float value ) const;
-	void SetMat4( const std::string& name, const glm::mat4& value ) const;
-	void SetVec3( const std::string& name, const glm::vec3& value ) const;
-	void SetVec3( const std::string& name, float x, float y, float z ) const;
+	void SetBool( const std::string& name, bool value ) noexcept;
+	void SetInt( const std::string& name, int value ) noexcept;
+	void SetFloat( const std::string& name, float value ) noexcept;
+	void SetMat4( const std::string& name, const glm::mat4& value ) noexcept;
+	void SetVec3( const std::string& name, const glm::vec3& value ) noexcept;
+	void SetVec3( const std::string& name, float x, float y, float z ) noexcept;
 	void SetTexture( const std::string& name, int index,
-					 const Texture& texture ) const;
+					 const Texture& texture ) noexcept;
 
 private:
 	uint32_t id_ = 0;
@@ -45,6 +45,10 @@ public:
 	Shader& operator=( Shader&& other ) noexcept;
 
 private:
+	std::unordered_map<std::string, int> uniform_locations_;
+
+	int GetUniform( const std::string& name ) noexcept;
+
 	static uint32_t CompileFromFile( const char* vertex_path,
 									 const char* fragment_path );
 

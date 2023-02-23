@@ -27,7 +27,7 @@ public:
 	Model( Model&& other ) noexcept;
 	~Model() = default;
 
-	void Draw( const Shader& shader, const Renderer& renderer ) const noexcept;
+	void Draw( Shader& shader, const Renderer& renderer ) const;
 
 	[[nodiscard]] const std::vector<Mesh>& GetMeshes() const noexcept {
 		return meshes_;
