@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.3)
-project(OctaveGT)
+project(Octave)
 
 set(IS_DEBUG_BUILD CMAKE_BUILD_TYPE STREQUAL "Debug")
 
@@ -59,15 +59,15 @@ add_subdirectory(dependencies/stb_image)
 # Set `source` variable to all .h(pp) and .cpp files in `src`
 file(GLOB_RECURSE source CONFIGURE_DEPENDS "src/*.h" "src/*.hpp" "src/*.cpp")
 
-add_executable(OctaveGT ${source})
-target_link_libraries(OctaveGT PRIVATE ${OPENGL_LIBRARIES} assimp glad glfw glm OpenAL simpleini stb_image)
-target_include_directories(OctaveGT PRIVATE)
-target_precompile_headers(OctaveGT PRIVATE "src/CommonInclude.hpp")
+add_executable(Octave ${source})
+target_link_libraries(Octave PRIVATE ${OPENGL_LIBRARIES} assimp glad glfw glm OpenAL simpleini stb_image)
+target_include_directories(Octave PRIVATE)
+target_precompile_headers(Octave PRIVATE "src/CommonInclude.hpp")
 
 # Visual Studio Startup Project
 if(WIN32)
-	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT OctaveGT)
+	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Octave)
 endif()
 
 # Symlink Resources
-add_custom_command(TARGET OctaveGT PRE_BUILD COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/resources $<TARGET_FILE_DIR:OctaveGT>/resources)
+add_custom_command(TARGET Octave PRE_BUILD COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/resources $<TARGET_FILE_DIR:Octave>/resources)
