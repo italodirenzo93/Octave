@@ -46,6 +46,10 @@ int main() {
         return EXIT_FAILURE;
     }
 
+	// Because Open GL coordinates are weird...
+	stbi_set_flip_vertically_on_load( true );
+
+	// Renderer initialization
     graphics::Initialize();
 
     glfwSetFramebufferSizeCallback(
