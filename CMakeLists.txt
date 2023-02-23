@@ -57,7 +57,7 @@ add_subdirectory(dependencies/simpleini)
 add_subdirectory(dependencies/stb_image)
 
 # Set `source` variable to all .h(pp) and .cpp files in `src`
-file(GLOB_RECURSE source CONFIGURE_DEPENDS "src/*.h" "src/*.hpp" "src/*.cpp")
+file(GLOB_RECURSE source CONFIGURE_DEPENDS "src/*.h" "src/*.hpp" "src/*.c" "src/*.cpp")
 
 add_executable(Octave ${source})
 target_link_libraries(Octave PRIVATE ${OPENGL_LIBRARIES} assimp glad glfw glm OpenAL simpleini stb_image)

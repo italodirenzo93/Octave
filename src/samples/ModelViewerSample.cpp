@@ -85,6 +85,8 @@ inline void SetDefaultLighting( Shader& shader ) {
 }
 
 void ModelViewerSample::OnLoad() {
+	std::cout << renderer_.GetDescription() << std::endl;
+
 	window_->AddSizeChangedCallback( [this]( int w, int h ) {
 		if ( w > 0 && h > 0 ) {
 			renderer_.SetViewport( 0, 0, w, h );

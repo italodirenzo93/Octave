@@ -14,6 +14,6 @@ Octave GT is not intended to compete with any commercial or non-commercial game 
   - *const* and *constexpr* everywhere!
   - Use exceptions only for "exceptional code" (i.e. this complex operation encountered a non-trivial error)
 - Focus on cross-platform (**Windows** and **Linux** initially)
-  - **Graphics** - OpenGL 4.3+
-  - **Windowing**/**Input** - GLFW 3
+  - **Graphics** - OpenGL 4.1+
+  - **Windowing**/**Input** - GLFW 3.3+
   - **Audio** - OpenAL Soft
