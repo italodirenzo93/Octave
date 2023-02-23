@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "Gamepad.hpp"
-#include "platform/Window.hpp"
+#include "core/Window.hpp"
 
 namespace Octave {
 

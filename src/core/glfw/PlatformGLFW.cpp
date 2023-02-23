@@ -1,4 +1,4 @@
-#include "platform/Platform.hpp"
+#include "core/Platform.hpp"
 
 #include <GLFW/glfw3.h>
 

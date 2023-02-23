@@ -38,16 +38,16 @@ source += [
 	'helpers/StepTimer.hpp',
 ]
 
-# Platform
+# Core
 source += [
-	'platform/Platform.hpp',
-	'platform/Window.cpp',
-	'platform/Window.hpp',
-	'platform/glfw/GLFWError.cpp',
-	'platform/glfw/GLFWError.hpp',
-	'platform/glfw/PlatformGLFW.cpp',
-	'platform/glfw/WindowGLFW.cpp',
-	'platform/glfw/WindowGLFW.hpp'
+	'core/Platform.hpp',
+	'core/Window.cpp',
+	'core/Window.hpp',
+	'core/glfw/GLFWError.cpp',
+	'core/glfw/GLFWError.hpp',
+	'core/glfw/PlatformGLFW.cpp',
+	'core/glfw/WindowGLFW.cpp',
+	'core/glfw/WindowGLFW.hpp'
 ]
 
 # Input

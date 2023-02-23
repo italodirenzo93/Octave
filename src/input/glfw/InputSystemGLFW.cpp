@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 
 #include "GamepadGLFW.hpp"
-#include "platform/glfw/WindowGLFW.hpp"
+#include "core/glfw/WindowGLFW.hpp"
 
 namespace Octave::Impl {
 

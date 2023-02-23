@@ -1,7 +1,7 @@
 #ifndef OCTAVE_WINDOWGLFW_HPP
 #define OCTAVE_WINDOWGLFW_HPP
 
-#include "platform/Window.hpp"
+#include "core/Window.hpp"
 
 struct GLFWwindow;
 

@@ -3,7 +3,7 @@
 
 // clang-format off
 #include "input/InputSystem.hpp"
-#include "platform/Platform.hpp"
+#include "core/Platform.hpp"
 // clang-format on
 
 namespace Octave {

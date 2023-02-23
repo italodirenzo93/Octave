@@ -8,8 +8,8 @@
 #include "Config.hpp"
 #include "Camera.hpp"
 
-#include "platform/Platform.hpp"
-#include "platform/Window.hpp"
+#include "core/Platform.hpp"
+#include "core/Window.hpp"
 
 #include "input/Gamepad.hpp"
 #include "input/InputSystem.hpp"

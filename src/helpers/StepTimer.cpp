@@ -1,6 +1,6 @@
 #include "StepTimer.hpp"
 
-#include "platform/Platform.hpp"
+#include "core/Platform.hpp"
 
 namespace Octave {
 
