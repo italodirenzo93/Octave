@@ -2,10 +2,9 @@
 
 namespace octave::samples {
 
-Sample::Sample( const std::shared_ptr<graphics::Window>& window ) noexcept {
-	window_ = window;
-
-	std::function<void()> close_callback = std::bind( &Sample::Exit, this );
+Sample::Sample( const std::shared_ptr<graphics::Window>& window ) noexcept
+	: window_( window ), renderer_( *window ) {
+	std::function<void()> close_callback = [this] { Exit(); };
 	window_->AddCloseCallback( close_callback );
 }
 

@@ -1,8 +1,10 @@
 #ifndef OCTAVE_SAMPLE_HPP
 #define OCTAVE_SAMPLE_HPP
 
+#include "Camera.hpp"
 #include "CommonInclude.hpp"
 #include "StepTimer.hpp"
+#include "graphics/Renderer.hpp"
 #include "graphics/Window.hpp"
 
 namespace octave::samples {
@@ -23,7 +25,9 @@ public:
 
 protected:
 	StepTimer step_timer_;
+	DebugCamera camera_;
 	std::shared_ptr<graphics::Window> window_;
+	graphics::Renderer renderer_;
 	bool should_quit_ = false;
 
 private:
