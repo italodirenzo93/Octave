@@ -150,7 +150,7 @@ bool Initialize() {
 
     glfwSetFramebufferSizeCallback( g_window,
                                     []( GLFWwindow*, int width, int height ) {
-                                        glViewport( 0, 0, width, height );
+                                        ResizeFramebuffer( width, height );
                                     } );
 
     // Initialize Open GL extension loader
@@ -218,6 +218,7 @@ void Clear( bool depth, float r, float g, float b, float a ) {
 
     if ( depth ) {
         clear_flags |= GL_DEPTH_BUFFER_BIT;
+        glClearDepthf( 1.0f );
     }
 
     glClearColor( r, g, b, a );
