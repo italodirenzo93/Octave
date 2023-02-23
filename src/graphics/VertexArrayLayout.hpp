@@ -34,6 +34,7 @@ struct LayoutBinding {
 class VertexArrayLayout {
     friend class VertexBuffer;
     friend class Mesh;
+    friend class Renderer;
 
 public:
     VertexArrayLayout();
@@ -41,8 +42,6 @@ public:
     VertexArrayLayout( VertexArrayLayout&& other ) noexcept;
     VertexArrayLayout( std::initializer_list<LayoutBinding> initializer );
     ~VertexArrayLayout();
-
-    uint32_t GetId() const { return id_; } // TODO: remove this later with friend class Renderer
 
     void ClearBindings();
     VertexArrayLayout& AddBinding( const LayoutBinding& binding );

@@ -7,6 +7,7 @@ namespace graphics {
 
 class IndexBuffer {
     friend class Mesh;
+    friend class Renderer;
 
 public:
     IndexBuffer();
@@ -14,7 +15,7 @@ public:
     IndexBuffer( IndexBuffer&& other ) noexcept;
     ~IndexBuffer();
 
-    uint32_t GetSize() const { return element_count_; }
+    uint32_t GetElementCount() const { return element_count_; }
 
     void SetData(std::initializer_list<uint32_t> initializerList) const;
     void SetData(const std::vector<uint32_t>& indices) const;
