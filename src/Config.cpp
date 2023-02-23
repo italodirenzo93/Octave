@@ -21,6 +21,7 @@ static constexpr int kDefaultSyncInterval = 1;
 static constexpr const char* kDefaultShaderList = "basic";
 static constexpr const char* kDefaultShaderDirectory = "resources/shaders";
 static constexpr bool kDefaultPreloadShaders = false;
+static constexpr float kDefaultFieldOfView = 45.0f;
 
 static void SetDefaultConfig( CSimpleIniA& config ) {
     config.SetLongValue( "Video", "FramebufferWidth", kDefaultWidth );
@@ -35,7 +36,7 @@ static void SetDefaultConfig( CSimpleIniA& config ) {
 
 unique_ptr<Config> Config::instance_ = nullptr;
 
-Config::Config() {
+Config::Config() noexcept {
     SI_Error result;
 
     static constexpr const char* configFile = "Engine.ini";
@@ -73,33 +74,33 @@ Config::Config() {
     assert( result == SI_OK );
 }
 
-void Config::Reset() {
+void Config::Reset() noexcept {
     ini_.Reset();
 }
 
-int Config::GetFramebufferWidth() const {
+int Config::GetFramebufferWidth() const noexcept {
     const long width =
         ini_.GetLongValue( "Video", "FramebufferWidth", kDefaultWidth );
     return static_cast<int>( width );
 }
 
-int Config::GetFramebufferHeight() const {
+int Config::GetFramebufferHeight() const noexcept {
     const long height =
         ini_.GetLongValue( "Video", "FramebufferHeight", kDefaultHeight );
     return static_cast<int>( height );
 }
 
-bool Config::GetIsFullscreen() const {
+bool Config::GetIsFullscreen() const noexcept {
     return ini_.GetBoolValue( "Video", "IsFullscreen", kDefaultFullscreen );
 }
 
-int Config::GetSyncInterval() const {
+int Config::GetSyncInterval() const noexcept {
     const long sync =
         ini_.GetLongValue( "Video", "SyncInterval", kDefaultSyncInterval );
     return static_cast<int>( sync );
 }
 
-std::vector<std::string> Config::GetShaderList() const {
+std::vector<std::string> Config::GetShaderList() const noexcept {
     vector<string> shader_list;
 
     const string val =
@@ -116,12 +117,18 @@ std::vector<std::string> Config::GetShaderList() const {
     return shader_list;
 }
 
-std::filesystem::path Config::GetShaderDirectory() const {
+std::filesystem::path Config::GetShaderDirectory() const noexcept {
     return ini_.GetValue( "Renderer", "ShaderDirectory",
                           kDefaultShaderDirectory );
 }
 
-bool Config::GetPreloadShaders() const {
+bool Config::GetPreloadShaders() const noexcept {
     return ini_.GetBoolValue( "Renderer", "PreloadShaders",
                               kDefaultPreloadShaders );
+}
+
+float Config::GetFieldOfView() const noexcept {
+    auto fov =
+        ini_.GetDoubleValue( "Renderer", "FieldOfView", kDefaultFieldOfView );
+    return static_cast<float>( fov );
 }

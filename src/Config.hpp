@@ -6,8 +6,8 @@
 #include <SimpleIni.h>
 
 class Config {
-   public:
-    static Config& Instance() {
+public:
+    static Config& Instance() noexcept {
         if ( instance_ == nullptr ) {
             instance_ = std::unique_ptr<Config>( new Config() );
         }
@@ -17,21 +17,22 @@ class Config {
 
     ~Config() = default;
 
-    void Reset();
+    void Reset() noexcept;
 
     // Video
-    int GetFramebufferWidth() const;
-    int GetFramebufferHeight() const;
-    bool GetIsFullscreen() const;
-    int GetSyncInterval() const;
+    [[nodiscard]] int GetFramebufferWidth() const noexcept;
+    [[nodiscard]] int GetFramebufferHeight() const noexcept;
+    [[nodiscard]] bool GetIsFullscreen() const noexcept;
+    [[nodiscard]] int GetSyncInterval() const noexcept;
 
     // Renderer
-    std::vector<std::string> GetShaderList() const;
-    std::filesystem::path GetShaderDirectory() const;
-    bool GetPreloadShaders() const;
+    [[nodiscard]] std::vector<std::string> GetShaderList() const noexcept;
+    [[nodiscard]] std::filesystem::path GetShaderDirectory() const noexcept;
+    [[nodiscard]] bool GetPreloadShaders() const noexcept;
+    [[nodiscard]] float GetFieldOfView() const noexcept;
 
-   private:
-    Config();
+private:
+    Config() noexcept;
     static std::unique_ptr<Config> instance_;
 
     CSimpleIniA ini_;

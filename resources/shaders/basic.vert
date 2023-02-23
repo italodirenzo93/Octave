@@ -7,13 +7,15 @@ layout(location=3) in vec3 aNormal;
 
 out vec3 VertexColor;
 out vec2 TexCoord;
+out vec3 VertexNormal;
 
-uniform mat4 uMatModel;
-uniform mat4 uMatView;
 uniform mat4 uMatProjection;
+uniform mat4 uMatView;
+uniform mat4 uMatModel;
 
 void main() {
 	gl_Position = uMatProjection * uMatView * uMatModel * vec4(aPos, 1.0);
 	VertexColor = aColor;
 	TexCoord = aTexCoord;
+    VertexNormal = aNormal;
 }
