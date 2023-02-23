@@ -8,10 +8,16 @@ Camera::Camera() noexcept {
     field_of_view_ = 45.0f;
     aspect_ratio_ = 16.0f / 9.0f;
     position_ = glm::vec3( 0.0f );
+    clip_near_ = 0.1f;
+    clip_far_ = 100.0f;
 
     front_ = glm::vec3( 0.0f, 0.0f, -1.0f );
     up_ = world_up_;
     right_ = glm::vec3( 1.0f, 0.0f, 0.0f );
+
+    yaw_ = -90.0f;
+    pitch_ = 0.0f;
+    roll_ = 0.0f;
 
     matrix_projection_ = glm::identity<glm::mat4>();
     matrix_view_ = glm::identity<glm::mat4>();
@@ -44,28 +50,44 @@ Camera& Camera::SetAspectRatio( float aspect ) noexcept {
     return *this;
 }
 
+Camera& Camera::SetClipping( float near, float far ) noexcept {
+    clip_near_ = near;
+    clip_far_ = far;
+    UpdateProjectionMatrix();
+    return *this;
+}
+
 void Camera::Translate( float x, float y, float z ) noexcept {
     Translate( glm::vec3( x, y, z ) );
 }
 
 void Camera::Translate( const glm::vec3& translation ) noexcept {
     if ( translation != glm::zero<glm::vec3>() ) {
-        position_ += translation;
+        // Forward / Backward
+        position_ += translation * front_;
+
+        // Side to side
+        position_ += glm::normalize( glm::cross( front_, up_ ) ) * translation;
+
         UpdateViewMatrix();
     }
 }
 
 void Camera::Rotate( const glm::vec3& angles ) noexcept {
     if ( angles != glm::zero<glm::vec3>() ) {
+        // Look left/right
         yaw_ += angles.y;
-        pitch_ += angles.x;
+
+        // Look up/down
+        pitch_ = glm::clamp( pitch_ + angles.x, -89.0f, 89.0f );
+
         UpdateViewMatrix();
     }
 }
 
 void Camera::UpdateProjectionMatrix() noexcept {
     matrix_projection_ = glm::perspective( glm::radians( field_of_view_ ),
-                                           aspect_ratio_, 0.1f, 100.0f );
+                                           aspect_ratio_, clip_near_, clip_far_ );
 }
 
 void Camera::UpdateViewMatrix() noexcept {

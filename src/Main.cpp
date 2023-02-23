@@ -3,11 +3,11 @@
 
 #include <assimp/Importer.hpp>
 
-#include "Octave.hpp"
 #include "Camera.hpp"
 #include "Config.hpp"
-#include "StepTimer.hpp"
 #include "GeometricPrimitive.hpp"
+#include "Octave.hpp"
+#include "StepTimer.hpp"
 #include "graphics/Mesh.hpp"
 #include "graphics/Renderer.hpp"
 #include "graphics/ShaderManager.hpp"
@@ -29,6 +29,39 @@ struct VertexPositionNormalTexture {
                                  const glm::vec3& normal,
                                  const glm::vec2& tex_coords ) noexcept
         : position( position ), normal( normal ), tex_coords( tex_coords ) {}
+};
+
+struct Transform {
+    glm::vec3 translation = glm::vec3( 0.0f );
+    glm::vec3 rotation = glm::vec3( 0.0f );
+    glm::vec3 scale = glm::vec3( 1.0f );
+
+    Transform() = default;
+    explicit Transform( const glm::vec3& translation = glm::vec3( 0.0f ),
+                        const glm::vec3& rotation = glm::vec3( 0.0f ),
+                        const glm::vec3& scale = glm::vec3( 1.0f ) )
+        : translation( translation ), rotation( rotation ), scale( scale ) {}
+    ~Transform() = default;
+
+    [[nodiscard]] glm::mat4 GetModelMatrix() const noexcept {
+        auto model = glm::identity<glm::mat4>();
+
+        // Translation
+        model = glm::translate( model, translation );
+
+        // Rotation
+        model = glm::rotate( model, glm::radians( rotation.x ),
+                             glm::vec3( 1.0f, 0.0f, 0.0f ) );
+        model = glm::rotate( model, glm::radians( rotation.y ),
+                             glm::vec3( 0.0f, 1.0f, 0.0f ) );
+        model = glm::rotate( model, glm::radians( rotation.z ),
+                             glm::vec3( 0.0f, 0.0f, 1.0f ) );
+
+        // Scale
+        model = glm::scale( model, scale );
+
+        return model;
+    }
 };
 
 Mesh LoadMesh( const filesystem::path& path ) {
@@ -180,9 +213,63 @@ inline void SetDefaultLighting( const Shader& shader ) {
     shader.SetVec3( "uLight.specular", specular );
 }
 
+void DebugCameraControls( const Keyboard& keyboard, Camera& camera,
+                          float camera_speed, float delta ) {
+    auto translation = glm::vec3( 0.0f );
+    // Strafe Left
+    if ( keyboard.IsKeyDown( GLFW_KEY_A ) ) {
+        translation.x = -camera_speed * delta;
+    }
+    // Strafe right
+    if ( keyboard.IsKeyDown( GLFW_KEY_D ) ) {
+        translation.x = camera_speed * delta;
+    }
+    // Forward
+    if ( keyboard.IsKeyDown( GLFW_KEY_W ) ) {
+        translation.z = camera_speed * delta;
+    }
+    // Backward
+    if ( keyboard.IsKeyDown( GLFW_KEY_S ) ) {
+        translation.z = -camera_speed * delta;
+    }
+    // Up
+    if ( keyboard.IsKeyDown( GLFW_KEY_E ) ) {
+        translation.y = camera_speed * delta;
+    }
+    // Down
+    if ( keyboard.IsKeyDown( GLFW_KEY_Q ) ) {
+        translation.y = -camera_speed * delta;
+    }
+
+    auto euler_angles = glm::zero<glm::vec3>();
+    // Turn left
+    if ( keyboard.IsKeyDown( GLFW_KEY_LEFT ) ) {
+        euler_angles.y = -camera_speed * delta;
+    }
+    // Turn right
+    if ( keyboard.IsKeyDown( GLFW_KEY_RIGHT ) ) {
+        euler_angles.y = camera_speed * delta;
+    }
+    // Look up
+    if ( keyboard.IsKeyDown( GLFW_KEY_UP ) ) {
+        euler_angles.x = camera_speed * delta;
+    }
+    // Look down
+    if ( keyboard.IsKeyDown( GLFW_KEY_DOWN ) ) {
+        euler_angles.x = -camera_speed * delta;
+    }
+    camera.Translate( translation );
+    camera.Rotate( euler_angles );
+}
+
 int main( int argc, char* argv[] ) {
     // Initialize engine
     octave::Up();
+
+    std::vector<Transform> object_transforms{
+        Transform( glm::vec3( 0.0f ), glm::vec3( 90.0f, 0.0f, 0.0f ) ),
+        Transform( glm::vec3( 1.0f, 0.25f, -1.0f ),
+                   glm::vec3( 90.0f, 0.0f, 90.0f ) ) };
 
     try {
         Window window;
@@ -205,13 +292,12 @@ int main( int argc, char* argv[] ) {
         Camera camera;
         camera.SetPosition( 0.0f, 0.0f, 7.0f );
         camera.SetFieldOfView( Config::Instance().GetFieldOfView() );
-        camera.SetAspectRatio( static_cast<float>( width ) / static_cast<float>( height ) );
+        camera.SetAspectRatio( static_cast<float>( width ) /
+                               static_cast<float>( height ) );
 
         auto model = glm::identity<glm::mat4>();
         model = glm::rotate( model, glm::radians( 90.0f ),
                              glm::vec3( 1.0f, 0.0f, 0.0f ) );
-
-        auto last_frame_time = static_cast<float>( glfwGetTime() );
 
         const auto shader = ShaderManager::Instance().Get( "basic" );
         if ( !shader ) {
@@ -229,8 +315,6 @@ int main( int argc, char* argv[] ) {
         } );
 
         Keyboard keyboard( window );
-        const float camera_speed = 25.0f;
-
         StepTimer step_timer;
 
         // Main loop
@@ -238,65 +322,19 @@ int main( int argc, char* argv[] ) {
             step_timer.Tick();
             const auto delta = step_timer.GetDeltaTime();
 
-            // Rotate the model around its Y-axis
-            model = glm::rotate( model, glm::radians( delta * 25 ),
-                                 glm::vec3( 0.0f, 0.0f, 1.0f ) );
-
-            auto translation = glm::vec3( 0.0f );
-            // Strafe Left
-            if ( keyboard.IsKeyDown( GLFW_KEY_A ) ) {
-                translation.x = -camera_speed * delta;
-            }
-            // Strafe right
-            if ( keyboard.IsKeyDown( GLFW_KEY_D ) ) {
-                translation.x = camera_speed * delta;
-            }
-            // Forward
-            if ( keyboard.IsKeyDown( GLFW_KEY_W ) ) {
-                translation.z = -camera_speed * delta;
-            }
-            // Backward
-            if ( keyboard.IsKeyDown( GLFW_KEY_S ) ) {
-                translation.z = camera_speed * delta;
-            }
-            // Up
-            if ( keyboard.IsKeyDown( GLFW_KEY_E ) ) {
-                translation.y = camera_speed * delta;
-            }
-            // Down
-            if ( keyboard.IsKeyDown( GLFW_KEY_Q ) ) {
-                translation.y = -camera_speed * delta;
-            }
-
-            auto euler_angles = glm::zero<glm::vec3>();
-            // Turn left
-            if ( keyboard.IsKeyDown( GLFW_KEY_LEFT ) ) {
-                euler_angles.y = -camera_speed * delta;
-            }
-            // Turn right
-            if ( keyboard.IsKeyDown( GLFW_KEY_RIGHT ) ) {
-                euler_angles.y = camera_speed * delta;
-            }
-            // Look up
-            if ( keyboard.IsKeyDown( GLFW_KEY_UP ) ) {
-                euler_angles.x = camera_speed * delta;
-            }
-            // Look down
-            if ( keyboard.IsKeyDown( GLFW_KEY_DOWN ) ) {
-                euler_angles.x = -camera_speed * delta;
-            }
-            camera.Translate( translation );
-            camera.Rotate( euler_angles );
+            DebugCameraControls( keyboard, camera, 25.0f, delta );
 
             shader->SetMat4( "uMatProjection", camera.GetProjectionMatrix() );
             shader->SetMat4( "uMatView", camera.GetViewMatrix() );
-            shader->SetMat4( "uMatModel", model );
+            shader->SetVec3( "uViewPos", camera.GetPosition() );
 
             // Clear the viewport
             renderer.Clear( true, 0.1f, 0.1f, 0.1f );
 
             // Draw scene
-            shader->SetVec3( "uViewPos", camera.GetPosition() );
+            model = glm::rotate( model, glm::radians( delta * 25.0f ),
+                                 glm::vec3( 0.0f, 0.0f, 1.0f ) );
+            shader->SetMat4( "uMatModel", model );
             mesh.Draw( *shader, renderer );
 
             // Show the result
