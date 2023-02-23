@@ -3,7 +3,7 @@
 
 namespace octave {
 
-bool Up();
+bool Up(int argc, char* argv[]);
 void Down();
 
 }  // namespace octave

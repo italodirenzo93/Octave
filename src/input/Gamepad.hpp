@@ -1,17 +1,17 @@
 #ifndef OCTAVE_GAMEPAD_HPP
 #define OCTAVE_GAMEPAD_HPP
 
-#include "graphics/Window.hpp"
-
 namespace octave::input {
 
 class Gamepad {
 public:
-	explicit Gamepad( int player_index ) noexcept;
+	explicit Gamepad( int player_index = 0 ) noexcept;
 	Gamepad( Gamepad&& other ) noexcept = default;
 	~Gamepad() noexcept = default;
 
 	[[nodiscard]] std::string GetName() const noexcept;
+	[[nodiscard]] std::string GetGUID() const noexcept;
+
 	[[nodiscard]] std::tuple<float, float> GetLeftStick() const noexcept;
 	[[nodiscard]] std::tuple<float, float> GetRightStick() const noexcept;
 	[[nodiscard]] bool IsButtonDown( int button ) const noexcept;
