@@ -87,6 +87,7 @@ Window::Window( int width, int height, const string& title ) {
 
 	// Set callback wrapper functions
 	glfwSetFramebufferSizeCallback( handle_, WindowSizeCallback );
+	glfwSetWindowCloseCallback( handle_, CloseCallback );
 
 	// Initialize Open GL extension loader
 	if ( !gladLoadGLLoader(
@@ -155,6 +156,16 @@ void Window::WindowSizeCallback( GLFWwindow* window, int width,
 	if ( c_window ) {
 		for ( const auto& callback : c_window->cb_window_size_ ) {
 			callback( width, height );
+		}
+	}
+}
+
+void Window::CloseCallback( GLFWwindow* window ) noexcept {
+	const auto c_window =
+		static_cast<Window*>( glfwGetWindowUserPointer( window ) );
+	if ( c_window ) {
+		for ( const auto& callback : c_window->cb_close_ ) {
+			callback();
 		}
 	}
 }

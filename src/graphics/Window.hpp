@@ -34,9 +34,17 @@ public:
 	void Restore() const noexcept;
 	void Close() const noexcept;
 
+	// Callbacks
 	using OnSizeChangedCallback = std::function<void( int, int )>;
-	void AddSizeChangedCallback( OnSizeChangedCallback callback ) noexcept {
+	Window& AddSizeChangedCallback( OnSizeChangedCallback callback ) noexcept {
 		cb_window_size_.emplace_back( std::move( callback ) );
+		return *this;
+	}
+
+	using OnCloseCallback = std::function<void( void )>;
+	Window& AddCloseCallback( OnCloseCallback callback ) noexcept {
+		cb_close_.emplace_back( std::move( callback ) );
+		return *this;
 	}
 
 private:
@@ -47,6 +55,9 @@ private:
 	std::vector<OnSizeChangedCallback> cb_window_size_;
 	static void WindowSizeCallback( GLFWwindow* window, int width,
 									int height ) noexcept;
+
+	std::vector<OnCloseCallback> cb_close_;
+	static void CloseCallback( GLFWwindow* window ) noexcept;
 
 	NON_COPYABLE_OR_MOVABLE_CLASS( Window )
 };
