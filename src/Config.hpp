@@ -10,6 +10,8 @@ bool TryGetInt( const std::string& section, const std::string& key,
                 int& value );
 bool TryGetString( const std::string& section, const std::string& key,
                    std::string& value );
+bool TryGetBool( const std::string& section, const std::string& key,
+                 bool& value );
 } // namespace config
 
 #endif

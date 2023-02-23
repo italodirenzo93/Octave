@@ -11,6 +11,18 @@ static constexpr const char* kConfigFile = "./resources/config/engine.ini";
 namespace config {
 static CSimpleIniA ini;
 
+inline bool EnsureKeyExists( const string& section, const string& key ) {
+    if (!ini.KeyExists( section.c_str(), key.c_str() )) {
+        cout << "Configuration value [" << section << "]/" << key
+            << " not found" << endl;
+        return false;
+    }
+
+    return true;
+}
+
+#define ENSURE_KEY_EXISTS( section, key ) if ( !EnsureKeyExists( section, key ) ) return false
+
 bool Initialize() {
     const SI_Error result = ini.LoadFile( kConfigFile );
     if (result < 0) {
@@ -25,31 +37,26 @@ bool Initialize() {
 void Reset() { ini.Reset(); }
 
 bool TryGetInt( const string& section, const string& key, int& value ) {
-    const char* value_str =
-        ini.GetValue( section.c_str(), key.c_str(), nullptr );
-    if (!value_str) {
-        return false;
-    }
+    ENSURE_KEY_EXISTS( section, key );
 
-    try {
-        value = stoi( value_str );
-    } catch (const exception& e) {
-        cerr << e.what() << endl;
-        return false;
-    }
+    value = static_cast<int>(ini.GetLongValue( section.c_str(), key.c_str() ));
 
     return true;
 }
 
 bool TryGetString( const string& section, const string& key, string& value ) {
-    const char* value_str =
-        ini.GetValue( section.c_str(), key.c_str(), nullptr );
+    ENSURE_KEY_EXISTS( section, key );
 
-    if (!value_str) {
-        return false;
-    }
+    value = ini.GetValue( section.c_str(), key.c_str(), nullptr );
 
-    value = value_str;
+    return true;
+}
+
+bool TryGetBool( const std::string& section, const std::string& key,
+                 bool& value ) {
+    ENSURE_KEY_EXISTS( section, key );
+
+    value = ini.GetBoolValue( section.c_str(), key.c_str() );
 
     return true;
 }

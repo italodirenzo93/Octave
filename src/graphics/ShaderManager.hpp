@@ -9,15 +9,13 @@ class ShaderManager {
 public:
     static ShaderManager& Instance() {
         if (instance_ == nullptr) {
-            instance_ = new ShaderManager();
+            instance_ = std::unique_ptr<ShaderManager>( new ShaderManager() );
         }
 
         return *instance_;
     }
 
-    ~ShaderManager() {
-        delete instance_;
-    }
+    ~ShaderManager() = default;
 
     /**
      * Pre-compiles and caches all shaders
@@ -37,7 +35,7 @@ public:
 private:
     ShaderManager();
 
-    static ShaderManager* instance_;
+    static std::unique_ptr<ShaderManager> instance_;
 
 	std::filesystem::path shader_directory_;
 	std::vector<std::string> shader_list_;

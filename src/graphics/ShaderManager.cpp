@@ -5,10 +5,10 @@
 using namespace std;
 namespace fs = std::filesystem;
 
-static constexpr const char* kDefaultShaderDirectory = "./resources/shaders";
+static constexpr const char* kDefaultShaderDirectory = "resources/shaders";
 
 namespace graphics {
-ShaderManager* ShaderManager::instance_ = nullptr;
+unique_ptr<ShaderManager> ShaderManager::instance_ = nullptr;
 
 ShaderManager::ShaderManager() {
 	// Read shader list
