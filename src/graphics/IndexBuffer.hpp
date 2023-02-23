@@ -17,8 +17,8 @@ public:
 
     uint32_t GetElementCount() const { return element_count_; }
 
-    void SetData(std::initializer_list<uint32_t> initializerList) const;
-    void SetData(const std::vector<uint32_t>& indices) const;
+    void SetData(std::initializer_list<uint32_t> initializerList);
+    void SetData(const std::vector<uint32_t>& indices);
 
 private:
     uint32_t id_ = 0;
