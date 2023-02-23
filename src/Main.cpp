@@ -14,19 +14,6 @@ using namespace octave;
 using namespace octave::graphics;
 using namespace octave::input;
 
-struct VertexPositionNormalTexture {
-	glm::vec3 position;
-	glm::vec3 normal;
-	glm::vec2 tex_coords;
-
-	VertexPositionNormalTexture() = default;
-
-	VertexPositionNormalTexture( const glm::vec3& position,
-								 const glm::vec3& normal,
-								 const glm::vec2& tex_coords ) noexcept
-		: position( position ), normal( normal ), tex_coords( tex_coords ) {}
-};
-
 struct Transform {
 	glm::vec3 translation = glm::vec3( 0.0f );
 	glm::vec3 rotation = glm::vec3( 0.0f );
