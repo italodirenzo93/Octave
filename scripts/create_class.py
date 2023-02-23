@@ -5,14 +5,8 @@ class_name = argv[1]
 if not class_name:
     raise "No class name provided. Exiting..."
 
-tokens = class_name.split("::")
-if len(tokens) > 1:
-    namespaces = tokens[:-1]
-    class_name = tokens[-1]
-else:
-    namespaces = ["octave"]
-
-namespace_str = "::".join(namespaces)
+class_path = path.split(class_name)
+class_name = class_path[-1]
 
 # Header
 header_filename = f"{class_name}.hpp"
@@ -20,7 +14,7 @@ header_filename = f"{class_name}.hpp"
 header_code = f"""#ifndef OCTAVE_{class_name.upper()}_HPP
 #define OCTAVE_{class_name.upper()}_HPP
 
-namespace {namespace_str} {{
+namespace Octave {{
 
 class {class_name} {{
 public:
@@ -61,9 +55,10 @@ private:
 # Source
 source_filename = f"{class_name}.cpp"
 
-source_code = f"""#include "{header_filename}"
+source_code = f"""#include "pch/pch.hpp"
+#include "{header_filename}"
 
-namespace {namespace_str} {{
+namespace Octave {{
 
 // Code...
 
@@ -73,7 +68,7 @@ namespace {namespace_str} {{
 
 # Write files
 project_root = "./"
-path_parts = ["src", *namespaces[1:]]
+path_parts = ("src", *class_path[:1])
 
 header_loc = path.join(project_root, *path_parts, header_filename)
 with open(path.realpath(header_loc), 'w') as header_file:
