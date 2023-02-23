@@ -19,6 +19,8 @@ public:
 
 	static void CreateCube( graphics::VertexBuffer& vbo,
 							graphics::IndexBuffer& ibo );
+
+	static void CreateQuad( graphics::VertexBuffer& vbo );
 };
 
 }  // namespace octave

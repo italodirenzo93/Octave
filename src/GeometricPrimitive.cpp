@@ -62,4 +62,22 @@ void GeometricPrimitive::CreateCube( VertexBuffer& vbo, IndexBuffer& ibo ) {
 				   16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23 } );
 }
 
+void GeometricPrimitive::CreateQuad( graphics::VertexBuffer& vbo ) {
+	const VertexBuffer::VertexLayout layout{
+		{ LayoutSemantic::kPosition, 2, GL_FLOAT, false },
+		{ LayoutSemantic::kTexCoord, 2, GL_FLOAT, false } };
+
+	// clang-format off
+	vbo.SetData( layout, {
+ 		// pos // tex
+		0.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, 0.0f, 1.0f, 0.0f
+	});
+	// clang-format on
+}
+
 }  // namespace octave
