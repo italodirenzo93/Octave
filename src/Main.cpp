@@ -7,11 +7,20 @@ using namespace std;
 using namespace graphics;
 
 int main() {
+    // Initialize GLFW library
+    if ( !glfwInit() ) {
+        cout << "Failed to initialize GLFW... exiting" << endl;
+        return EXIT_FAILURE;
+    }
+
     Window window;
 
-    // Renderer initialization
+	// Renderer initialization
     Renderer renderer( window );
     cout << renderer.GetDescription() << endl;
+
+	int width, height;
+    renderer.GetFramebufferSize( width, height );
 
     VertexArrayLayout vao;
     VertexBuffer vbo;
@@ -22,10 +31,10 @@ int main() {
     Texture texture;
     texture.LoadFromFile( "resources/textures/container.jpg" );
 
-    auto projection = glm::perspective(
+    auto projection = glm::perspectiveFov(
         glm::radians( 45.0f ),
-        static_cast<float>( Config::Instance().GetFramebufferWidth() ) /
-            static_cast<float>( Config::Instance().GetFramebufferHeight() ),
+        static_cast<float>(width),
+        static_cast<float>(height),
         0.1f, 100.0f );
 
     auto view = glm::lookAt( glm::vec3( 2.0f, 0.0f, 5.0f ), glm::vec3( 0.0f ),
@@ -33,11 +42,11 @@ int main() {
 
     auto model = glm::identity<glm::mat4>();
 
-    auto last_frame_time = static_cast<float>( glfwGetTime() );
+    auto last_frame_time = static_cast<float>(glfwGetTime());
 
     // Main loop
-    while ( window.IsOpen() ) {
-        auto now = static_cast<float>( glfwGetTime() );
+    while (window.IsOpen()) {
+        auto now = static_cast<float>(glfwGetTime());
         float delta = now - last_frame_time;
         last_frame_time = now;
 
@@ -63,5 +72,6 @@ int main() {
         window.PollEvents();
     }
 
+	glfwTerminate();
     return EXIT_SUCCESS;
 }

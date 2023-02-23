@@ -14,12 +14,12 @@ void APIENTRY DebugOutputCallback( GLenum source, GLenum type, unsigned int id,
                                    const char* message,
                                    const void* userParam ) {
     // ignore non-significant error/warning codes
-    if ( id == 131169 || id == 131185 || id == 131218 || id == 131204 ) return;
+    if (id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
 
     std::cout << "---------------" << std::endl;
     std::cout << "Debug message (" << id << "): " << message << std::endl;
 
-    switch ( source ) {
+    switch (source) {
         case GL_DEBUG_SOURCE_API:
             std::cout << "Source: API";
             break;
@@ -41,7 +41,7 @@ void APIENTRY DebugOutputCallback( GLenum source, GLenum type, unsigned int id,
     }
     std::cout << std::endl;
 
-    switch ( type ) {
+    switch (type) {
         case GL_DEBUG_TYPE_ERROR:
             std::cout << "Type: Error";
             break;
@@ -72,7 +72,7 @@ void APIENTRY DebugOutputCallback( GLenum source, GLenum type, unsigned int id,
     }
     std::cout << std::endl;
 
-    switch ( severity ) {
+    switch (severity) {
         case GL_DEBUG_SEVERITY_HIGH:
             std::cout << "Severity: high";
             break;
@@ -91,7 +91,8 @@ void APIENTRY DebugOutputCallback( GLenum source, GLenum type, unsigned int id,
 }
 #endif
 
-Renderer::Renderer( const Window& window ) : window_( window ) {
+Renderer::Renderer( const Window& window )
+    : window_( window ) {
     // Always enabled
     glEnable( GL_DEPTH_TEST );
     glEnable( GL_CULL_FACE );
@@ -104,7 +105,7 @@ Renderer::Renderer( const Window& window ) : window_( window ) {
     // Configure debug callback if we got a debug context
     int gl_context_flags;
     glGetIntegerv( GL_CONTEXT_FLAGS, &gl_context_flags );
-    if ( gl_context_flags & GL_CONTEXT_FLAG_DEBUG_BIT ) {
+    if (gl_context_flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
         glEnable( GL_DEBUG_OUTPUT );
         glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS );
         glDebugMessageCallback( DebugOutputCallback, nullptr );
@@ -117,35 +118,19 @@ Renderer::Renderer( const Window& window ) : window_( window ) {
     stbi_set_flip_vertically_on_load( true );
 
     // Shader pre-cache
-    if ( Config::Instance().GetPreloadShaders() ) {
+    if (Config::Instance().GetPreloadShaders()) {
         ShaderManager::Instance().PreloadShaders();
     }
-}
-
-Renderer::~Renderer() {
 }
 
 void Renderer::ResizeFramebuffer( int width, int height ) const {
     glViewport( 0, 0, width, height );
 }
 
-std::string Renderer::GetDescription() const {
-    ostringstream oss;
-
-    // Print OpenGL context information
-    oss << "OpenGL Context Version: " << glGetString( GL_VERSION ) << endl
-        << "GLSL Version: " << glGetString( GL_SHADING_LANGUAGE_VERSION )
-        << endl
-        << "GPU Vendor: " << glGetString( GL_VENDOR ) << endl
-        << "GPU Model: " << glGetString( GL_RENDERER ) << endl;
-
-    return oss.str();
-}
-
 void Renderer::Clear( bool depth, float r, float g, float b, float a ) const {
     int clear_flags = GL_COLOR_BUFFER_BIT;
 
-    if ( depth ) {
+    if (depth) {
         clear_flags |= GL_DEPTH_BUFFER_BIT;
         glClearDepthf( 1.0f );
     }
@@ -162,7 +147,7 @@ void Renderer::DrawPrimitives( const VertexArrayLayout& vao,
                                const VertexBuffer& vbo ) const {
     glBindVertexArray( vao.id_ );
 
-    glDrawArrays( GL_TRIANGLES, 0, static_cast<int>( vbo.GetVertexCount() ) );
+    glDrawArrays( GL_TRIANGLES, 0, static_cast<int>(vbo.GetVertexCount()) );
 
     glBindVertexArray( 0 );
 }
@@ -172,11 +157,28 @@ void Renderer::DrawIndexedPrimitives( const VertexArrayLayout& vao,
     glBindVertexArray( vao.id_ );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo.id_ );
 
-    glDrawElements( GL_TRIANGLES, static_cast<int>( ibo.GetElementCount() ),
+    glDrawElements( GL_TRIANGLES, static_cast<int>(ibo.GetElementCount()),
                     GL_UNSIGNED_INT, nullptr );
 
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
     glBindVertexArray( 0 );
+}
+
+std::string Renderer::GetDescription() const {
+    ostringstream oss;
+
+    // Print OpenGL context information
+    oss << "OpenGL Context Version: " << glGetString( GL_VERSION ) << endl
+        << "GLSL Version: " << glGetString( GL_SHADING_LANGUAGE_VERSION )
+        << endl
+        << "GPU Vendor: " << glGetString( GL_VENDOR ) << endl
+        << "GPU Model: " << glGetString( GL_RENDERER ) << endl;
+
+    return oss.str();
+}
+
+void Renderer::GetFramebufferSize( int& width, int& height ) const {
+    glfwGetFramebufferSize( window_.handle_, &width, &height );
 }
 
 void Renderer::SetTexture( const Texture& texture ) {
@@ -187,5 +189,4 @@ void Renderer::SetTexture( const Texture& texture ) {
 void Renderer::SetShader( const Shader& shader ) {
     glUseProgram( shader.id_ );
 }
-
-}  // namespace graphics
+} // namespace graphics
