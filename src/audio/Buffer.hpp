@@ -17,6 +17,8 @@ public:
 	[[nodiscard]] int GetChannels() const noexcept;
 	[[nodiscard]] int GetSize() const noexcept;
 
+	void LoadFromOggFile( const std::string& path );
+
 private:
 	uint32_t id_ = 0;
 };

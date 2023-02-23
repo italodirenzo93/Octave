@@ -1,5 +1,8 @@
 #include "Buffer.hpp"
 
+#define STB_VORBIS_HEADER_ONLY
+#include "stb_vorbis.cpp"
+
 namespace octave::audio {
 
 Buffer::Buffer() {
@@ -33,6 +36,32 @@ int Buffer::GetSize() const noexcept {
 	int size;
 	alGetBufferi( id_, AL_SIZE, &size );
 	return size;
+}
+
+void Buffer::LoadFromOggFile( const std::string& path ) {
+	int n_channels, sample_rate;
+	short* data;
+
+	const int n_samples = stb_vorbis_decode_filename(path.c_str(), &n_channels, &sample_rate, &data );
+
+	if ( n_samples < 0 ) {
+		throw Exception( "Unable to open OGG Vorbis file " + path );
+	}
+
+	ALenum format;
+	if ( n_channels  > 1 ) {
+		format = AL_FORMAT_STEREO16;
+	} else {
+		format = AL_FORMAT_MONO16;
+	}
+
+	alBufferData( id_, format, static_cast<void*>( data ),
+				  static_cast<ALsizei>( n_samples * sizeof ( short ) * n_channels ),
+				  static_cast<ALsizei>( sample_rate ) );
+
+	free( data );
+
+	al::ThrowIfFailed();
 }
 
 }  // namespace octave::audio

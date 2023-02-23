@@ -10,6 +10,8 @@ public:
 	Context();
 	~Context() noexcept;
 
+	[[nodiscard]] std::string GetDeviceInfo() const noexcept;
+
 private:
 	ALCdevice* device_ = nullptr;
 	ALCcontext* context_ = nullptr;
