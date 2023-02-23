@@ -3,6 +3,11 @@
 #include <fstream>
 #include <sstream>
 
+#define STB_INCLUDE_IMPLEMENTATION
+#define STB_INCLUDE_LINE_NONE
+#include "Config.hpp"
+#include "stb_include.h"
+
 using namespace std;
 
 namespace octave::graphics {
@@ -30,9 +35,16 @@ Shader& Shader::SetFloat( const std::string& name, float value ) noexcept {
 	return *this;
 }
 
-Shader& Shader::SetMat4( const std::string& name,
-						 const glm::mat4& value ) noexcept {
-	glUniformMatrix4fv( GetUniform( name ), 1, GL_FALSE,
+Shader& Shader::SetMat3( const std::string& name, const glm::mat3& value,
+						 bool transpose ) noexcept {
+	glUniformMatrix3fv( GetUniform( name ), 1, transpose,
+						glm::value_ptr( value ) );
+	return *this;
+}
+
+Shader& Shader::SetMat4( const std::string& name, const glm::mat4& value,
+						 bool transpose ) noexcept {
+	glUniformMatrix4fv( GetUniform( name ), 1, transpose,
 						glm::value_ptr( value ) );
 	return *this;
 }
@@ -65,31 +77,26 @@ Shader& Shader::SetTexture( const std::string& name, int index,
 
 void Shader::CompileFromFile( const std::filesystem::path& vertex_path,
 							  const std::filesystem::path& fragment_path ) {
-	// 1. retrieve the vertex/fragment source code from filePath
-	std::string vertex_code;
-	std::string fragment_code;
-	std::ifstream v_shader_file;
-	std::ifstream f_shader_file;
-	// ensure ifstream objects can throw exceptions:
-	v_shader_file.exceptions( std::ifstream::failbit | std::ifstream::badbit );
-	f_shader_file.exceptions( std::ifstream::failbit | std::ifstream::badbit );
-	try {
-		// open files
-		v_shader_file.open( vertex_path );
-		f_shader_file.open( fragment_path );
-		std::stringstream vShaderStream, f_shader_stream;
-		// read file�s buffer contents into streams
-		vShaderStream << v_shader_file.rdbuf();
-		f_shader_stream << f_shader_file.rdbuf();
-		// close file handlers
-		v_shader_file.close();
-		f_shader_file.close();
-		// convert stream into string
-		vertex_code = vShaderStream.str();
-		fragment_code = f_shader_stream.str();
-	} catch ( const std::ifstream::failure& ) {
-		throw Exception( "Unable to read shader file" );
-	}
+	auto load_shader = []( const std::filesystem::path& path ) -> std::string {
+		auto filename = path.string();
+		auto dir = Config::Instance().GetShaderDirectory().string();
+
+
+		char* shader_directory = const_cast<char*>( dir.c_str() );
+		char error[512];
+		auto code = stb_include_file( const_cast<char*>( filename.c_str() ),
+									  nullptr, shader_directory, error );
+
+		if ( !code ) {
+			throw Exception( "Shader pre-processing error: " +
+							 string( error ) );
+		}
+
+		return code;
+	};
+
+	const auto vertex_code = load_shader( vertex_path );
+	const auto fragment_code = load_shader( fragment_path );
 
 	CompileFromString( vertex_code, fragment_code );
 }
