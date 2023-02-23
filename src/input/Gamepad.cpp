@@ -22,7 +22,7 @@ std::string Gamepad::GetGUID() const noexcept {
 std::pair<float, float> Gamepad::GetLeftStick() const noexcept {
 	GLFWgamepadstate state;
 	if ( !glfwGetGamepadState( player_index_, &state ) ) {
-		return make_tuple( 0.0f, 0.0f );
+		return { 0.0f, 0.0f };
 	}
 
 	return { state.axes[GLFW_GAMEPAD_AXIS_LEFT_X],
@@ -32,7 +32,7 @@ std::pair<float, float> Gamepad::GetLeftStick() const noexcept {
 std::pair<float, float> Gamepad::GetRightStick() const noexcept {
 	GLFWgamepadstate state;
 	if ( !glfwGetGamepadState( player_index_, &state ) ) {
-		return make_tuple( 0.0f, 0.0f );
+		return { 0.0f, 0.0f };
 	}
 
 	return { state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X],
