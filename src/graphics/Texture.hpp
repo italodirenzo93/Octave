@@ -4,28 +4,30 @@
 #include "CommonInclude.hpp"
 
 namespace graphics {
+
 class Texture {
     friend class Renderer;
 
-   public:
-    Texture();
+public:
+    Texture() noexcept;
     Texture( Texture&& other ) noexcept;
-    ~Texture();
+    ~Texture() noexcept;
 
-    bool LoadFromFile( const std::string& file_name );
+    void LoadFromFile( const std::string& file_name );
 
-   private:
+private:
     uint32_t id_ = 0;
     int format_ = 0;
 
     int width_ = 0, height_ = 0;
 
-   public:
+public:
     Texture& operator=( Texture&& other ) noexcept;
 
-   private:
+private:
     NON_COPYABLE_CLASS( Texture )
 };
+
 }  // namespace graphics
 
 #endif

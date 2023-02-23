@@ -104,7 +104,7 @@ void APIENTRY DebugOutputCallback( GLenum source, GLenum type, unsigned int id,
 }
 #endif
 
-Renderer::Renderer( const Window& window )
+Renderer::Renderer( const Window& window ) noexcept
     : window_( window ) {
     // Always enabled
     glEnable( GL_DEPTH_TEST );
@@ -140,7 +140,7 @@ void Renderer::ResizeFramebuffer( int width, int height ) const {
     glViewport( 0, 0, width, height );
 }
 
-void Renderer::Clear( bool depth, float r, float g, float b, float a ) const {
+void Renderer::Clear( bool depth, float r, float g, float b, float a ) const noexcept {
     int clear_flags = GL_COLOR_BUFFER_BIT;
 
     if (depth) {
@@ -152,12 +152,12 @@ void Renderer::Clear( bool depth, float r, float g, float b, float a ) const {
     glClear( clear_flags );
 }
 
-void Renderer::Present() const {
+void Renderer::Present() const noexcept {
     glfwSwapBuffers( window_.handle_ );
 }
 
 void Renderer::DrawPrimitives( PrimitiveType type,
-                               const VertexBuffer& vbo ) const {
+                               const VertexBuffer& vbo ) const noexcept {
     glBindVertexArray( vbo.vao_ );
 
     glDrawArrays( PrimitiveToGLType( type ), 0,
@@ -168,7 +168,7 @@ void Renderer::DrawPrimitives( PrimitiveType type,
 
 void Renderer::DrawIndexedPrimitives( PrimitiveType type,
                                       const VertexBuffer& vbo,
-                                      const IndexBuffer& ibo ) const {
+                                      const IndexBuffer& ibo ) const noexcept {
     glBindVertexArray( vbo.vao_ );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo.id_ );
 
@@ -180,7 +180,7 @@ void Renderer::DrawIndexedPrimitives( PrimitiveType type,
     glBindVertexArray( 0 );
 }
 
-std::string Renderer::GetDescription() const {
+std::string Renderer::GetDescription() const noexcept {
     ostringstream oss;
 
     // Print OpenGL context information
@@ -193,16 +193,16 @@ std::string Renderer::GetDescription() const {
     return oss.str();
 }
 
-void Renderer::GetFramebufferSize( int& width, int& height ) const {
+void Renderer::GetFramebufferSize( int& width, int& height ) const noexcept {
     glfwGetFramebufferSize( window_.handle_, &width, &height );
 }
 
-void Renderer::SetTexture( const Texture& texture ) {
+void Renderer::SetTexture( const Texture& texture ) noexcept {
     glActiveTexture( GL_TEXTURE0 );
     glBindTexture( GL_TEXTURE_2D, texture.id_ );
 }
 
-void Renderer::SetShader( const Shader& shader ) {
+void Renderer::SetShader( const Shader& shader ) noexcept {
     glUseProgram( shader.id_ );
 }
 } // namespace graphics

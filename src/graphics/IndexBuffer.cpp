@@ -3,11 +3,12 @@
 using namespace std;
 
 namespace graphics {
-IndexBuffer::IndexBuffer() {
+
+IndexBuffer::IndexBuffer() noexcept {
     glGenBuffers( 1, &id_ );
 }
 
-IndexBuffer::IndexBuffer( const IndexBuffer& other ) {
+IndexBuffer::IndexBuffer( const IndexBuffer& other ) noexcept {
     glGenBuffers( 1, &id_ );
 
     glBindBuffer( GL_COPY_READ_BUFFER, other.id_ );
@@ -34,7 +35,7 @@ IndexBuffer::~IndexBuffer() {
     glDeleteBuffers( 1, &id_ );
 }
 
-std::vector<uint32_t> IndexBuffer::GetData() const {
+std::vector<uint32_t> IndexBuffer::GetData() const noexcept {
     vector<uint32_t> data( element_count_ );
 
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, id_ );
@@ -49,7 +50,7 @@ std::vector<uint32_t> IndexBuffer::GetData() const {
 }
 
 void IndexBuffer::SetData(
-    std::initializer_list<uint32_t> initializerList ) {
+    std::initializer_list<uint32_t> initializerList ) noexcept {
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, id_ );
 
     glBufferData(
@@ -63,7 +64,7 @@ void IndexBuffer::SetData(
 	element_count_ = static_cast<uint32_t>( initializerList.size() );
 }
 
-void IndexBuffer::SetData( const std::vector<uint32_t>& indices ) {
+void IndexBuffer::SetData( const std::vector<uint32_t>& indices ) noexcept {
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, id_ );
 
     glBufferData( GL_ELEMENT_ARRAY_BUFFER,
@@ -76,7 +77,7 @@ void IndexBuffer::SetData( const std::vector<uint32_t>& indices ) {
 	element_count_ = static_cast<uint32_t>( indices.size() );
 }
 
-IndexBuffer& IndexBuffer::operator=( const IndexBuffer& other ) {
+IndexBuffer& IndexBuffer::operator=( const IndexBuffer& other ) noexcept {
     glGenBuffers( 1, &id_ );
 
     glBindBuffer( GL_COPY_READ_BUFFER, other.id_ );

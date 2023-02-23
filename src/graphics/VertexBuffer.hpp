@@ -37,24 +37,24 @@ class VertexBuffer {
     friend class Mesh;
 
 public:
-    VertexBuffer();
-    VertexBuffer( const VertexBuffer& other );
+    VertexBuffer() noexcept;
+    VertexBuffer( const VertexBuffer& other ) noexcept;
     VertexBuffer( VertexBuffer&& other ) noexcept;
-    ~VertexBuffer();
+    ~VertexBuffer() noexcept;
 
 	using VertexLayout = std::vector<LayoutBinding>;
 
-    uint32_t GetVertexCount() const { return vertex_count_; }
+    uint32_t GetVertexCount() const noexcept { return vertex_count_; }
 
     template <typename Vertex>
-    std::vector<Vertex> GetData() const;
+    std::vector<Vertex> GetData() const noexcept;
 
     template <typename Vertex>
     void SetData( const VertexLayout& layout,
-                  std::initializer_list<Vertex> vertices );
+                  std::initializer_list<Vertex> vertices ) noexcept;
     template <typename Vertex>
     void SetData( const VertexLayout& layout,
-                  const std::vector<Vertex>& vertices );
+                  const std::vector<Vertex>& vertices ) noexcept;
 
 private:
     uint32_t vbo_ = 0;
@@ -63,7 +63,7 @@ private:
     VertexLayout layout_;
 
 public:
-    VertexBuffer& operator=( const VertexBuffer& other );
+    VertexBuffer& operator=( const VertexBuffer& other ) noexcept;
     VertexBuffer& operator=( VertexBuffer&& other ) noexcept;
 
 private:
@@ -72,7 +72,7 @@ private:
 };
 
 template <typename Vertex>
-std::vector<Vertex> VertexBuffer::GetData() const {
+std::vector<Vertex> VertexBuffer::GetData() const noexcept {
     std::vector<Vertex> data( vertex_count_ );
 
     glBindBuffer( GL_ARRAY_BUFFER, vbo_ );
@@ -88,7 +88,7 @@ std::vector<Vertex> VertexBuffer::GetData() const {
 
 template <typename Vertex>
 void VertexBuffer::SetData( const VertexLayout& layout,
-                            std::initializer_list<Vertex> vertices ) {
+                            std::initializer_list<Vertex> vertices ) noexcept {
     glBindBuffer( GL_ARRAY_BUFFER, vbo_ );
 
     // Set buffer data
@@ -106,7 +106,7 @@ void VertexBuffer::SetData( const VertexLayout& layout,
 
 template <typename Vertex>
 void VertexBuffer::SetData( const VertexLayout& layout,
-                            const std::vector<Vertex>& vertices ) {
+                            const std::vector<Vertex>& vertices ) noexcept {
     glBindBuffer( GL_ARRAY_BUFFER, vbo_ );
 
     // Set buffer data

@@ -5,12 +5,12 @@ namespace graphics {
 static const std::map<LayoutSemantic, uint32_t> kAttributeBindings{
     {POSITION, 0}, {COLOR, 1}, {TEXCOORD, 2}, {NORMAL, 3}};
 
-VertexBuffer::VertexBuffer() {
+VertexBuffer::VertexBuffer() noexcept {
     glGenBuffers( 1, &vbo_ );
     glGenVertexArrays( 1, &vao_ );
 }
 
-VertexBuffer::VertexBuffer( const VertexBuffer& other ) {
+VertexBuffer::VertexBuffer( const VertexBuffer& other ) noexcept {
     glGenBuffers( 1, &vbo_ );
     glGenVertexArrays( 1, &vao_ );
 
@@ -44,7 +44,7 @@ VertexBuffer::VertexBuffer( VertexBuffer&& other ) noexcept {
     layout_ = std::move( other.layout_ );
 }
 
-VertexBuffer::~VertexBuffer() {
+VertexBuffer::~VertexBuffer() noexcept {
     glDeleteBuffers( 1, &vbo_ );
     glDeleteVertexArrays( 1, &vao_ );
 }
@@ -76,7 +76,7 @@ void VertexBuffer::SetVertexAttributes( const VertexLayout& layout,
     glBindVertexArray( 0 );
 }
 
-VertexBuffer& VertexBuffer::operator=( const VertexBuffer& other ) {
+VertexBuffer& VertexBuffer::operator=( const VertexBuffer& other ) noexcept {
     glGenBuffers( 1, &vbo_ );
 
     glBindBuffer( GL_COPY_READ_BUFFER, other.vbo_ );

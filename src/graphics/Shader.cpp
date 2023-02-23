@@ -3,7 +3,11 @@
 #include <fstream>
 #include <sstream>
 
-static uint32_t CompileFromFile( const char* vertex_path,
+using namespace std;
+
+namespace graphics {
+
+uint32_t Shader::CompileFromFile( const char* vertex_path,
                                  const char* fragment_path ) {
     // 1. retrieve the vertex/fragment source code from filePath
     std::string vertex_code;
@@ -46,8 +50,7 @@ static uint32_t CompileFromFile( const char* vertex_path,
     glGetShaderiv( vertex, GL_COMPILE_STATUS, &success );
     if (!success) {
         glGetShaderInfoLog( vertex, 512, nullptr, info_log );
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n"
-            << info_log << std::endl;
+        throw CompileError( info_log );
     }
 
     fragment = glCreateShader( GL_FRAGMENT_SHADER );
@@ -56,9 +59,7 @@ static uint32_t CompileFromFile( const char* vertex_path,
     // print compile errors if any
     glGetShaderiv( fragment, GL_COMPILE_STATUS, &success );
     if (!success) {
-        glGetShaderInfoLog( fragment, 512, nullptr, info_log );
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n"
-            << info_log << std::endl;
+        throw CompileError( info_log );
     }
 
     auto id = glCreateProgram();
@@ -69,8 +70,7 @@ static uint32_t CompileFromFile( const char* vertex_path,
     glGetProgramiv( id, GL_LINK_STATUS, &success );
     if (!success) {
         glGetProgramInfoLog( id, 512, nullptr, info_log );
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n"
-            << info_log << std::endl;
+        throw CompileError( info_log );
     }
     // delete shaders; they�re linked into our program and no longer necessary
     glDeleteShader( vertex );
@@ -79,7 +79,6 @@ static uint32_t CompileFromFile( const char* vertex_path,
     return id;
 }
 
-namespace graphics {
 Shader::Shader( const char* vertex_path, const char* fragment_path ) {
     id_ = CompileFromFile( vertex_path, fragment_path );
 }
@@ -89,7 +88,7 @@ Shader::Shader( Shader&& other ) noexcept
     other.id_ = 0;
 }
 
-Shader::~Shader() {
+Shader::~Shader() noexcept {
     glDeleteProgram( id_ );
 }
 
@@ -127,4 +126,5 @@ Shader& Shader::operator=( Shader&& other ) noexcept {
 
     return *this;
 }
+
 }
