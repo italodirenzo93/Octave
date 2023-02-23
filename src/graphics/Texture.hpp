@@ -12,7 +12,7 @@ class Texture {
     Texture( Texture&& other ) noexcept;
     ~Texture();
 
-    bool LoadFromFile( const std::filesystem::path& fileName );
+    bool LoadFromFile( const std::string& file_name );
 
    private:
     uint32_t id_ = 0;

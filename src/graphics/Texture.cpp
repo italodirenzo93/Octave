@@ -22,10 +22,10 @@ Texture::Texture( Texture&& other ) noexcept
     other.height_ = 0;
 }
 
-bool Texture::LoadFromFile( const std::filesystem::path& fileName ) {
+bool Texture::LoadFromFile( const std::string& file_name ) {
     int n_channels;
     stbi_uc* image =
-        stbi_load( fileName.c_str(), &width_, &height_, &n_channels, STBI_default );
+        stbi_load( file_name.c_str(), &width_, &height_, &n_channels, STBI_default );
 
     if ( image ) {
         if ( n_channels == 1 )
@@ -43,7 +43,7 @@ bool Texture::LoadFromFile( const std::filesystem::path& fileName ) {
 
         stbi_image_free( image );
     } else {
-        std::cout << "Unable to load texture at " << fileName << std::endl;
+        std::cout << "Unable to load texture at " << file_name << std::endl;
         stbi_image_free( image );
 
         return false;

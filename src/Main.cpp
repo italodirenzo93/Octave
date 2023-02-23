@@ -49,14 +49,13 @@ int main() {
         // Draw scene
         auto shader = ShaderManager::Instance().Get( "basic" );
 
+        renderer.SetShader( *shader );
+        renderer.SetTexture( texture );
+
         shader->SetMat4( "uMatProjection", projection );
         shader->SetMat4( "uMatView", view );
         shader->SetMat4( "uMatModel", model );
 
-        renderer.SetShader( *shader );
-        renderer.SetTexture( texture );
-
-        //        renderer.DrawPrimitives( vao, vbo );
         renderer.DrawIndexedPrimitives( vao, ibo );
 
         renderer.Present();
