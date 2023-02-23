@@ -3,7 +3,9 @@
 
 #include "Exception.hpp"
 
+#ifndef AL_LIBTYPE_STATIC
 #define AL_LIBTYPE_STATIC
+#endif
 #include <AL/al.h>
 
 #include <iostream>
