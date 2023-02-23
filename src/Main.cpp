@@ -40,7 +40,7 @@ Mesh LoadMesh( const filesystem::path& path ) {
 
     VertexBuffer vbo;
     IndexBuffer ibo;
-    vector<Texture> textures( 2 );
+    vector<Texture> textures( 3 );
 
     // Parse vertex data
     {
@@ -106,15 +106,21 @@ Mesh LoadMesh( const filesystem::path& path ) {
         };
 
         if ( material->GetTextureCount( aiTextureType_DIFFUSE ) > 0 ) {
-            textures.insert( textures.cbegin(), load_texture( aiTextureType_DIFFUSE ) );
+            textures[0] = load_texture( aiTextureType_DIFFUSE );
         } else {
             cout << "No diffuse texture to load" << endl;
         }
 
         if ( material->GetTextureCount( aiTextureType_SPECULAR ) > 0 ) {
-            textures.insert( textures.cbegin() + 1, load_texture( aiTextureType_SPECULAR ) );
+            textures[1] = load_texture( aiTextureType_SPECULAR );
         } else {
             cout << "No specular texture to load" << endl;
+        }
+
+        if ( material->GetTextureCount( aiTextureType_NORMALS ) > 0 ) {
+            textures[2] = load_texture( aiTextureType_NORMALS );
+        } else {
+            cout << "No height texture to load" << endl;
         }
     }
 
@@ -140,7 +146,7 @@ inline void SetDefaultLighting( const Shader& shader ) {
     glm::vec3 direction( 0.5f, 0.0f, -0.5f );
     glm::vec3 ambient( 0.2f );
     glm::vec3 diffuse( 0.5f );
-    glm::vec3 specular( 1.0f );
+    glm::vec3 specular( 0.8f );
 
     shader.SetVec3( "uLight.direction", direction );
     shader.SetVec3( "uLight.ambient", ambient );
