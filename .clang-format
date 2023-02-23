@@ -1,8 +1,9 @@
 BasedOnStyle: Google
-Language: Cpp
 DerivePointerAlignment: false
-MaxEmptyLinesToKeep: 1
+MaxEmptyLinesToKeep: 2
 IndentWidth: 4
 TabWidth: 4
 SpacesInParentheses: true
+AccessModifierOffset: -4
 AllowShortFunctionsOnASingleLine: InlineOnly
+UseTab: ForContinuationAndIndentation
