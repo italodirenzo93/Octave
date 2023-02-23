@@ -105,10 +105,6 @@ Window& WindowGLFW::SetSyncInterval( int interval ) noexcept {
 	return *this;
 }
 
-void WindowGLFW::PollEvents() const noexcept {
-	glfwPollEvents();
-}
-
 void WindowGLFW::Close() const noexcept {
 	glfwSetWindowShouldClose( window_, GLFW_TRUE );
 }

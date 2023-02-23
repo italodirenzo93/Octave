@@ -28,7 +28,6 @@ public:
 	virtual Window& SetSyncInterval( int interval ) noexcept = 0;
 
 	// Actions
-	virtual void PollEvents() const noexcept = 0;
 	virtual void Close() const noexcept = 0;
 	virtual void SwapBuffers() noexcept = 0;
 
