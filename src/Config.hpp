@@ -2,6 +2,9 @@
 #define OCTAVE_CONFIG_HPP
 
 #include <SimpleIni.h>
+#if defined( _WIN32 ) && defined( CreateWindow )
+#undef CreateWindow
+#endif
 
 #include <filesystem>
 #include <vector>

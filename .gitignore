@@ -4,6 +4,7 @@
 imgui.ini
 /Engine.ini
 build
+builddir
 out
 cmake-build-*
 

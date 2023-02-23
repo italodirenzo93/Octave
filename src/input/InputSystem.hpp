@@ -1,6 +1,8 @@
 #ifndef OCTAVE_INPUTSYSTEM_HPP
 #define OCTAVE_INPUTSYSTEM_HPP
 
+#include <memory>
+
 #include "Gamepad.hpp"
 #include "platform/Window.hpp"
 
