@@ -1,7 +1,10 @@
 #include "Renderer.hpp"
-#include "CommonInclude.hpp"
+
+#include <sstream>
 
 namespace graphics {
+using namespace std;
+
 #ifdef __DEBUG__
 void APIENTRY DebugOutputCallback( GLenum source, GLenum type, unsigned int id,
                                    GLenum severity, GLsizei length,
@@ -100,13 +103,13 @@ void Initialize() {
     }
 #endif
 
-	// Always enabled
+    // Always enabled
     glEnable( GL_DEPTH_TEST );
     glEnable( GL_CULL_FACE );
 
-	glClearDepthf( 1.0f );
+    glClearDepthf( 1.0f );
 
-	// Because Open GL coordinates are weird...
+    // Because Open GL coordinates are weird...
     stbi_set_flip_vertically_on_load( true );
 }
 
@@ -124,5 +127,19 @@ void Clear( bool depth, float r, float g, float b, float a ) {
 
     glClearColor( r, g, b, a );
     glClear( clear_flags );
+}
+
+std::string GetRendererInfo() {
+    ostringstream oss;
+
+    // Print OpenGL context information
+    oss << "OpenGL Context Version: " << glGetString( GL_VERSION ) << endl
+        << "GLSL Version: " << glGetString( GL_SHADING_LANGUAGE_VERSION )
+        << endl
+        << "GPU Vendor: " << glGetString( GL_VENDOR ) << endl
+        << "GPU Model: " << glGetString( GL_RENDERER ) << endl
+        << endl;
+
+    return oss.str();
 }
 }

@@ -1,22 +1,24 @@
 #include "CommonInclude.hpp"
 #include "graphics/Renderer.hpp"
 
+using namespace std;
+
 static constexpr int kDefaultWidth = 1280;
 static constexpr int kDefaultHeight = 720;
 
-int main() {
+int main( int argc, char* argv[] ) {
     GLFWwindow* window = nullptr;
 
     // Initialize GLFW library
     if (!glfwInit()) {
-        printf( "Failed to initialize GLFW... exiting\n" );
+        cout << "Failed to initialize GLFW... exiting" << endl;
         return EXIT_FAILURE;
     }
 
     // Set window hints
 #ifdef __APPLE__
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+	glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
+	glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
 #else
     glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
     glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
@@ -31,7 +33,7 @@ int main() {
     window = glfwCreateWindow( kDefaultWidth, kDefaultHeight, "My Game Engine",
                                nullptr, nullptr );
     if (!window) {
-        printf( "Failed to create GLFW window... exiting\n" );
+        cout << "Failed to create GLFW window... exiting" << endl;
         glfwTerminate();
         return EXIT_FAILURE;
     }
@@ -41,13 +43,15 @@ int main() {
     // Initialize Open GL extension loader
     if (!gladLoadGLLoader(
         reinterpret_cast<GLADloadproc>(glfwGetProcAddress) )) {
-        printf(
-            "Failed set proc address for Open GL extension loader... exiting\n" );
+        cout
+            << "Failed set proc address for Open GL extension loader... exiting"
+            << endl;
         return EXIT_FAILURE;
     }
 
-	// Renderer initialization
+    // Renderer initialization
     graphics::Initialize();
+    cout << graphics::GetRendererInfo() << endl;
 
     glfwSetFramebufferSizeCallback(
         window, []( GLFWwindow*, int width, int height ) {
