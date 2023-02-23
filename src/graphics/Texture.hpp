@@ -5,26 +5,26 @@
 
 namespace graphics {
 class Texture {
+    friend class Renderer;
+
    public:
-    explicit Texture( const char* file_name );
-    Texture( const Texture& other );
+    Texture();
     Texture( Texture&& other ) noexcept;
     ~Texture();
 
-    uint32_t GetId() const { return id_; }
-    int GetFormat() const { return format_; }
-
-    void activate( GLenum texture_unit ) const;
+    bool LoadFromFile( const std::filesystem::path& fileName );
 
    private:
-    uint32_t id_;
-    int32_t format_;
+    uint32_t id_ = 0;
+    int format_ = 0;
 
-    int32_t width_, height_;
+    int width_ = 0, height_ = 0;
 
    public:
-    Texture& operator=( const Texture& other );
     Texture& operator=( Texture&& other ) noexcept;
+
+   private:
+    NON_COPYABLE_CLASS( Texture )
 };
 }  // namespace graphics
 

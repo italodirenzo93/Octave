@@ -5,15 +5,13 @@
 
 namespace graphics {
 class Shader {
+    friend class Renderer;
+
 public:
     explicit Shader( const char* vertex_path, const char* fragment_path );
     Shader( Shader&& other ) noexcept;
     ~Shader();
 
-    uint32_t GetId() const { return id_; }
-
-    void Activate() const;
-    void Deactivate() const;
     void SetBool( const std::string& name, bool value ) const;
     void SetInt( const std::string& name, int value ) const;
     void SetFloat( const std::string& name, float value ) const;

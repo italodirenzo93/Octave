@@ -8,7 +8,7 @@ Mesh::Mesh( const std::vector<Vertex>& vertex_data,
             const std::vector<Texture>& textures ) {
     vertices_ = vertex_data;
     indices_ = index_data;
-    this->textures_ = textures;
+    textures_ = textures;
 
     SetupMesh();
 }

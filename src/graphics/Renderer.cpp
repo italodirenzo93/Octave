@@ -97,6 +97,8 @@ Renderer::Renderer( const Window& window ) : window_( window ) {
     glEnable( GL_CULL_FACE );
 
     glClearDepthf( 1.0f );
+    glCullFace( GL_BACK );
+    glFrontFace( GL_CW );
 
 #ifdef __DEBUG__
     // Configure debug callback if we got a debug context
@@ -175,6 +177,15 @@ void Renderer::DrawIndexedPrimitives( const VertexArrayLayout& vao,
 
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
     glBindVertexArray( 0 );
+}
+
+void Renderer::SetTexture( const Texture& texture ) {
+    glActiveTexture( GL_TEXTURE0 );
+    glBindTexture( GL_TEXTURE_2D, texture.id_ );
+}
+
+void Renderer::SetShader( const Shader& shader ) {
+    glUseProgram( shader.id_ );
 }
 
 }  // namespace graphics
