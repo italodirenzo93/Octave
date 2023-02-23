@@ -4,9 +4,9 @@
 #include "ResourceManager.hpp"
 #include "graphics/Shader.hpp"
 
-namespace Octave::resources {
+namespace Octave {
 
-class ShaderManager : public ResourceManager<graphics::Shader> {
+class ShaderManager : public ResourceManager<Shader> {
 public:
 	ShaderManager() noexcept;
 

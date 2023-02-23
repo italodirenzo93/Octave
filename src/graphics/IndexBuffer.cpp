@@ -2,7 +2,7 @@
 
 using namespace std;
 
-namespace Octave::graphics {
+namespace Octave {
 
 static inline void CopyIndexBuffer( GLuint source, GLuint target ) {
 	GLsizei buffer_size;
@@ -112,4 +112,4 @@ bool IndexBuffer::operator==( const IndexBuffer& other ) const noexcept {
 	return id_ == other.id_ && element_count_ && other.element_count_;
 }
 
-}  // namespace octave::graphics
+}  // namespace Octave

@@ -3,7 +3,7 @@
 
 #include "CommonInclude.hpp"
 
-namespace Octave::graphics {
+namespace Octave {
 
 enum class LayoutSemantic { kPosition, kColor, kTexCoord, kNormal };
 
@@ -125,6 +125,6 @@ void VertexBuffer::SetData( const VertexLayout& layout,
 	vertex_count_ = static_cast<uint32_t>( vertices.size() );
 }
 
-}  // namespace octave::graphics
+}  // namespace Octave
 
 #endif

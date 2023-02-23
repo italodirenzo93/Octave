@@ -6,7 +6,7 @@
 #include "Texture.hpp"
 #include "VertexBuffer.hpp"
 
-namespace Octave::graphics {
+namespace Octave {
 
 enum class PrimitiveType { kTriangleList, kTriangleStrip, kTriangleFan };
 
@@ -30,6 +30,6 @@ public:
 
 	NON_COPYABLE_OR_MOVABLE_CLASS( Renderer )
 };
-}  // namespace octave::graphics
+}  // namespace Octave
 
 #endif

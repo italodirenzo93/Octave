@@ -4,7 +4,7 @@
 #include "graphics/IndexBuffer.hpp"
 #include "graphics/VertexBuffer.hpp"
 
-namespace Octave::helpers {
+namespace Octave {
 
 class GeometricPrimitive {
 public:
@@ -31,7 +31,9 @@ public:
 									glm::vec2( tex_x, tex_y ) );
 		}
 
-		static VertexType PositionNormalTexture ( const glm::vec3& position, const glm::vec3& normal, const glm::vec2& tex_coord ) {
+		static VertexType PositionNormalTexture( const glm::vec3& position,
+												 const glm::vec3& normal,
+												 const glm::vec2& tex_coord ) {
 			VertexType vt;
 			vt.position = position;
 			vt.normal = normal;
@@ -40,12 +42,11 @@ public:
 		}
 	};
 
-	static void CreateCube( graphics::VertexBuffer& vbo,
-							graphics::IndexBuffer& ibo );
-	static void CreateQuad( graphics::VertexBuffer& vbo );
-	static void CreatePlane( graphics::VertexBuffer& vbo );
+	static void CreateCube( VertexBuffer& vbo, IndexBuffer& ibo );
+	static void CreateQuad( VertexBuffer& vbo );
+	static void CreatePlane( VertexBuffer& vbo );
 };
 
-}  // namespace octave
+}  // namespace Octave
 
 #endif

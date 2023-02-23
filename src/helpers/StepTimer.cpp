@@ -1,6 +1,6 @@
 #include "StepTimer.hpp"
 
-namespace Octave::helpers {
+namespace Octave {
 
 void StepTimer::ResetElapsedTime() noexcept {
 	m_qpcLastTime = glfwGetTimerValue();
