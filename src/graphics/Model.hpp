@@ -1,31 +1,30 @@
-#ifndef _MODEL_HPP
+#ifndef MODEL_HPP
 #define MODEL_HPP
 
 #include "CommonInclude.hpp"
 #include "Shader.hpp"
 #include "Mesh.hpp"
-#include "Texture.hpp"
 
 #include <assimp/scene.h>
 
 namespace graphics {
 class Model {
 public:
-    Model( const char* path );
+    explicit Model( const char* path );
 
     void draw( const Shader& program ) const;
 
 private:
-    std::vector<Mesh> _meshes;
-    std::string _directory;
-    std::vector<Mesh::Texture> _texuresLoaded;
+    std::vector<Mesh> meshes_;
+    std::string directory_;
+    std::vector<Mesh::Texture> texures_loaded_;
 
-    void loadModel( const std::string& path );
-    void processNode( aiNode* node, const aiScene* scene );
-    Mesh processMesh( aiMesh* mesh, const aiScene* scene );
-    std::vector<Mesh::Texture> loadMaterialTextures(
-        aiMaterial* material, aiTextureType textureType,
-        const std::string& typeName );
+    void LoadModel( const std::string& path );
+    void ProcessNode( aiNode* node, const aiScene* scene );
+    Mesh ProcessMesh( aiMesh* mesh, const aiScene* scene );
+    std::vector<Mesh::Texture> LoadMaterialTextures(
+        aiMaterial* material, aiTextureType texture_type,
+        const std::string& type_name );
 };
 } // namespace graphics
 

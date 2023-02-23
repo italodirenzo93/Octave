@@ -11,7 +11,7 @@ class Mesh {
 public:
     struct Vertex {
         glm::vec3 position;
-        glm::vec2 texCoords;
+        glm::vec2 tex_coords;
         glm::vec3 normal;
     };
 
@@ -22,24 +22,25 @@ public:
     };
 
 public:
-    std::vector<Vertex> vertices;
-    std::vector<uint32_t> indices;
-    std::vector<Texture> textures;
+    std::vector<Vertex> vertices_;
+    std::vector<uint32_t> indices_;
+    std::vector<Texture> textures_;
 
-    explicit Mesh( const std::vector<Vertex>& vertexData,
-                   const std::vector<uint32_t>& indexData,
+    explicit Mesh( const std::vector<Vertex>& vertex_data,
+                   const std::vector<uint32_t>& index_data,
                    const std::vector<Texture>& textures );
     Mesh( const Mesh& other );
     Mesh( Mesh&& other ) noexcept;
+    ~Mesh() = default;
 
     void draw( const Shader& program ) const;
 
 private:
-    VertexArrayLayout m_vao;
-    VertexBuffer<Vertex> m_vbo;
-    IndexBuffer m_ibo;
+    VertexArrayLayout vao_;
+    VertexBuffer<Vertex> vbo_;
+    IndexBuffer ibo_;
 
-    void setupMesh();
+    void SetupMesh();
 
 public:
     Mesh& operator=( const Mesh& other );

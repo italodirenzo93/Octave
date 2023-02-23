@@ -18,7 +18,7 @@ struct LayoutBinding {
                type == other.type && normalized == other.normalized;
     }
 
-    static uint32_t getSizeOfType( uint32_t type ) {
+    static uint32_t GetSizeOfType( uint32_t type ) {
         switch (type) {
             case GL_FLOAT:
             case GL_UNSIGNED_INT:
@@ -40,43 +40,43 @@ public:
     VertexArrayLayout( std::initializer_list<LayoutBinding> initializer );
     ~VertexArrayLayout();
 
-    void bind() const {
-        glBindVertexArray( m_vertexArrayID );
+    void Bind() const {
+        glBindVertexArray( vao_ );
     }
 
-    void unbind() const {
+    void Unbind() const {
         glBindVertexArray( 0 );
     }
 
 private:
-    uint32_t m_vertexArrayID;
-    std::vector<LayoutBinding> m_layoutBindings;
+    uint32_t vao_ = 0;
+    std::vector<LayoutBinding> layout_bindings_;
 
 public:
-    void clearBindings() { m_layoutBindings.clear(); }
-    VertexArrayLayout& addBinding( const LayoutBinding& binding );
+    void ClearBindings() { layout_bindings_.clear(); }
+    VertexArrayLayout& AddBinding( const LayoutBinding& binding );
 
     template <typename Vertex, uint32_t Stride = 1>
-    void mapToBuffer( const VertexBuffer<Vertex>& vertexBuffer ) const {
-        vertexBuffer.bind();
-        bind();
+    void MapToBuffer( const VertexBuffer<Vertex>& vertex_buffer ) const {
+        vertex_buffer.Bind();
+        Bind();
 
-        size_t offsetInBytes = 0;
+        size_t offset_in_bytes = 0;
 
-        for (auto& binding : m_layoutBindings) {
-            auto iter = Bindings.find( binding.semantic );
-            if (iter == Bindings.end()) continue;
+        for (auto& binding : layout_bindings_) {
+            auto iter = bindings_.find( binding.semantic );
+            if (iter == bindings_.end()) continue;
 
-            const unsigned int bindingPoint = iter->second;
+            const uint32_t binding_point = iter->second;
 
             glVertexAttribPointer(
-                bindingPoint, static_cast<int>(binding.size), binding.type,
+                binding_point, static_cast<int>(binding.size), binding.type,
                 binding.normalized, Stride * sizeof( Vertex ),
-                reinterpret_cast<const void*>(offsetInBytes) );
-            glEnableVertexAttribArray( bindingPoint );
+                reinterpret_cast<const void*>(offset_in_bytes) );
+            glEnableVertexAttribArray( binding_point );
 
-            offsetInBytes +=
-                binding.size * LayoutBinding::getSizeOfType( binding.type );
+            offset_in_bytes +=
+                binding.size * LayoutBinding::GetSizeOfType( binding.type );
         }
     }
 
@@ -85,7 +85,7 @@ public:
     VertexArrayLayout& operator=( VertexArrayLayout&& other ) noexcept;
 
 private:
-    static const std::map<LayoutSemantic, unsigned int> Bindings;
+    static const std::map<LayoutSemantic, unsigned int> bindings_;
 };
 }
 

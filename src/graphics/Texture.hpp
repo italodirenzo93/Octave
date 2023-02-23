@@ -6,21 +6,21 @@
 namespace graphics {
 class Texture {
    public:
-    explicit Texture( const char* fileName );
+    explicit Texture( const char* file_name );
     Texture( const Texture& other );
     Texture( Texture&& other ) noexcept;
     ~Texture();
 
-    uint32_t getID() const { return _id; }
-    int32_t getFormat() const { return _format; }
+    uint32_t GetId() const { return id_; }
+    int GetFormat() const { return format_; }
 
-    void activate( GLenum textureUnit ) const;
+    void activate( GLenum texture_unit ) const;
 
    private:
-    uint32_t _id;
-    int32_t _format;
+    uint32_t id_;
+    int32_t format_;
 
-    int32_t _width, _height;
+    int32_t width_, height_;
 
    public:
     Texture& operator=( const Texture& other );

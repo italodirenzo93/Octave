@@ -3,99 +3,99 @@
 namespace graphics {
 using namespace std;
 
-Mesh::Mesh( const std::vector<Vertex>& vertexData,
-            const std::vector<uint32_t>& indexData,
+Mesh::Mesh( const std::vector<Vertex>& vertex_data,
+            const std::vector<uint32_t>& index_data,
             const std::vector<Texture>& textures ) {
-    vertices = vertexData;
-    indices = indexData;
-    this->textures = textures;
+    vertices_ = vertex_data;
+    indices_ = index_data;
+    this->textures_ = textures;
 
-    setupMesh();
+    SetupMesh();
 }
 
 Mesh::Mesh( const Mesh& other ) {
-    vertices = other.vertices;
-    indices = other.indices;
-    textures = other.textures;
+    vertices_ = other.vertices_;
+    indices_ = other.indices_;
+    textures_ = other.textures_;
 
-    m_vao = other.m_vao;
-    m_vbo = other.m_vbo;
-    m_ibo = other.m_ibo;
+    vao_ = other.vao_;
+    vbo_ = other.vbo_;
+    ibo_ = other.ibo_;
 
-    setupMesh();
+    SetupMesh();
 }
 
 Mesh::Mesh( Mesh&& other ) noexcept {
-    vertices = std::move( other.vertices );
-    indices = std::move( other.indices );
-    textures = std::move( other.textures );
+    vertices_ = std::move( other.vertices_ );
+    indices_ = std::move( other.indices_ );
+    textures_ = std::move( other.textures_ );
 
-    m_vao = std::move( other.m_vao );
-    m_vbo = std::move( other.m_vbo );
-    m_ibo = std::move( other.m_ibo );
+    vao_ = std::move( other.vao_ );
+    vbo_ = std::move( other.vbo_ );
+    ibo_ = std::move( other.ibo_ );
 }
 
 void Mesh::draw( const Shader& program ) const {
-    uint32_t diffuseNr = 1;
-    uint32_t specularNr = 1;
-    for (int i = 0; i < textures.size(); i++) {
+    uint32_t diffuse_nr = 1;
+    uint32_t specular_nr = 1;
+    for (size_t i = 0; i < textures_.size(); i++) {
         glActiveTexture( GL_TEXTURE0 + i ); // activate the proper texture unit
         string name = "uMaterial.";
-        name += textures[i].type;
+        name += textures_[i].type;
 
-        if (textures[i].type == "texture_diffuse")
-            name += to_string( diffuseNr++ );
-        else if (textures[i].type == "texture_specular")
-            name += to_string( specularNr++ );
+        if (textures_[i].type == "texture_diffuse")
+            name += to_string( diffuse_nr++ );
+        else if (textures_[i].type == "texture_specular")
+            name += to_string( specular_nr++ );
 
-        program.setInt( name, i );
-        glBindTexture( GL_TEXTURE_2D, textures[i].id );
+        program.SetInt( name, i );
+        glBindTexture( GL_TEXTURE_2D, textures_[i].id );
     }
     glActiveTexture( GL_TEXTURE0 );
 
-    m_vao.bind();
-    m_ibo.bind();
+    vao_.Bind();
+    ibo_.Bind();
 
-    glDrawElements( GL_TRIANGLES, static_cast<uint32_t>(indices.size()),
+    glDrawElements( GL_TRIANGLES, static_cast<int>(indices_.size()),
                     GL_UNSIGNED_INT, nullptr );
-
-    m_ibo.unbind();
-    m_vao.unbind();
+	
+    ibo_.Unbind();
+    vao_.Unbind();
 }
 
-void Mesh::setupMesh() {
-    m_vbo.setData( vertices );
-    m_ibo.setData( indices );
+void Mesh::SetupMesh() {
+    vbo_.SetData( vertices_ );
+    ibo_.SetData( indices_ );
 
-    m_vao.addBinding( {POSITION, 3, GL_FLOAT, false} )
-         .addBinding( {TEXCOORD, 2, GL_FLOAT, false} )
-         .addBinding( {NORMAL, 3, GL_FLOAT, false} );
+    vao_.AddBinding( {POSITION, 3, GL_FLOAT, false} )
+         .AddBinding( {TEXCOORD, 2, GL_FLOAT, false} )
+         .AddBinding( {NORMAL, 3, GL_FLOAT, false} );
 
-    m_vao.mapToBuffer( m_vbo );
+    vao_.MapToBuffer( vbo_ );
 }
 
 Mesh& Mesh::operator=( const Mesh& other ) {
-    vertices = other.vertices;
-    indices = other.indices;
-    textures = other.textures;
+    vertices_ = other.vertices_;
+    indices_ = other.indices_;
+    textures_ = other.textures_;
 
-    m_vao = other.m_vao;
-    m_vbo = other.m_vbo;
-    m_ibo = other.m_ibo;
+    vao_ = other.vao_;
+    vbo_ = other.vbo_;
+    ibo_ = other.ibo_;
 
-    setupMesh();
+    SetupMesh();
 
     return *this;
 }
 
 Mesh& Mesh::operator=( Mesh&& other ) noexcept {
-    vertices = std::move( other.vertices );
-    indices = std::move( other.indices );
-    textures = std::move( other.textures );
+    vertices_ = std::move( other.vertices_ );
+    indices_ = std::move( other.indices_ );
+    textures_ = std::move( other.textures_ );
 
-    m_vao = std::move( other.m_vao );
-    m_vbo = std::move( other.m_vbo );
-    m_ibo = std::move( other.m_ibo );
+    vao_ = std::move( other.vao_ );
+    vbo_ = std::move( other.vbo_ );
+    ibo_ = std::move( other.ibo_ );
 
     return *this;
 }

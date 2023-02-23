@@ -19,12 +19,12 @@ void ShaderManager::PreloadShaders() {
             continue;
         }
 
-        string vertexPath = shaderDirectory + shader + ".vert";
-        string fragmentPath = shaderDirectory + shader + ".frag";
+        string vertex_path = shaderDirectory + shader + ".vert";
+        string fragment_path = shaderDirectory + shader + ".frag";
 
         ifstream ifs;
 
-        ifs.open( vertexPath );
+        ifs.open( vertex_path );
         if (!ifs.is_open()) {
             cout << "Missing vertex shader for " << shader << " program" <<
                 endl;
@@ -33,7 +33,7 @@ void ShaderManager::PreloadShaders() {
 
         ifs.close();
 
-        ifs.open( fragmentPath );
+        ifs.open( fragment_path );
         if (!ifs.is_open()) {
             cout << "Missing fragment shader for " << shader << " program" <<
                 endl;
@@ -43,8 +43,8 @@ void ShaderManager::PreloadShaders() {
         ifs.close();
 
         shaders_.emplace(
-            shader, make_shared<Shader>( vertexPath.c_str(),
-                                         fragmentPath.c_str() ) );
+            shader, make_shared<Shader>( vertex_path.c_str(),
+                                         fragment_path.c_str() ) );
     }
 }
 
