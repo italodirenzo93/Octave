@@ -32,6 +32,7 @@ public:
 	[[nodiscard]] std::filesystem::path GetShaderDirectory() const noexcept;
 	[[nodiscard]] bool GetPreloadShaders() const noexcept;
 	[[nodiscard]] float GetFieldOfView() const noexcept;
+	[[nodiscard]] bool IsCullFaceEnabled() const noexcept;
 
 private:
 	Config() noexcept;
