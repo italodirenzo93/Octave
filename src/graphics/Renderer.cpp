@@ -5,10 +5,11 @@
 #include "Config.hpp"
 #include "ShaderManager.hpp"
 
-namespace octave::graphics {
 using namespace std;
 
-inline GLenum PrimitiveToGLType( PrimitiveType type ) {
+namespace octave::graphics {
+
+static inline GLenum PrimitiveToGLType( PrimitiveType type ) {
 	switch ( type ) {
 		case PrimitiveType::kTriangleList:
 			return GL_TRIANGLES;
@@ -22,7 +23,7 @@ inline GLenum PrimitiveToGLType( PrimitiveType type ) {
 }
 
 #ifdef __DEBUG__
-void APIENTRY DebugOutputCallback( GLenum source, GLenum type, unsigned int id,
+static void GLAPIENTRY DebugOutputCallback( GLenum source, GLenum type, unsigned int id,
 								   GLenum severity, GLsizei length,
 								   const char* message,
 								   const void* userParam ) {
@@ -121,8 +122,8 @@ Renderer::Renderer( const Window& window ) noexcept : window_( window ) {
 		glEnable( GL_DEBUG_OUTPUT );
 		glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS );
 		glDebugMessageCallback( DebugOutputCallback, nullptr );
-		glDebugMessageControl( GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0,
-							   nullptr, GL_TRUE );
+		glDebugMessageControl( GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0,
+							   nullptr, GL_FALSE );
 	}
 #endif
 
@@ -158,17 +159,23 @@ void Renderer::Present() const noexcept {
 
 void Renderer::DrawPrimitives( PrimitiveType type,
 							   const VertexBuffer& vbo ) const noexcept {
+	glPushDebugGroup( GL_DEBUG_SOURCE_APPLICATION, 0, -1, "DrawPrimitives" );
+
 	glBindVertexArray( vbo.vao_ );
 
 	glDrawArrays( PrimitiveToGLType( type ), 0,
 				  static_cast<int>( vbo.GetVertexCount() ) );
 
 	glBindVertexArray( 0 );
+
+	glPopDebugGroup();
 }
 
 void Renderer::DrawIndexedPrimitives( PrimitiveType type,
 									  const VertexBuffer& vbo,
 									  const IndexBuffer& ibo ) const noexcept {
+	glPushDebugGroup( GL_DEBUG_SOURCE_APPLICATION, 0, -1, "DrawIndexedPrimitives" );
+
 	glBindVertexArray( vbo.vao_ );
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo.id_ );
 
@@ -178,6 +185,8 @@ void Renderer::DrawIndexedPrimitives( PrimitiveType type,
 
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
 	glBindVertexArray( 0 );
+
+	glPopDebugGroup();
 }
 
 std::string Renderer::GetDescription() const noexcept {

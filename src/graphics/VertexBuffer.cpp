@@ -1,5 +1,7 @@
 #include "VertexBuffer.hpp"
 
+using namespace std;
+
 namespace octave::graphics {
 // NOTE: This must be kept in sync with the input layout of the vertex shader!
 static const std::unordered_map<LayoutSemantic, uint32_t> kAttributeBindings{
@@ -8,30 +10,48 @@ static const std::unordered_map<LayoutSemantic, uint32_t> kAttributeBindings{
 	{ LayoutSemantic::kTexCoord, 2 },
 	{ LayoutSemantic::kNormal, 3 } };
 
+static inline void CopyVertexBuffer( GLuint source, GLuint target ) {
+	GLsizei buffer_size;
+
+	glBindBuffer( GL_COPY_READ_BUFFER, source );
+	glGetBufferParameteriv( GL_COPY_READ_BUFFER, GL_BUFFER_SIZE, &buffer_size );
+
+	glBindBuffer( GL_COPY_WRITE_BUFFER, target );
+	glBufferData( GL_COPY_WRITE_BUFFER, buffer_size, nullptr, GL_STATIC_DRAW );
+
+	glCopyBufferSubData( GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0,
+						 buffer_size );
+
+	glBindBuffer( GL_COPY_READ_BUFFER, 0 );
+	glBindBuffer( GL_COPY_WRITE_BUFFER, 0 );
+}
+
 VertexBuffer::VertexBuffer() noexcept {
 	glGenBuffers( 1, &vbo_ );
 	glGenVertexArrays( 1, &vao_ );
 }
 
 VertexBuffer::VertexBuffer( const VertexBuffer& other ) noexcept {
+	glPushDebugGroup( GL_DEBUG_SOURCE_APPLICATION, 0, -1,
+					  "Vertex buffer copy constructor" );
+
 	glGenBuffers( 1, &vbo_ );
 	glGenVertexArrays( 1, &vao_ );
 
-	glBindBuffer( GL_COPY_READ_BUFFER, other.vbo_ );
-	glBindBuffer( GL_COPY_WRITE_BUFFER, vbo_ );
-
-	glCopyBufferSubData( GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0,
-						 other.vertex_count_ );
-
-	glBindBuffer( GL_COPY_READ_BUFFER, 0 );
-	glBindBuffer( GL_COPY_WRITE_BUFFER, 0 );
-
-	if ( !other.layout_.empty() ) {
-		SetVertexAttributes( layout_, layout_.size() * sizeof( layout_[0] ) );
-	}
+	CopyVertexBuffer( other.vbo_, vbo_ );
 
 	vertex_count_ = other.vertex_count_;
 	layout_ = other.layout_;
+
+	if ( !layout_.empty() ) {
+		glBindBuffer( GL_ARRAY_BUFFER, vbo_ );
+
+		SetVertexAttributes( layout_, layout_.size() * sizeof( layout_[0] ) );
+
+		glBindBuffer( GL_ARRAY_BUFFER, 0 );
+	}
+
+	glPopDebugGroup();
 }
 
 VertexBuffer::VertexBuffer( VertexBuffer&& other ) noexcept {
@@ -54,6 +74,9 @@ VertexBuffer::~VertexBuffer() noexcept {
 
 void VertexBuffer::SetVertexAttributes( const VertexLayout& layout,
 										size_t stride ) {
+	glPushDebugGroup( GL_DEBUG_SOURCE_APPLICATION, 0, -1,
+					  "SetVertexAttributes" );
+
 	glBindVertexArray( vao_ );
 
 	size_t offset_in_bytes = 0;
@@ -77,28 +100,32 @@ void VertexBuffer::SetVertexAttributes( const VertexLayout& layout,
 	layout_ = layout;
 
 	glBindVertexArray( 0 );
+
+	glPopDebugGroup();
 }
 
 VertexBuffer& VertexBuffer::operator=( const VertexBuffer& other ) noexcept {
 	SELF_REFERENCE_CHECK( other );
 
+	glPushDebugGroup( GL_DEBUG_SOURCE_APPLICATION, 0, -1,
+					  "Vertex buffer copy assignment" );
+
 	glGenBuffers( 1, &vbo_ );
 
-	glBindBuffer( GL_COPY_READ_BUFFER, other.vbo_ );
-	glBindBuffer( GL_COPY_WRITE_BUFFER, vbo_ );
-
-	glCopyBufferSubData( GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0,
-						 other.vertex_count_ );
-
-	glBindBuffer( GL_COPY_READ_BUFFER, 0 );
-	glBindBuffer( GL_COPY_WRITE_BUFFER, 0 );
+	CopyVertexBuffer( other.vbo_, vbo_ );
 
 	if ( !other.layout_.empty() ) {
+		glBindBuffer( GL_ARRAY_BUFFER, vbo_ );
+
 		SetVertexAttributes( layout_, layout_.size() * sizeof( layout_[0] ) );
+
+		glBindBuffer( GL_ARRAY_BUFFER, 0 );
 	}
 
 	vertex_count_ = other.vertex_count_;
 	layout_ = other.layout_;
+
+	glPopDebugGroup();
 
 	return *this;
 }

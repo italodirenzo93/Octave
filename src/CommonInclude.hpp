@@ -89,10 +89,6 @@ inline void ThrowIfFailed() {
 
 }  // namespace octave::graphics::gl
 
-#define GL_CALL( func ) \
-	func;               \
-	octave::graphics::gl::ThrowIfFailed()
-
 namespace octave::audio::al {
 
 class OpenALError : public Exception {
