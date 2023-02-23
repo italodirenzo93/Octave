@@ -10,25 +10,12 @@ using namespace std;
 
 namespace Octave {
 
-static GLenum PrimitiveToGLType( PrimitiveType type ) {
-	switch ( type ) {
-		case PrimitiveType::kTriangleList:
-			return GL_TRIANGLES;
-		case PrimitiveType::kTriangleStrip:
-			return GL_TRIANGLE_STRIP;
-		case PrimitiveType::kTriangleFan:
-			return GL_TRIANGLE_FAN;
-	}
-
-	return 0;
-}
-
 Renderer::Renderer() noexcept {
 	const Config& config = Config::Instance();
 
 	// Always enabled
 	glEnable( GL_DEPTH_TEST );
-	glClearDepth( 1.0f );
+	glClearDepth( 1.0 );
 
 	if ( config.IsCullFaceEnabled() ) {
 		glEnable( GL_CULL_FACE );
@@ -48,31 +35,27 @@ void Renderer::Clear( bool color, bool depth, float r, float g, float b,
 
 	if ( depth ) {
 		clear_flags |= GL_DEPTH_BUFFER_BIT;
-		glClearDepth( 1.0f );
+		glClearDepth( 1.0 );
 	}
 
 	glClear( clear_flags );
 }
 
-void Renderer::DrawPrimitives( PrimitiveType type,
-							   const VertexBuffer& vbo ) const noexcept {
+void Renderer::Draw( const VertexBuffer& vbo ) const noexcept {
 	glBindVertexArray( vbo.vao_ );
 
-	glDrawArrays( PrimitiveToGLType( type ), 0,
-				  static_cast<int>( vbo.GetVertexCount() ) );
+	glDrawArrays( GL_TRIANGLES, 0, static_cast<int>( vbo.GetVertexCount() ) );
 
 	glBindVertexArray( 0 );
 }
 
-void Renderer::DrawIndexedPrimitives( PrimitiveType type,
-									  const VertexBuffer& vbo,
-									  const IndexBuffer& ibo ) const noexcept {
+void Renderer::DrawIndexed( const VertexBuffer& vbo,
+							const IndexBuffer& ibo ) const noexcept {
 	glBindVertexArray( vbo.vao_ );
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo.id_ );
 
-	glDrawElements( PrimitiveToGLType( type ),
-					static_cast<int>( ibo.GetElementCount() ), GL_UNSIGNED_INT,
-					nullptr );
+	glDrawElements( GL_TRIANGLES, static_cast<int>( ibo.GetElementCount() ),
+					GL_UNSIGNED_INT, nullptr );
 
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
 	glBindVertexArray( 0 );

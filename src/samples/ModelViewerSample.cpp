@@ -218,7 +218,7 @@ void ModelViewerSample::OnRender() {
 		shader_->SetMat4( "uMatModel", model );
 		shader_->SetMat3( "uMatNormal", MakeNormalMatrix( model ) );
 
-		renderer_->DrawPrimitives( PrimitiveType::kTriangleList, *floor_vbo_ );
+		renderer_->Draw( *floor_vbo_ );
 	}
 }
 
