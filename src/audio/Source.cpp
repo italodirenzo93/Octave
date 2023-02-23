@@ -2,11 +2,12 @@
 
 #include "Exception.hpp"
 
+#include "alCommon.hpp"
+
 namespace octave::audio {
 
 Source::Source() {
 	alGenSources( 1, &id_ );
-	al::ThrowIfFailed();
 }
 
 Source::~Source() noexcept {
