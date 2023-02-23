@@ -1,3 +1,4 @@
+#include "pch/pch.hpp"
 #include "WindowGLFW.hpp"
 
 // clang-format off
@@ -12,12 +13,17 @@ namespace Octave::Impl {
 
 static uint32_t g_window_count = 0;
 
+static void ErrorCallback( int error_code, const char* description ) {
+	std::cerr << "GLFW Error - " << error_code << std::endl << description << std::endl;
+}
+
 WindowGLFW::WindowGLFW( const WindowOptions& options ) {
 	// Init GLFW
 	if ( g_window_count == 0 ) {
 		if ( !glfwInit() ) {
 			throw Exception( "Unable to initialize GLFW" );
 		}
+		glfwSetErrorCallback(ErrorCallback);
 	}
 
 	// Set defaults as a baseline
