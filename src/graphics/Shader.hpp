@@ -1,9 +1,9 @@
 #ifndef OCTAVE_SHADER_HPP
 #define OCTAVE_SHADER_HPP
 
-#include "CommonInclude.hpp"
 #include "Exception.hpp"
 #include "Texture.hpp"
+#include "pch.hpp"
 
 namespace Octave {
 class Shader {

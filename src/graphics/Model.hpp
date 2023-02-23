@@ -3,8 +3,8 @@
 
 #include <assimp/scene.h>
 
-#include "CommonInclude.hpp"
 #include "Mesh.hpp"
+#include "pch.hpp"
 
 namespace Octave {
 

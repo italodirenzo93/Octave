@@ -2,10 +2,10 @@
 #define OCTAVE_SAMPLE_HPP
 
 #include "Camera.hpp"
-#include "CommonInclude.hpp"
-#include "helpers/StepTimer.hpp"
 #include "graphics/Renderer.hpp"
 #include "graphics/Window.hpp"
+#include "helpers/StepTimer.hpp"
+#include "pch.hpp"
 
 namespace Octave::samples {
 

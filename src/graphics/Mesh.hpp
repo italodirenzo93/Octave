@@ -1,12 +1,12 @@
 #ifndef OCTAVE_MESH_HPP
 #define OCTAVE_MESH_HPP
 
-#include "CommonInclude.hpp"
 #include "IndexBuffer.hpp"
 #include "Renderer.hpp"
 #include "Shader.hpp"
 #include "Texture.hpp"
 #include "VertexBuffer.hpp"
+#include "pch.hpp"
 
 namespace Octave {
 
