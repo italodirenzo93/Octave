@@ -9,15 +9,16 @@ public:
 	explicit ModelViewerSample( std::string file_name ) noexcept
 		: file_name_( std::move( file_name ) ) {}
 
-	void Initialize() override;
-	void OnUpdate() override;
+	void OnInitialize() override;
+	void OnStep() override;
 	void OnRender() override;
 
 private:
 	void DebugCameraControls( Octave::DebugCamera& camera, float camera_speed,
 							  float delta ) noexcept;
-	void DebugCameraControls( const Octave::Gamepad& gamepad, Octave::DebugCamera& camera,
-							  float camera_speed, float delta ) noexcept;
+	void DebugCameraControls( const Octave::Gamepad& gamepad,
+							  Octave::DebugCamera& camera, float camera_speed,
+							  float delta ) noexcept;
 
 	std::string file_name_;
 
@@ -30,7 +31,8 @@ private:
 	glm::mat4 model_matrix_;
 
 	std::unique_ptr<Octave::VertexBuffer> floor_vbo_;
-	std::unique_ptr<Octave::Texture> floor_texture_diffuse_, floor_texture_specular_;
+	std::unique_ptr<Octave::Texture> floor_texture_diffuse_,
+		floor_texture_specular_;
 	glm::vec3 floor_position_;
 };
 
@@ -142,8 +144,8 @@ static glm::mat3 MakeNormalMatrix( const glm::mat4& model_matrix ) {
 	return { glm::transpose( glm::inverse( model_matrix ) ) };
 }
 
-void ModelViewerSample::Initialize() {
-	Sample::Initialize();
+void ModelViewerSample::OnInitialize() {
+	Sample::OnInitialize();
 
 	cout << renderer_->GetDescription() << endl;
 
@@ -201,7 +203,7 @@ void ModelViewerSample::Initialize() {
 	floor_position_ = glm::vec3( 0, -3, 0 );
 }
 
-void ModelViewerSample::OnUpdate() {
+void ModelViewerSample::OnStep() {
 	const auto delta = static_cast<float>( step_timer_->GetElapsedSeconds() );
 
 	if ( input_->IsKeyDown( *window_, Key::Escape ) ||
@@ -249,7 +251,8 @@ void ModelViewerSample::OnRender() {
 	}
 }
 
-unique_ptr<Octave::Application> Octave::CreateApplication( int argc, char* argv[] ) {
+unique_ptr<Octave::Application> Octave::CreateApplication( int argc,
+														   char* argv[] ) {
 	string filename = argc > 1 ? argv[1] : "";
 	return make_unique<ModelViewerSample>( filename );
 }

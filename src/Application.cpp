@@ -1,7 +1,6 @@
 #include "Application.hpp"
 
 #include "input/glfw/InputSystemGLFW.hpp"
-#include "platform/glfw/PlatformGLFW.hpp"
 
 namespace Octave {
 
@@ -9,30 +8,34 @@ Application::Application() : Application( 0, nullptr ) {
 }
 
 Application::Application( int argc, char* argv[] ) : is_running_( true ) {
-	platform_ = std::make_unique<Impl::PlatformGLFW>();
 	input_ = std::make_unique<Impl::InputSystemGLFW>();
+	window_ = Window::Create( WindowOptions() );
 }
 
 Application::~Application() noexcept {
-	platform_.reset();
 }
 
 void Application::Run() {
-	Initialize();
+	OnInitialize();
 	while ( is_running_ ) {
-		platform_->PollEvents();
-		Update();
+		window_->PollEvents();
+		OnUpdate();
+		window_->SwapBuffers();
 	}
+	OnExit();
 }
 
 void Application::Exit() {
 	is_running_ = false;
 }
 
-void Application::Initialize() {
+void Application::OnInitialize() {
 }
 
-void Application::Update() {
+void Application::OnUpdate() {
+}
+
+void Application::OnExit() noexcept {
 }
 
 }  // namespace Octave

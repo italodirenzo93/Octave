@@ -16,7 +16,7 @@ public:
 	virtual ~Application() noexcept;
 
 	// Getter/setter pairs
-	[[nodiscard]] Platform& GetPlatform() const noexcept { return *platform_; }
+	[[nodiscard]] Window& GetWindow() const noexcept { return *window_; }
 	[[nodiscard]] InputSystem& GetInput() const noexcept { return *input_; }
 
 	// Methods
@@ -27,11 +27,12 @@ public:
 
 protected:
 	// Methods
-	virtual void Initialize();
-	virtual void Update();
+	virtual void OnInitialize();
+	virtual void OnUpdate();
+	virtual void OnExit() noexcept;
 
 	// Fields
-	std::unique_ptr<Platform> platform_;
+	std::unique_ptr<Window> window_;
 	std::unique_ptr<InputSystem> input_;
 
 private:

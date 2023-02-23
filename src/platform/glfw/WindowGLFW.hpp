@@ -11,13 +11,17 @@ class WindowGLFW : public Window {
 public:
 	explicit WindowGLFW( const WindowOptions& options );
 	~WindowGLFW() noexcept override;
+
 	[[nodiscard]] std::pair<int, int> GetSize() const noexcept override;
 	[[nodiscard]] GLFWwindow* GetPointer() const noexcept { return window_; }
 	[[nodiscard]] bool IsOpen() const noexcept override;
+
 	Window& SetTitle( const std::string& title ) noexcept override;
 	Window& SetSyncInterval( int interval ) noexcept override;
+
 	void Close() const noexcept override;
 	void SwapBuffers() noexcept override;
+	void PollEvents() noexcept override;
 
 private:
 	GLFWwindow* window_ = nullptr;

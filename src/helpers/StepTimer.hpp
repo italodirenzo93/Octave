@@ -1,30 +1,15 @@
 #ifndef OCTAVE_STEPTIMER_HPP
 #define OCTAVE_STEPTIMER_HPP
 
-#include "platform/Platform.hpp"
+#include <cstdint>
+#include <functional>
 
 namespace Octave {
 
 // Helper class for animation and simulation timing.
 class StepTimer {
 public:
-	StepTimer( const Platform& platform ) noexcept( false )
-		: platform_(platform),
-		  m_elapsedTicks( 0 ),
-		  m_totalTicks( 0 ),
-		  m_leftOverTicks( 0 ),
-		  m_frameCount( 0 ),
-		  m_framesPerSecond( 0 ),
-		  m_framesThisSecond( 0 ),
-		  m_qpcSecondCounter( 0 ),
-		  m_isFixedTimeStep( false ),
-		  m_targetElapsedTicks( TicksPerSecond / 60 ) {
-		m_qpcFrequency = platform_.GetPerformanceFrequency();
-		m_qpcLastTime = platform_.GetPerformanceCounter();
-
-		// Initialize max delta to 1/10 of a second.
-		m_qpcMaxDelta = static_cast<uint64_t>( m_qpcFrequency / 10 );
-	}
+	StepTimer() noexcept;
 
 	// Get elapsed time since the previous Update call.
 	[[nodiscard]] uint64_t GetElapsedTicks() const noexcept {
@@ -86,8 +71,6 @@ public:
 	void Tick( const std::function<void()>& update );
 
 private:
-	const Platform& platform_;
-
 	// Source timing data uses QPC units.
 	uint64_t m_qpcFrequency;
 	uint64_t m_qpcLastTime;
@@ -109,6 +92,6 @@ private:
 	uint64_t m_targetElapsedTicks;
 };
 
-}  // namespace octave
+}  // namespace Octave
 
 #endif  // OCTAVE_STEPTIMER_HPP

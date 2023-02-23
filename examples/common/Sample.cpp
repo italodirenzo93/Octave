@@ -3,10 +3,9 @@
 using namespace std;
 using namespace Octave;
 
-void Sample::Initialize() {
-	step_timer_ = make_unique<StepTimer>( *platform_ );
+void Sample::OnInitialize() {
+	step_timer_ = make_unique<StepTimer>();
 
-	window_ = platform_->CreateWindow( WindowOptions() );
 	window_->AddCloseCallback( [this]() { Exit(); } );
 
 	renderer_ = make_unique<Renderer>();
@@ -22,9 +21,7 @@ void Sample::Initialize() {
 	} );
 }
 
-void Sample::Update() {
-	step_timer_->Tick( [this] { OnUpdate(); } );
+void Sample::OnUpdate() {
+	step_timer_->Tick( [this] { OnStep(); } );
 	OnRender();
-
-	window_->SwapBuffers();
 }

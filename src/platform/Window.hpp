@@ -15,7 +15,9 @@ struct WindowOptions {
 	std::string title;
 
 	WindowOptions() noexcept;
-	WindowOptions( int width, int height, std::string title, bool is_fullscreen = false,
+	WindowOptions( std::string title ) noexcept;
+	WindowOptions( int width, int height, std::string title,
+				   bool is_fullscreen = false,
 				   bool is_borderless = false ) noexcept;
 };
 
@@ -32,6 +34,7 @@ public:
 	// Actions
 	virtual void Close() const noexcept = 0;
 	virtual void SwapBuffers() noexcept = 0;
+	virtual void PollEvents() noexcept = 0;
 
 	// Callbacks
 	using OnSizeChangedCallback = std::function<void( int, int )>;
@@ -46,11 +49,20 @@ public:
 		return *this;
 	}
 
+	static std::unique_ptr<Window> Create( const WindowOptions& options );
+
 protected:
-	explicit Window( const WindowOptions& options ) {};
+	Window() = default;
 
 	std::vector<OnSizeChangedCallback> cb_window_size_;
 	std::vector<OnCloseCallback> cb_close_;
+
+public:
+	Window( const Window& ) = delete;
+	Window( Window&& ) = delete;
+
+	Window& operator=( const Window& ) = delete;
+	Window& operator=( Window&& ) = delete;
 };
 
 }  // namespace Octave

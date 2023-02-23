@@ -10,7 +10,16 @@
 
 namespace Octave::Impl {
 
-WindowGLFW::WindowGLFW( const WindowOptions& options ) : Window( options ) {
+static uint32_t g_window_count = 0;
+
+WindowGLFW::WindowGLFW( const WindowOptions& options ) {
+	// Init GLFW
+	if ( g_window_count == 0 ) {
+		if ( !glfwInit() ) {
+			throw Exception( "Unable to initialize GLFW" );
+		}
+	}
+
 	// Set defaults as a baseline
 	glfwDefaultWindowHints();
 
@@ -62,6 +71,9 @@ WindowGLFW::WindowGLFW( const WindowOptions& options ) : Window( options ) {
 		throw GLFWError();
 	}
 
+	// Increment window count
+	g_window_count += 1;
+
 	glfwMakeContextCurrent( window_ );
 
 	SetSyncInterval( config.GetSyncInterval() );
@@ -83,6 +95,12 @@ WindowGLFW::WindowGLFW( const WindowOptions& options ) : Window( options ) {
 
 WindowGLFW::~WindowGLFW() noexcept {
 	glfwDestroyWindow( window_ );
+	g_window_count -= 1;
+
+	// Quit GLFW if no windows left
+	if ( g_window_count == 0 ) {
+		glfwTerminate();
+	}
 }
 
 std::pair<int, int> WindowGLFW::GetSize() const noexcept {
@@ -111,6 +129,10 @@ void WindowGLFW::Close() const noexcept {
 
 void WindowGLFW::SwapBuffers() noexcept {
 	glfwSwapBuffers( window_ );
+}
+
+void WindowGLFW::PollEvents() noexcept {
+	glfwPollEvents();
 }
 
 void WindowGLFW::WindowSizeCallback( GLFWwindow* window, int width,

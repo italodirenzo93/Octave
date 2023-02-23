@@ -46,7 +46,6 @@ source += [
 	'platform/glfw/GLFWError.cpp',
 	'platform/glfw/GLFWError.hpp',
 	'platform/glfw/PlatformGLFW.cpp',
-	'platform/glfw/PlatformGLFW.hpp',
 	'platform/glfw/WindowGLFW.cpp',
 	'platform/glfw/WindowGLFW.hpp'
 ]

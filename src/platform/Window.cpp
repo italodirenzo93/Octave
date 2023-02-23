@@ -2,12 +2,17 @@
 
 #include "Config.hpp"
 
+#include "glfw/WindowGLFW.hpp"
+
 namespace Octave {
 
-WindowOptions::WindowOptions() noexcept {
+WindowOptions::WindowOptions() noexcept
+	: WindowOptions( "Octave Application" ) {
+}
+
+WindowOptions::WindowOptions( std::string title ) noexcept : title( title ) {
 	width = Config::Instance().GetFramebufferWidth();
 	height = Config::Instance().GetFramebufferHeight();
-	title = "Octave Game Toolkit";
 	is_fullscreen = Config::Instance().IsFullscreen();
 	is_borderless = Config::Instance().IsBorderless();
 }
@@ -19,6 +24,11 @@ WindowOptions::WindowOptions( int width, int height, std::string title,
 	  title( std::move( title ) ),
 	  is_fullscreen( is_fullscreen ),
 	  is_borderless( is_borderless ) {
+}
+
+std::unique_ptr<Window> Window::Create( const WindowOptions& options ) {
+	// TODO: Conditionally choose implementation per platform
+	return std::make_unique<Impl::WindowGLFW>( options );
 }
 
 }  // namespace Octave

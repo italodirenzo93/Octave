@@ -1,9 +1,28 @@
 #include "StepTimer.hpp"
 
+#include "platform/Platform.hpp"
+
 namespace Octave {
 
+StepTimer::StepTimer() noexcept
+	: m_elapsedTicks( 0 ),
+	  m_totalTicks( 0 ),
+	  m_leftOverTicks( 0 ),
+	  m_frameCount( 0 ),
+	  m_framesPerSecond( 0 ),
+	  m_framesThisSecond( 0 ),
+	  m_qpcSecondCounter( 0 ),
+	  m_isFixedTimeStep( false ),
+	  m_targetElapsedTicks( TicksPerSecond / 60 ) {
+	m_qpcFrequency = Platform::GetTimerFrequency();
+	m_qpcLastTime = Platform::GetTimerValue();
+
+	// Initialize max delta to 1/10 of a second.
+	m_qpcMaxDelta = static_cast<uint64_t>( m_qpcFrequency / 10 );
+}
+
 void StepTimer::ResetElapsedTime() noexcept {
-	m_qpcLastTime = platform_.GetPerformanceCounter();
+	m_qpcLastTime = Platform::GetTimerValue();
 
 	m_leftOverTicks = 0;
 	m_framesPerSecond = 0;
@@ -13,7 +32,7 @@ void StepTimer::ResetElapsedTime() noexcept {
 
 void StepTimer::Tick( const std::function<void()>& update ) {
 	// Query the current time.
-	const auto currentTime = platform_.GetPerformanceCounter();
+	const auto currentTime = Platform::GetTimerValue();
 
 	auto timeDelta = static_cast<uint64_t>( currentTime - m_qpcLastTime );
 
@@ -45,8 +64,8 @@ void StepTimer::Tick( const std::function<void()>& update ) {
 		// errors that it would drop a frame. It is better to just round
 		// small deviations down to zero to leave things running smoothly.
 
-		if ( static_cast<uint64_t>( std::abs( static_cast<int64_t>(
-				 timeDelta - m_targetElapsedTicks ) ) ) <
+		if ( static_cast<uint64_t>( std::abs(
+				 static_cast<int64_t>( timeDelta - m_targetElapsedTicks ) ) ) <
 			 TicksPerSecond / 4000 ) {
 			timeDelta = m_targetElapsedTicks;
 		}
@@ -83,4 +102,4 @@ void StepTimer::Tick( const std::function<void()>& update ) {
 	}
 }
 
-}  // namespace octave
+}  // namespace Octave
