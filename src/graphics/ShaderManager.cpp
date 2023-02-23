@@ -5,7 +5,7 @@
 using namespace std;
 namespace fs = std::filesystem;
 
-namespace graphics {
+namespace octave::graphics {
 unique_ptr<ShaderManager> ShaderManager::instance_ = nullptr;
 
 ShaderManager::ShaderManager() {

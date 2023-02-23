@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.3)
-project(MyGameEngine)
+project(Octave)
 
 set(IS_DEBUG_BUILD CMAKE_BUILD_TYPE STREQUAL "Debug")
 
@@ -46,14 +46,14 @@ add_subdirectory(dependencies/stb_image)
 # Set `source` variable to all .h(pp) and .cpp files in `src`
 file(GLOB_RECURSE source CONFIGURE_DEPENDS "src/*.h" "src/*.hpp" "src/*.cpp")
 
-add_executable(MyGameEngine ${source})
-target_link_libraries(MyGameEngine ${OPENGL_LIBRARIES} assimp glad glfw glm simpleini stb_image)
-target_include_directories(MyGameEngine PRIVATE)
+add_executable(Octave ${source})
+target_link_libraries(Octave ${OPENGL_LIBRARIES} assimp glad glfw glm simpleini stb_image)
+target_include_directories(Octave PRIVATE)
 
 # Visual Studio Startup Project
 if(WIN32)
-	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT MyGameEngine)
+	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Octave)
 endif()
 
 # Symlink Resources
-add_custom_command(TARGET MyGameEngine PRE_BUILD COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/resources $<TARGET_FILE_DIR:MyGameEngine>/resources)
+add_custom_command(TARGET Octave PRE_BUILD COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/resources $<TARGET_FILE_DIR:Octave>/resources)

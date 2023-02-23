@@ -5,7 +5,7 @@
 
 using namespace std;
 
-namespace graphics {
+namespace octave::graphics {
 
 uint32_t Shader::CompileFromFile( const char* vertex_path,
                                  const char* fragment_path ) {

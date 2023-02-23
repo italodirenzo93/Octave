@@ -10,7 +10,8 @@
 #include "graphics/ShaderManager.hpp"
 
 using namespace std;
-using namespace graphics;
+using namespace octave;
+using namespace octave::graphics;
 
 struct VertexPositionNormalTexture {
     glm::vec3 position;

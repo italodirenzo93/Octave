@@ -1,17 +1,20 @@
 #include "Camera.hpp"
 
+namespace octave {
+
 using namespace graphics;
 
 Camera::Camera( float aspect_ratio, const glm::vec3& pos, const glm::vec3& up )
-    : aspect_ratio_( aspect_ratio ), position_( pos ), up_( up ),
+    : aspect_ratio_( aspect_ratio ),
+      position_( pos ),
+      up_( up ),
       world_up_( up ) {
     Update();
 }
 
 glm::mat4 Camera::GetProjectionMatrix() const {
     return glm::perspective( glm::radians( field_of_view_ ), aspect_ratio_,
-                             0.1f,
-                             100.0f );
+                             0.1f, 100.0f );
 }
 
 glm::mat4 Camera::GetViewMatrix() const {
@@ -41,3 +44,5 @@ void Camera::Unproject( const Shader& shader ) const {
     shader.SetMat4( "uMatProjection", glm::identity<glm::mat4>() );
     shader.SetMat4( "uMatView", glm::identity<glm::mat4>() );
 }
+
+}  // namespace octave

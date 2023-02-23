@@ -3,7 +3,7 @@
 
 #include "CommonInclude.hpp"
 
-namespace graphics {
+namespace octave::graphics {
 class Window {
     friend class Renderer;
 
@@ -32,6 +32,6 @@ private:
 
     NON_COPYABLE_OR_MOVABLE_CLASS( Window )
 };
-} // namespace graphics
+} // namespace octave::graphics
 
 #endif

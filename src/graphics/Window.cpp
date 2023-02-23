@@ -5,7 +5,7 @@
 
 using namespace std;
 
-namespace graphics {
+namespace octave::graphics {
 
 Window::Window() : Window( "My Game Engine" ) {
 }
@@ -83,4 +83,4 @@ void Window::WindowSizeCallback(GLFWwindow* window, int width, int height) noexc
     }
 }
 
-}  // namespace graphics
+}  // namespace octave::graphics

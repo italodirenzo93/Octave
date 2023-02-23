@@ -2,7 +2,7 @@
 
 using namespace std;
 
-namespace graphics {
+namespace octave::graphics {
 
 IndexBuffer::IndexBuffer() noexcept {
     glGenBuffers( 1, &id_ );
@@ -112,4 +112,4 @@ bool IndexBuffer::operator==( const IndexBuffer& other ) const noexcept {
     return id_ == other.id_ && element_count_ && other.element_count_;
 }
 
-}  // namespace graphics
+}  // namespace octave::graphics

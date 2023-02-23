@@ -1,6 +1,6 @@
 #include "VertexBuffer.hpp"
 
-namespace graphics {
+namespace octave::graphics {
 // NOTE: This must be kept in sync with the input layout of the vertex shader!
 static const std::map<LayoutSemantic, uint32_t> kAttributeBindings{
     { POSITION, 0 }, { COLOR, 1 }, { TEXCOORD, 2 }, { NORMAL, 3 } };
@@ -122,4 +122,4 @@ bool VertexBuffer::operator==( const VertexBuffer& other ) const noexcept {
            vertex_count_ == other.vertex_count_ && layout_ == other.layout_;
 }
 
-}  // namespace graphics
+}  // namespace octave::graphics

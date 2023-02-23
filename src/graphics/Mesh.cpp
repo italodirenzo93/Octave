@@ -1,6 +1,6 @@
 #include "Mesh.hpp"
 
-namespace graphics {
+namespace octave::graphics {
 using namespace std;
 
 static constexpr float kDefaultShininess = 32.0f;
@@ -106,4 +106,4 @@ Mesh& Mesh::operator=( Mesh&& other ) noexcept {
     return *this;
 }
 
-}  // namespace graphics
+}  // namespace octave::graphics

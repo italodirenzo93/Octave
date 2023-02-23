@@ -3,7 +3,7 @@
 //#include <assimp/Importer.hpp>
 //#include <assimp/postprocess.h>
 //
-//namespace graphics {
+//namespace octave::graphics {
 //using namespace std;
 //
 //uint32_t TextureFromFile( const char* file_name, const string& directory ) {
@@ -155,4 +155,4 @@
 //    }
 //    return textures;
 //}
-//} // namespace graphics
+//} // namespace octave::graphics

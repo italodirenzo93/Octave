@@ -2,7 +2,7 @@
 
 #include "Exception.hpp"
 
-namespace graphics {
+namespace octave::graphics {
 using namespace std;
 
 Texture::Texture() noexcept {
@@ -69,4 +69,4 @@ bool Texture::operator==( const Texture& other ) const noexcept {
            width_ == other.width_ && height_ == other.height_;
 }
 
-}  // namespace graphics
+}  // namespace octave::graphics

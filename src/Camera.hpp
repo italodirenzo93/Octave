@@ -4,6 +4,8 @@
 #include "CommonInclude.hpp"
 #include "graphics/Shader.hpp"
 
+namespace octave {
+
 class Camera {
 public:
     Camera( float aspect_ratio, const glm::vec3& pos, const glm::vec3& up );
@@ -21,8 +23,8 @@ public:
     float pitch_ = 0.0f;
     float yaw_ = -90.0f;
 
-    glm::mat4 GetProjectionMatrix() const;
-    glm::mat4 GetViewMatrix() const;
+    [[nodiscard]] glm::mat4 GetProjectionMatrix() const;
+    [[nodiscard]] glm::mat4 GetViewMatrix() const;
 
     void Project( const graphics::Shader& shader ) const;
     void Unproject( const graphics::Shader& shader ) const;
@@ -32,5 +34,7 @@ public:
 private:
     NON_COPYABLE_OR_MOVABLE_CLASS( Camera )
 };
+
+}  // namespace octave
 
 #endif
