@@ -112,6 +112,7 @@ Renderer::Renderer( const Window& window ) noexcept
 
     glClearDepthf( 1.0f );
     glCullFace( GL_BACK );
+    glFrontFace( GL_CW );
 
 #ifdef __DEBUG__
     // Configure debug callback if we got a debug context

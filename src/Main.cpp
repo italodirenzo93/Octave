@@ -27,7 +27,7 @@ struct VertexPositionNormalTexture {
 Mesh LoadMesh( const filesystem::path& path ) {
     Assimp::Importer importer;
     auto scene =
-        importer.ReadFile( path, aiProcess_Triangulate );
+        importer.ReadFile( path, aiProcess_Triangulate | aiProcess_FlipWindingOrder );
     if ( !scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ) {
         throw Exception( importer.GetErrorString() );
     }

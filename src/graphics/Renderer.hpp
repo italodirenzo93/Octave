@@ -30,7 +30,7 @@ public:
     void DrawIndexedPrimitives( PrimitiveType type, const VertexBuffer& vbo,
                                 const IndexBuffer& ibo ) const noexcept;
 
-    std::string GetDescription() const noexcept;
+    [[nodiscard]] std::string GetDescription() const noexcept;
     void GetFramebufferSize( int& width, int& height ) const noexcept;
 
     void SetTexture( const Texture& texture ) noexcept;
