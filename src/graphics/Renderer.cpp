@@ -91,61 +91,7 @@ void APIENTRY DebugOutputCallback( GLenum source, GLenum type, unsigned int id,
 }
 #endif
 
-Renderer::Renderer() {
-    // Initialize GLFW library
-    if ( !glfwInit() ) {
-        cout << "Failed to initialize GLFW... exiting" << endl;
-        return;
-    }
-
-    // Set window hints
-#ifdef __APPLE__
-    glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
-    glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
-#else
-    glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
-    glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
-#endif
-    glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
-    glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE );
-#ifdef __DEBUG__
-    glfwWindowHint( GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE );
-#endif
-
-    const Config& config = Config::Instance();
-
-    GLFWmonitor* monitor = nullptr;
-    if ( config.GetIsFullscreen() ) {
-        monitor = glfwGetPrimaryMonitor();
-    }
-
-    // Create window
-    window_ = glfwCreateWindow( config.GetFramebufferWidth(),
-                                config.GetFramebufferHeight(), "My Game Engine",
-                                monitor, nullptr );
-    if ( !window_ ) {
-        cout << "Failed to create GLFW window... exiting" << endl;
-        glfwTerminate();
-        return;
-    }
-
-    glfwMakeContextCurrent( window_ );
-    glfwSwapInterval( config.GetSyncInterval() );
-
-    glfwSetFramebufferSizeCallback( window_,
-                                    []( GLFWwindow*, int width, int height ) {
-                                        glViewport( 0, 0, width, height );
-                                    } );
-
-    // Initialize Open GL extension loader
-    if ( !gladLoadGLLoader(
-             reinterpret_cast<GLADloadproc>( glfwGetProcAddress ) ) ) {
-        cout
-            << "Failed set proc address for Open GL extension loader... exiting"
-            << endl;
-        return;
-    }
-
+Renderer::Renderer( const Window& window ) : window_( window ) {
     // Always enabled
     glEnable( GL_DEPTH_TEST );
     glEnable( GL_CULL_FACE );
@@ -169,25 +115,16 @@ Renderer::Renderer() {
     stbi_set_flip_vertically_on_load( true );
 
     // Shader pre-cache
-    if ( config.GetPreloadShaders() ) {
+    if ( Config::Instance().GetPreloadShaders() ) {
         ShaderManager::Instance().PreloadShaders();
     }
 }
 
 Renderer::~Renderer() {
-    if ( window_ ) {
-        glfwDestroyWindow( window_ );
-        window_ = nullptr;
-    }
-    glfwTerminate();
 }
 
 void Renderer::ResizeFramebuffer( int width, int height ) const {
     glViewport( 0, 0, width, height );
-}
-
-bool Renderer::IsWindowOpen() const {
-    return window_ != nullptr && !glfwWindowShouldClose( window_ );
 }
 
 std::string Renderer::GetDescription() const {
@@ -216,10 +153,7 @@ void Renderer::Clear( bool depth, float r, float g, float b, float a ) const {
 }
 
 void Renderer::Present() const {
-    if ( window_ ) {
-        glfwSwapBuffers( window_ );
-    }
-    glfwPollEvents();
+    glfwSwapBuffers( window_.handle_ );
 }
 
 void Renderer::DrawPrimitives( const VertexArrayLayout& vao,

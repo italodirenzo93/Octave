@@ -1,7 +1,7 @@
 #ifndef RENDERER_HPP
 #define RENDERER_HPP
 
-#include "CommonInclude.hpp"
+#include "Window.hpp"
 #include "IndexBuffer.hpp"
 #include "VertexBuffer.hpp"
 
@@ -9,11 +9,10 @@ namespace graphics {
 
 class Renderer {
    public:
-    Renderer();
+    explicit Renderer(const Window& window);
     ~Renderer();
 
     void ResizeFramebuffer( int width, int height ) const;
-    bool IsWindowOpen() const;
     std::string GetDescription() const;
 
     void Clear( bool depth = true, float r = 0.0f, float g = 0.0f,
@@ -26,7 +25,7 @@ class Renderer {
                                 const IndexBuffer& ibo ) const;
 
    private:
-    GLFWwindow* window_ = nullptr;
+    const Window& window_;
 
     NON_COPYABLE_OR_MOVABLE_CLASS( Renderer )
 };
