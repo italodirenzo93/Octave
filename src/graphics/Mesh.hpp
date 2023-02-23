@@ -6,7 +6,6 @@
 #include "Shader.hpp"
 #include "Texture.hpp"
 #include "VertexBuffer.hpp"
-#include "pch.hpp"
 
 namespace Octave {
 

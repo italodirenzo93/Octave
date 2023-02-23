@@ -1,8 +1,6 @@
 #ifndef OCTAVE_AUDIO_BUFFER_HPP
 #define OCTAVE_AUDIO_BUFFER_HPP
 
-#include "pch.hpp"
-
 namespace Octave::audio {
 
 class Buffer {

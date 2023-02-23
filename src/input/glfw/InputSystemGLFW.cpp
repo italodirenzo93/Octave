@@ -1,5 +1,7 @@
 #include "InputSystemGLFW.hpp"
 
+#include "pch/pch.hpp"
+
 #include <GLFW/glfw3.h>
 
 #include "GamepadGLFW.hpp"

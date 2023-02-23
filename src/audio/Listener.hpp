@@ -1,8 +1,6 @@
 #ifndef OCTAVE_LISTENER_HPP
 #define OCTAVE_LISTENER_HPP
 
-#include "pch.hpp"
-
 namespace Octave::audio {
 
 class Listener final {

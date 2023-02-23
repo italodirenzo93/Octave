@@ -1,10 +1,11 @@
+#include "pch/pch.hpp"
 #include "VertexBuffer.hpp"
 
 using namespace std;
 
 namespace Octave {
 // NOTE: This must be kept in sync with the input layout of the vertex shader!
-static const std::unordered_map<LayoutSemantic, uint32_t> kAttributeBindings{
+static const unordered_map<LayoutSemantic, uint32_t> kAttributeBindings{
 	{ LayoutSemantic::kPosition, 0 },
 	{ LayoutSemantic::kColor, 1 },
 	{ LayoutSemantic::kTexCoord, 2 },

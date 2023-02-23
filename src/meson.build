@@ -1,7 +1,5 @@
 # Top-level
 source = [
-	'pch.cpp',
-	'pch.hpp',
 	'Application.cpp',
 	'Application.hpp',
 	'Camera.cpp',
@@ -96,7 +94,8 @@ octave = library(
 		glm_dep,
 		simpleini_dep,
 		stb_image_dep
-	]
+	],
+	cpp_pch: ['pch/pch.hpp', 'pch/pch.cpp']
 )
 
 octave_dep = declare_dependency(

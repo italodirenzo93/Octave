@@ -1,7 +1,7 @@
 #ifndef OCTAVE_TEXTURE_HPP
 #define OCTAVE_TEXTURE_HPP
 
-#include "pch.hpp"
+#include <string>
 
 namespace Octave {
 
@@ -27,8 +27,9 @@ public:
 
 	bool operator==( const Texture& other ) const noexcept;
 
-private:
-	NON_COPYABLE_CLASS( Texture )
+public:
+	Texture( const Texture& ) = delete;
+	Texture& operator=( const Texture& ) = delete;
 };
 
 }  // namespace Octave

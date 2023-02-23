@@ -3,7 +3,9 @@
 
 #include <SimpleIni.h>
 
-#include "pch.hpp"
+#include <filesystem>
+#include <vector>
+#include <string>
 
 namespace Octave {
 class Config {
@@ -40,7 +42,11 @@ private:
 
 	CSimpleIniA ini_;
 
-	NON_COPYABLE_OR_MOVABLE_CLASS( Config )
+public:
+	Config( const Config& ) = delete;
+	Config( Config&& ) = delete;
+	Config& operator=( const Config& ) = delete;
+	Config& operator=( Config&& ) = delete;
 };
 }  // namespace octave
 
