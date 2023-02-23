@@ -3,14 +3,15 @@
 #include <memory>
 
 #include "Config.hpp"
-#include "GeometricPrimitive.hpp"
 #include "graphics/ShaderManager.hpp"
+#include "helpers/GeometricPrimitive.hpp"
 
 using namespace std;
 
 namespace octave::samples {
 
 using namespace graphics;
+using namespace helpers;
 using namespace input;
 
 static void DebugCameraControls( const Keyboard& keyboard, DebugCamera& camera,

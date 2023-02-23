@@ -3,7 +3,7 @@
 
 #include "Camera.hpp"
 #include "CommonInclude.hpp"
-#include "StepTimer.hpp"
+#include "helpers/StepTimer.hpp"
 #include "graphics/Renderer.hpp"
 #include "graphics/Window.hpp"
 
@@ -16,7 +16,7 @@ public:
 	virtual ~Sample() noexcept = default;
 
 	virtual void OnLoad() {}
-	virtual void OnUpdate( const StepTimer& timer ) {}
+	virtual void OnUpdate( const helpers::StepTimer& timer ) {}
 	virtual void OnRender() {}
 	virtual void OnUnload() {}
 
@@ -24,7 +24,7 @@ public:
 	void Exit();
 
 protected:
-	StepTimer step_timer_;
+	helpers::StepTimer step_timer_;
 	DebugCamera camera_;
 	std::shared_ptr<graphics::Window> window_;
 	graphics::Renderer renderer_;
