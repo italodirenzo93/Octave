@@ -1,4 +1,4 @@
-set(sources Platform.hpp Window.hpp)
+set(sources Platform.hpp Window.cpp Window.hpp)
 
 # GLFW
 list(APPEND sources glfw/PlatformGLFW.cpp glfw/PlatformGLFW.hpp glfw/GLFWError.cpp glfw/GLFWError.hpp glfw/WindowGLFW.cpp glfw/WindowGLFW.hpp)

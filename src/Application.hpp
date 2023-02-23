@@ -10,6 +10,7 @@ namespace Octave {
 class Application {
 public:
 	// Constructors
+	Application();
 	Application( int argc, char* argv[] );
 	Application( const Application& other ) = delete;
 	Application( Application&& other ) noexcept = delete;

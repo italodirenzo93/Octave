@@ -4,17 +4,9 @@ using namespace std;
 using namespace Octave;
 
 class SampleApplication : public Application {
-public:
-	SampleApplication( int argc, char* argv[] ) : Application( argc, argv ) {}
-
 protected:
 	void Initialize() override {
-		WindowOptions options = {};
-		options.width = 800;
-		options.height = 600;
-		options.title = "Octave Game Toolkit";
-
-		window_ = platform_->CreateWindow( options );
+		window_ = platform_->CreateWindow( WindowOptions() );
 		window_->AddCloseCallback( [this]() { Exit(); } );
 
 		renderer_ = make_unique<Renderer>();
@@ -29,7 +21,6 @@ protected:
 	void Update() override {
 		renderer_->Clear( true, false, 0.0f, 1.0f, 0.0f, 1.0f );
 
-
 		window_->SwapBuffers();
 		window_->PollEvents();
 	}
@@ -39,9 +30,9 @@ private:
 	unique_ptr<Renderer> renderer_;
 };
 
-int main( int argc, char* argv[] ) {
+int main() {
 	try {
-		unique_ptr<Application> app( new SampleApplication( argc, argv ) );
+		unique_ptr<Application> app( new SampleApplication() );
 		app->Run();
 	} catch ( const std::exception& e ) {
 		cerr << "Critical Error: " << e.what() << " ...exiting" << endl;

@@ -13,4 +13,4 @@ GLFWError::GLFWError() noexcept {
 	}
 }
 
-}  // namespace octave::platform::glfw
+}  // namespace Octave::Impl

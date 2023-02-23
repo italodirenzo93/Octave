@@ -15,9 +15,10 @@ public:
 	uint64_t GetPerformanceCounter() override;
 	uint64_t GetPerformanceFrequency() override;
 
-	std::unique_ptr<Window> CreateWindow( const WindowOptions& options ) override;
+	std::unique_ptr<Window> CreateWindow(
+		const WindowOptions& options ) override;
 };
 
-}  // namespace octave::platform::glfw
+}  // namespace Octave::Impl
 
 #endif  // OCTAVE_PLATFORMGLFW_HPP
