@@ -1,8 +1,9 @@
 #include "Renderer.hpp"
-#include "ShaderManager.hpp"
-#include "Config.hpp"
 
 #include <sstream>
+
+#include "Config.hpp"
+#include "ShaderManager.hpp"
 
 namespace graphics {
 using namespace std;
@@ -13,13 +14,12 @@ void APIENTRY DebugOutputCallback( GLenum source, GLenum type, unsigned int id,
                                    const char* message,
                                    const void* userParam ) {
     // ignore non-significant error/warning codes
-    if (id == 131169 || id == 131185 || id == 131218 || id == 131204)
-        return;
+    if ( id == 131169 || id == 131185 || id == 131218 || id == 131204 ) return;
 
     std::cout << "---------------" << std::endl;
     std::cout << "Debug message (" << id << "): " << message << std::endl;
 
-    switch (source) {
+    switch ( source ) {
         case GL_DEBUG_SOURCE_API:
             std::cout << "Source: API";
             break;
@@ -41,7 +41,7 @@ void APIENTRY DebugOutputCallback( GLenum source, GLenum type, unsigned int id,
     }
     std::cout << std::endl;
 
-    switch (type) {
+    switch ( type ) {
         case GL_DEBUG_TYPE_ERROR:
             std::cout << "Type: Error";
             break;
@@ -72,7 +72,7 @@ void APIENTRY DebugOutputCallback( GLenum source, GLenum type, unsigned int id,
     }
     std::cout << std::endl;
 
-    switch (severity) {
+    switch ( severity ) {
         case GL_DEBUG_SEVERITY_HIGH:
             std::cout << "Severity: high";
             break;
@@ -91,16 +91,12 @@ void APIENTRY DebugOutputCallback( GLenum source, GLenum type, unsigned int id,
 }
 #endif
 
-// Default width, height
-static constexpr int kDefaultWidth = 1280;
-static constexpr int kDefaultHeight = 720;
-
 // Open GL window
 static GLFWwindow* g_window = nullptr;
 
 bool Initialize() {
     // Initialize GLFW library
-    if (!glfwInit()) {
+    if ( !glfwInit() ) {
         cout << "Failed to initialize GLFW... exiting" << endl;
         return false;
     }
@@ -120,25 +116,33 @@ bool Initialize() {
 #endif
 
     int width, height;
-    if (!config::TryGetInt( "Video", "FramebufferWidth", width )) {
-        width = kDefaultWidth;
+    if ( !config::TryGetInt( "Video", "FramebufferWidth", width ) ) {
+        width = 800;
     }
-    if (!config::TryGetInt( "Video", "FramebufferHeight", height )) {
-        height = kDefaultHeight;
+    if ( !config::TryGetInt( "Video", "FramebufferHeight", height ) ) {
+        height = 600;
     }
 
     int sync_interval;
-    if (!config::TryGetInt( "Video", "SyncInterval", sync_interval )) {
+    if ( !config::TryGetInt( "Video", "SyncInterval", sync_interval ) ) {
         sync_interval = 1;
+    }
+
+    bool is_fullscreen = false;
+    config::TryGetBool( "Video", "IsFullscreen", is_fullscreen );
+
+    GLFWmonitor* monitor = nullptr;
+    if ( is_fullscreen ) {
+        monitor = glfwGetPrimaryMonitor();
     }
 
     // Create window
     g_window =
-        glfwCreateWindow( width, height, "My Game Engine", nullptr, nullptr );
-    if (!g_window) {
+        glfwCreateWindow( width, height, "My Game Engine", monitor, nullptr );
+    if ( !g_window ) {
         cout << "Failed to create GLFW window... exiting" << endl;
         glfwTerminate();
-        return EXIT_FAILURE;
+        return false;
     }
 
     glfwMakeContextCurrent( g_window );
@@ -150,12 +154,12 @@ bool Initialize() {
                                     } );
 
     // Initialize Open GL extension loader
-    if (!gladLoadGLLoader(
-        reinterpret_cast<GLADloadproc>(glfwGetProcAddress) )) {
+    if ( !gladLoadGLLoader(
+             reinterpret_cast<GLADloadproc>( glfwGetProcAddress ) ) ) {
         cout
             << "Failed set proc address for Open GL extension loader... exiting"
             << endl;
-        return EXIT_FAILURE;
+        return false;
     }
 
     // Always enabled
@@ -168,7 +172,7 @@ bool Initialize() {
     // Configure debug callback if we got a debug context
     int gl_context_flags;
     glGetIntegerv( GL_CONTEXT_FLAGS, &gl_context_flags );
-    if (gl_context_flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
+    if ( gl_context_flags & GL_CONTEXT_FLAG_DEBUG_BIT ) {
         glEnable( GL_DEBUG_OUTPUT );
         glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS );
         glDebugMessageCallback( DebugOutputCallback, nullptr );
@@ -185,7 +189,7 @@ bool Initialize() {
         bool preload = false;
         config::TryGetBool( "Renderer", "PreloadShaders", preload );
 
-        if (preload) {
+        if ( preload ) {
             ShaderManager::Instance().PreloadShaders();
         }
     }
@@ -194,8 +198,9 @@ bool Initialize() {
 }
 
 void Terminate() {
-    if (g_window) {
+    if ( g_window ) {
         glfwDestroyWindow( g_window );
+        g_window = nullptr;
     }
     glfwTerminate();
 }
@@ -211,7 +216,7 @@ bool IsWindowOpen() {
 void Clear( bool depth, float r, float g, float b, float a ) {
     int clear_flags = GL_COLOR_BUFFER_BIT;
 
-    if (depth) {
+    if ( depth ) {
         clear_flags |= GL_DEPTH_BUFFER_BIT;
     }
 
@@ -221,7 +226,7 @@ void Clear( bool depth, float r, float g, float b, float a ) {
 
 void Present() {
     glfwPollEvents();
-    if (g_window) {
+    if ( g_window ) {
         glfwSwapBuffers( g_window );
     }
 }
@@ -238,4 +243,4 @@ std::string GetRendererInfo() {
 
     return oss.str();
 }
-}
+}  // namespace graphics
