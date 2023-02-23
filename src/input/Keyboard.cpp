@@ -1,13 +1,17 @@
 #include "Keyboard.hpp"
 
-namespace Octave::input {
+#include "platform/glfw/WindowGLFW.hpp"
+#include <GLFW/glfw3.h>
 
-Keyboard::Keyboard( const graphics::Window& window ) noexcept
-	: window_( window ) {
+namespace Octave {
+
+Keyboard::Keyboard( const Window& window ) noexcept : window_( window ) {
 }
 
 bool Keyboard::IsKeyDown( int key_code ) const noexcept {
-	return glfwGetKey( window_.handle_, key_code ) == GLFW_PRESS;
+	// TODO: This is a nasty hack to temporarily get the keyboard working again. Abstract this later.
+	const auto& glfw_window = dynamic_cast<const Impl::WindowGLFW&>( window_ );
+	return glfwGetKey( glfw_window.GetPointer(), key_code ) == GLFW_PRESS;
 }
 
-}  // namespace octave::input
+}  // namespace Octave

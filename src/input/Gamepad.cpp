@@ -5,7 +5,7 @@
 
 using namespace std;
 
-namespace Octave::input {
+namespace Octave {
 
 Gamepad::Gamepad( int player_index ) noexcept : player_index_( player_index ) {
 	assert( glfwJoystickPresent( player_index ) );

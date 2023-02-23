@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace Octave::input {
+namespace Octave {
 
 class Gamepad {
 public:
@@ -31,6 +31,6 @@ public:
 	Gamepad& operator=( const Gamepad& ) = delete;
 };
 
-}  // namespace octave::input
+}  // namespace Octave
 
 #endif  // OCTAVE_GAMEPAD_HPP
