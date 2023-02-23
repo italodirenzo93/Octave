@@ -1,5 +1,8 @@
 #include "Object.hpp"
 
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
+
 using namespace glm;
 
 namespace octave::scene {

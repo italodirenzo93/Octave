@@ -1,6 +1,9 @@
 #ifndef OCTAVE_STEPTIMER_HPP
 #define OCTAVE_STEPTIMER_HPP
 
+#include <GLFW/glfw3.h>
+#include <functional>
+
 namespace octave::helpers {
 
 // Helper class for animation and simulation timing.
