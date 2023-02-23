@@ -26,8 +26,8 @@ struct VertexPositionNormalTexture {
 
 Mesh LoadMesh( const filesystem::path& path ) {
     Assimp::Importer importer;
-    auto scene =
-        importer.ReadFile( path, aiProcess_Triangulate | aiProcess_FlipWindingOrder );
+    auto scene = importer.ReadFile(
+        path, aiProcess_Triangulate | aiProcess_FlipWindingOrder );
     if ( !scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ) {
         throw Exception( importer.GetErrorString() );
     }
@@ -40,7 +40,7 @@ Mesh LoadMesh( const filesystem::path& path ) {
 
     VertexBuffer vbo;
     IndexBuffer ibo;
-    Texture texture;
+    vector<Texture> textures( 2 );
 
     // Parse vertex data
     {
@@ -88,24 +88,37 @@ Mesh LoadMesh( const filesystem::path& path ) {
         ibo.SetData( indices );
     }
 
-    // Parse texture
+    // Parse textures
     if ( mesh->mMaterialIndex >= 0 ) {
         auto material = scene->mMaterials[mesh->mMaterialIndex];
 
-        // Use the first diffuse map as the texture
-        uint32_t n_textures =
-            material->GetTextureCount( aiTextureType_DIFFUSE );
-        aiString str;
-        material->GetTexture( aiTextureType_DIFFUSE, 0, &str );
+        auto load_texture = [&]( aiTextureType type ) {
+            aiString str;
+            material->GetTexture( type, 0, &str );
 
-        try {
-            texture.LoadFromFile( path.parent_path() / str.C_Str() );
-        } catch ( const Exception& e ) {
-            cerr << "Error loading model texture : " << e.what() << endl;
+            Texture texture;
+            try {
+                texture.LoadFromFile( path.parent_path() / str.C_Str() );
+            } catch ( const Exception& e ) {
+                cerr << "Error loading model texture : " << e.what() << endl;
+            }
+            return texture;
+        };
+
+        if ( material->GetTextureCount( aiTextureType_DIFFUSE ) > 0 ) {
+            textures.insert( textures.cbegin(), load_texture( aiTextureType_DIFFUSE ) );
+        } else {
+            cout << "No diffuse texture to load" << endl;
+        }
+
+        if ( material->GetTextureCount( aiTextureType_SPECULAR ) > 0 ) {
+            textures.insert( textures.cbegin() + 1, load_texture( aiTextureType_SPECULAR ) );
+        } else {
+            cout << "No specular texture to load" << endl;
         }
     }
 
-    return { std::move( vbo ), std::move( ibo ), std::move( texture ) };
+    return { std::move( vbo ), std::move( ibo ), std::move( textures ) };
 }
 
 Mesh LoadCube() {
@@ -117,7 +130,22 @@ Mesh LoadCube() {
     Texture texture;
     texture.LoadFromFile( "resources/textures/container.jpg" );
 
-    return { std::move( vbo ), std::move( ibo ), std::move( texture ) };
+    vector<Texture> textures;
+    textures.emplace_back( std::move( texture ) );
+
+    return { std::move( vbo ), std::move( ibo ), std::move( textures ) };
+}
+
+inline void SetDefaultLighting( const Shader& shader ) {
+    glm::vec3 direction( 0.5f, 0.0f, -0.5f );
+    glm::vec3 ambient( 0.2f );
+    glm::vec3 diffuse( 0.5f );
+    glm::vec3 specular( 1.0f );
+
+    shader.SetVec3( "uLight.direction", direction );
+    shader.SetVec3( "uLight.ambient", ambient );
+    shader.SetVec3( "uLight.diffuse", diffuse );
+    shader.SetVec3( "uLight.specular", specular );
 }
 
 int main( int argc, char* argv[] ) {
@@ -151,11 +179,10 @@ int main( int argc, char* argv[] ) {
             glm::radians( fov ), static_cast<float>( width ),
             static_cast<float>( height ), 0.1f, 100.0f );
 
-        glm::vec3 position( 2.0f, 0.0f, 5.0f );
+        glm::vec3 position( 0.0f, 0.0f, 5.0f );
 
-        auto view =
-            glm::lookAt( position, glm::vec3( 0.0f ),
-                         glm::vec3( 0.0f, 1.0f, 0.0f ) );
+        auto view = glm::lookAt( position, glm::vec3( 0.0f ),
+                                 glm::vec3( 0.0f, 1.0f, 0.0f ) );
 
         auto model = glm::identity<glm::mat4>();
         model = glm::rotate( model, glm::radians( 90.0f ),
@@ -194,6 +221,7 @@ int main( int argc, char* argv[] ) {
             shader->SetMat4( "uMatModel", model );
 
             shader->SetVec3( "uViewPos", position );
+            SetDefaultLighting( *shader );
 
             mesh.Draw( *shader, renderer );
 

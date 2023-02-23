@@ -3,10 +3,11 @@
 namespace graphics {
 using namespace std;
 
-Mesh::Mesh( VertexBuffer&& vbo, IndexBuffer&& ibo, Texture&& texture ) noexcept {
+Mesh::Mesh( VertexBuffer&& vbo, IndexBuffer&& ibo,
+            vector<Texture>&& texture ) noexcept {
     vbo_ = std::move( vbo );
     ibo_ = std::move( ibo );
-    texture_ = std::move( texture );
+    textures_ = std::move( texture );
 }
 
 Mesh::Mesh( const Mesh& other ) noexcept {
@@ -17,14 +18,18 @@ Mesh::Mesh( const Mesh& other ) noexcept {
 Mesh::Mesh( Mesh&& other ) noexcept {
     vbo_ = std::move( other.vbo_ );
     ibo_ = std::move( other.ibo_ );
-    texture_ = std::move( other.texture_ );
+    textures_ = std::move( other.textures_ );
 }
 
 void Mesh::Draw( const Shader& shader, Renderer& renderer ) const {
     assert( vbo_.GetVertexCount() > 0 );
     assert( ibo_.GetElementCount() > 0 );
 
-    shader.SetTexture( "uTextures", 0, texture_ );
+    int texture_index = 0;
+    for ( const auto& texture : textures_ ) {
+        shader.SetTexture( "uTextures", texture_index++, texture );
+    }
+
     renderer.DrawIndexedPrimitives( PrimitiveType::kTriangleList, vbo_, ibo_ );
 }
 
@@ -38,7 +43,7 @@ Mesh& Mesh::operator=( const Mesh& other ) noexcept {
 Mesh& Mesh::operator=( Mesh&& other ) noexcept {
     vbo_ = std::move( other.vbo_ );
     ibo_ = std::move( other.ibo_ );
-    texture_ = std::move( other.texture_ );
+    textures_ = std::move( other.textures_ );
 
     return *this;
 }
