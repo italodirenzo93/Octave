@@ -5,6 +5,7 @@
 #include "Config.hpp"
 #include "GeometricPrimitive.hpp"
 #include "graphics/ShaderManager.hpp"
+#include "input/Gamepad.hpp"
 
 using namespace std;
 
@@ -85,7 +86,12 @@ inline void SetDefaultLighting( Shader& shader ) {
 }
 
 void ModelViewerSample::OnLoad() {
-	std::cout << renderer_.GetDescription() << std::endl;
+	cout << renderer_.GetDescription() << endl;
+
+	if ( Gamepad::IsPresent( 0 ) ) {
+		Gamepad pad( 0 );
+		cout << "Gamepad: " << pad.GetName() << endl;
+	}
 
 	window_->AddSizeChangedCallback( [this]( int w, int h ) {
 		if ( w > 0 && h > 0 ) {
@@ -95,15 +101,14 @@ void ModelViewerSample::OnLoad() {
 		}
 	} );
 
-	keyboard_ = std::make_unique<Keyboard>( *window_ );
+	keyboard_ = make_unique<Keyboard>( *window_ );
 
 	shader_ = ShaderManager::Instance().Get( "basic" );
 	if ( !shader_ ) {
 		throw Exception( "Shader program not found" );
 	}
 
-	int width, height;
-	window_->GetSize( width, height );
+	const auto [width, height] = window_->GetSize();
 	camera_.width_ = static_cast<float>( width );
 	camera_.height_ = static_cast<float>( height );
 	camera_.field_of_view_ = Config::Instance().GetFieldOfView();
