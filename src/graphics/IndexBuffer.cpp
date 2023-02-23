@@ -31,7 +31,7 @@ IndexBuffer::IndexBuffer( IndexBuffer&& other ) noexcept {
     other.element_count_ = 0;
 }
 
-IndexBuffer::~IndexBuffer() {
+IndexBuffer::~IndexBuffer() noexcept {
     glDeleteBuffers( 1, &id_ );
 }
 
@@ -98,7 +98,7 @@ IndexBuffer& IndexBuffer::operator=( IndexBuffer&& other ) noexcept {
     id_ = other.id_;
     other.id_ = 0;
 
-    element_count_ = 0;
+    element_count_ = other.element_count_;
     other.element_count_ = 0;
 
     return *this;
