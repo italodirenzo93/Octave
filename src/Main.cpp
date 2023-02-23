@@ -1,12 +1,36 @@
 #include "CommonInclude.hpp"
 #include "graphics/Renderer.hpp"
 
+#include "Config.hpp"
+
 using namespace std;
 
 static constexpr int kDefaultWidth = 1280;
 static constexpr int kDefaultHeight = 720;
 
+static int width = kDefaultWidth;
+static int height = kDefaultHeight;
+static int sync_interval = 1;
+
+static void LoadConfig( int argc, char* argv[] ) {
+    if ( !config::TryGetInt( "Video", "FramebufferWidth", width ) ) {
+        width = kDefaultWidth;
+    }
+
+	if ( !config::TryGetInt( "Video", "FramebufferHeight", height ) ) {
+        height = kDefaultHeight;
+    }
+
+	if ( !config::TryGetInt( "Video", "SyncInterval", sync_interval ) ) {
+        sync_interval = 1;
+	}
+}
+
 int main( int argc, char* argv[] ) {
+    config::Initialize();
+
+    LoadConfig( argc, argv );
+
     GLFWwindow* window = nullptr;
 
     // Initialize GLFW library
@@ -30,7 +54,7 @@ int main( int argc, char* argv[] ) {
 #endif
 
     // Create window
-    window = glfwCreateWindow( kDefaultWidth, kDefaultHeight, "My Game Engine",
+    window = glfwCreateWindow( width, height, "My Game Engine",
                                nullptr, nullptr );
     if (!window) {
         cout << "Failed to create GLFW window... exiting" << endl;
@@ -39,6 +63,7 @@ int main( int argc, char* argv[] ) {
     }
 
     glfwMakeContextCurrent( window );
+    glfwSwapInterval( sync_interval );
 
     // Initialize Open GL extension loader
     if (!gladLoadGLLoader(

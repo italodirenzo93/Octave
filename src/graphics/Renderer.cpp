@@ -1,4 +1,5 @@
 #include "Renderer.hpp"
+#include "ShaderManager.hpp"
 
 #include <sstream>
 
@@ -111,6 +112,8 @@ void Initialize() {
 
     // Because Open GL coordinates are weird...
     stbi_set_flip_vertically_on_load( true );
+
+	ShaderManager::Instance().PreloadShaders();
 }
 
 void ResizeFramebuffer( int width, int height ) {

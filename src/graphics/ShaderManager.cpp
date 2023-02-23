@@ -1,50 +1,65 @@
 #include "ShaderManager.hpp"
+#include "Config.hpp"
 
-#include <fstream>
+#include <regex>
 using namespace std;
+namespace fs = std::filesystem;
 
-static const vector<string> ShaderNames{"basic", "lit", "mesh", "single_color",
-                                        "skybox"};
-static const string shaderDirectory = "./resources/shaders/";
+static constexpr const char* kDefaultShaderDirectory = "./resources/shaders";
 
 namespace graphics {
 ShaderManager* ShaderManager::instance_ = nullptr;
 
+ShaderManager::ShaderManager() {
+	// Read shader list
+    string shader_list;
+    if (config::TryGetString( "Renderer", "ShaderList", shader_list )) {
+        regex expr( "," );
+        sregex_token_iterator iter( shader_list.begin(), shader_list.end(),
+                                    expr, -1 );
+        sregex_token_iterator end;
+
+        while (iter != end) {
+            shader_list_.emplace_back( *iter++ );
+        }
+    } else {
+        cout << "No shaders listed for compilation..." << endl;
+    }
+
+	// Read shader directory
+	string dir = kDefaultShaderDirectory;
+    config::TryGetString( "Renderer", "ShaderDirectory", dir );
+
+	shader_directory_ = dir;
+}
 
 void ShaderManager::PreloadShaders() {
-    for (auto& shader : ShaderNames) {
+    for (auto& shader : shader_list_) {
         // Check to see if we already compiled this shader program
         if (shaders_.find( shader ) != shaders_.cend()) {
             // if so, skip it
             continue;
         }
 
-        string vertex_path = shaderDirectory + shader + ".vert";
-        string fragment_path = shaderDirectory + shader + ".frag";
+        const fs::path vertex_path = shader_directory_ / ( shader + ".vert" );
+        const fs::path fragment_path = shader_directory_ / ( shader + ".frag" );
 
-        ifstream ifs;
-
-        ifs.open( vertex_path );
-        if (!ifs.is_open()) {
+        if (!fs::exists( vertex_path )) {
             cout << "Missing vertex shader for " << shader << " program" <<
                 endl;
             continue;
         }
 
-        ifs.close();
-
-        ifs.open( fragment_path );
-        if (!ifs.is_open()) {
+        if (!fs::exists( fragment_path )) {
             cout << "Missing fragment shader for " << shader << " program" <<
                 endl;
             continue;
         }
 
-        ifs.close();
-
-        shaders_.emplace(
-            shader, make_shared<Shader>( vertex_path.c_str(),
-                                         fragment_path.c_str() ) );
+        shaders_.emplace( shader,
+                          make_shared<Shader>( vertex_path.string().c_str(),
+                                               fragment_path.string().
+                                               c_str() ) );
     }
 }
 
@@ -68,10 +83,10 @@ shared_ptr<Shader> ShaderManager::Get( const string& name ) {
     auto shader = shaders_[name];
 
     if (!shader) {
-        const auto vertex_path = shaderDirectory + name + ".vert";
-        const auto fragment_path = shaderDirectory + name + ".frag";
-        shader = make_shared<
-            Shader>( vertex_path.c_str(), fragment_path.c_str() );
+        const fs::path vertex_path = shader_directory_ / ( name + ".vert" );
+        const fs::path fragment_path = shader_directory_ / ( name + ".frag" );
+        shader = make_shared<Shader>( vertex_path.string().c_str(),
+                                      fragment_path.string().c_str() );
 
         if (shader) {
             shaders_[name] = shader;

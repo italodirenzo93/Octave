@@ -39,13 +39,14 @@ add_subdirectory(dependencies/assimp)
 add_subdirectory(dependencies/glad)
 add_subdirectory(dependencies/glfw)
 add_subdirectory(dependencies/glm)
+add_subdirectory(dependencies/simpleini)
 add_subdirectory(dependencies/stb_image)
 
 # Set `source` variable to all .h(pp) and .cpp files in `src`
 file(GLOB_RECURSE source CONFIGURE_DEPENDS "src/*.h" "src/*.hpp" "src/*.cpp")
 
 add_executable(MyGameEngine ${source})
-target_link_libraries(MyGameEngine ${OPENGL_LIBRARIES} assimp glad glfw glm stb_image)
+target_link_libraries(MyGameEngine ${OPENGL_LIBRARIES} assimp glad glfw glm simpleini stb_image)
 target_include_directories(MyGameEngine PRIVATE)
 
 # Visual Studio Startup Project

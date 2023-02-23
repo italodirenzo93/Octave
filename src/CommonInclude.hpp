@@ -13,6 +13,7 @@
 
 // C++ headers
 #include <algorithm>
+#include <filesystem>
 #include <iostream>
 #include <map>
 #include <memory>
