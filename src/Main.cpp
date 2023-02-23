@@ -181,6 +181,10 @@ int main( int argc, char* argv[] ) {
 			step_timer.Tick();
 			const auto delta = step_timer.GetDeltaTime();
 
+			if ( keyboard.IsKeyDown( GLFW_KEY_ESCAPE ) ) {
+				window.Close();
+			}
+
 			DebugCameraControls( keyboard, camera, 25.0f, delta );
 
 			shader->SetMat4( "uMatProjection", camera.GetProjectionMatrix() );
@@ -188,7 +192,7 @@ int main( int argc, char* argv[] ) {
 			shader->SetVec3( "uViewPos", camera.GetPosition() );
 
 			// Clear the viewport
-			renderer.Clear( true, 0.1f, 0.1f, 0.1f );
+			renderer.Clear( true, true, 0.1f, 0.1f, 0.1f );
 
 			// Draw scene
 			model_matrix =

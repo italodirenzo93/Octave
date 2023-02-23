@@ -24,11 +24,14 @@ public:
 	[[nodiscard]] bool IsMinimized() const noexcept;
 	[[nodiscard]] bool IsMaximized() const noexcept;
 
+	Window& SetTitle( const std::string& title ) noexcept;
+
 	// Actions
 	void PollEvents() const noexcept;
 	void Minimize() const noexcept;
 	void Maximize() const noexcept;
 	void Restore() const noexcept;
+	void Close() const noexcept;
 
 	using OnSizeChangedCallback = std::function<void( int, int )>;
 	void AddSizeChangedCallback( OnSizeChangedCallback callback ) noexcept {
