@@ -1,18 +1,20 @@
 #ifndef OCTAVE_MODELVIEWERSAMPLE_HPP
 #define OCTAVE_MODELVIEWERSAMPLE_HPP
 
+#include <utility>
+
 #include "Sample.hpp"
 #include "graphics/Model.hpp"
-#include "input/Keyboard.hpp"
 #include "input/Gamepad.hpp"
+#include "input/Keyboard.hpp"
 
 namespace octave::samples {
 
 class ModelViewerSample : public Sample {
 public:
-	explicit ModelViewerSample(
-		const std::shared_ptr<graphics::Window>& window ) noexcept
-		: Sample( window ) {}
+	ModelViewerSample( const std::shared_ptr<graphics::Window>& window,
+					   std::string file_name = "" ) noexcept
+		: Sample( window ), file_name_( std::move( file_name ) ) {}
 
 	void OnLoad() override;
 	void OnUpdate( const helpers::StepTimer& timer ) override;
@@ -20,6 +22,8 @@ public:
 	void OnUnload() override;
 
 private:
+	std::string file_name_;
+
 	std::shared_ptr<graphics::Shader> shader_;
 	std::unique_ptr<input::Keyboard> keyboard_;
 	std::unique_ptr<input::Gamepad> pad_;

@@ -16,7 +16,11 @@ int main( int argc, char* argv[] ) {
 	try {
 		shared_ptr<Window> window( new Window() );
 
-		sample = make_unique<ModelViewerSample>( window );
+		if ( argc > 1 ) {
+			sample = make_unique<ModelViewerSample>( window, argv[1] );
+		} else {
+			sample = make_unique<ModelViewerSample>( window );
+		}
 
 		sample->Run();
 
