@@ -27,13 +27,13 @@ public:
 	Shader( Shader&& other ) noexcept;
 	~Shader() noexcept;
 
-	void SetBool( const std::string& name, bool value ) noexcept;
-	void SetInt( const std::string& name, int value ) noexcept;
-	void SetFloat( const std::string& name, float value ) noexcept;
-	void SetMat4( const std::string& name, const glm::mat4& value ) noexcept;
-	void SetVec3( const std::string& name, const glm::vec3& value ) noexcept;
-	void SetVec3( const std::string& name, float x, float y, float z ) noexcept;
-	void SetTexture( const std::string& name, int index,
+	Shader& SetBool( const std::string& name, bool value ) noexcept;
+	Shader& SetInt( const std::string& name, int value ) noexcept;
+	Shader& SetFloat( const std::string& name, float value ) noexcept;
+	Shader& SetMat4( const std::string& name, const glm::mat4& value ) noexcept;
+	Shader& SetVec3( const std::string& name, const glm::vec3& value ) noexcept;
+	Shader& SetVec3( const std::string& name, float x, float y, float z ) noexcept;
+	Shader& SetTexture( const std::string& name, int index,
 					 const Texture& texture ) noexcept;
 
 private:

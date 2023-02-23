@@ -25,16 +25,11 @@ IndexBuffer::IndexBuffer() noexcept {
 }
 
 IndexBuffer::IndexBuffer( const IndexBuffer& other ) noexcept {
-	glPushDebugGroup( GL_DEBUG_SOURCE_APPLICATION, 0, -1,
-					  "Index buffer copy constructor" );
-
 	glGenBuffers( 1, &id_ );
 
 	CopyIndexBuffer( other.id_, id_ );
 
 	element_count_ = other.element_count_;
-
-	glPopDebugGroup();
 }
 
 IndexBuffer::IndexBuffer( IndexBuffer&& other ) noexcept {
@@ -94,16 +89,11 @@ void IndexBuffer::SetData( const std::vector<uint32_t>& indices ) noexcept {
 IndexBuffer& IndexBuffer::operator=( const IndexBuffer& other ) noexcept {
 	SELF_REFERENCE_CHECK( other );
 
-	glPushDebugGroup( GL_DEBUG_SOURCE_APPLICATION, 0, -1,
-					  "Index buffer copy assignment" );
-
 	glGenBuffers( 1, &id_ );
 
 	CopyIndexBuffer( other.id_, id_ );
 
 	element_count_ = other.element_count_;
-
-	glPopDebugGroup();
 
 	return *this;
 }

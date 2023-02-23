@@ -92,35 +92,41 @@ Shader::~Shader() noexcept {
 	glDeleteProgram( id_ );
 }
 
-void Shader::SetBool( const std::string& name, bool value ) noexcept {
+Shader& Shader::SetBool( const std::string& name, bool value ) noexcept {
 	glUniform1i( GetUniform( name ), static_cast<int>( value ) );
+	return *this;
 }
 
-void Shader::SetInt( const std::string& name, int value ) noexcept {
+Shader& Shader::SetInt( const std::string& name, int value ) noexcept {
 	glUniform1i( GetUniform( name ), value );
+	return *this;
 }
 
-void Shader::SetFloat( const std::string& name, float value ) noexcept {
+Shader& Shader::SetFloat( const std::string& name, float value ) noexcept {
 	glUniform1f( GetUniform( name ), value );
+	return *this;
 }
 
-void Shader::SetMat4( const std::string& name,
+Shader& Shader::SetMat4( const std::string& name,
 					  const glm::mat4& value ) noexcept {
 	glUniformMatrix4fv( GetUniform( name ), 1, GL_FALSE,
 						glm::value_ptr( value ) );
+	return *this;
 }
 
-void Shader::SetVec3( const std::string& name,
+Shader& Shader::SetVec3( const std::string& name,
 					  const glm::vec3& value ) noexcept {
 	glUniform3fv( GetUniform( name ), 1, glm::value_ptr( value ) );
+	return *this;
 }
 
-void Shader::SetVec3( const std::string& name, float x, float y,
+Shader& Shader::SetVec3( const std::string& name, float x, float y,
 					  float z ) noexcept {
 	glUniform3f( GetUniform( name ), x, y, z );
+	return *this;
 }
 
-void Shader::SetTexture( const std::string& name, int index,
+Shader& Shader::SetTexture( const std::string& name, int index,
 						 const Texture& texture ) noexcept {
 	assert( index >= 0 );
 
@@ -130,6 +136,8 @@ void Shader::SetTexture( const std::string& name, int index,
 
 	glActiveTexture( GL_TEXTURE0 + index );
 	glBindTexture( GL_TEXTURE_2D, texture.id_ );
+
+	return *this;
 }
 
 int Shader::GetUniform( const std::string& name ) noexcept {

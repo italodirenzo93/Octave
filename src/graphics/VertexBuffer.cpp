@@ -32,9 +32,6 @@ VertexBuffer::VertexBuffer() noexcept {
 }
 
 VertexBuffer::VertexBuffer( const VertexBuffer& other ) noexcept {
-	glPushDebugGroup( GL_DEBUG_SOURCE_APPLICATION, 0, -1,
-					  "Vertex buffer copy constructor" );
-
 	glGenBuffers( 1, &vbo_ );
 	glGenVertexArrays( 1, &vao_ );
 
@@ -50,8 +47,6 @@ VertexBuffer::VertexBuffer( const VertexBuffer& other ) noexcept {
 
 		glBindBuffer( GL_ARRAY_BUFFER, 0 );
 	}
-
-	glPopDebugGroup();
 }
 
 VertexBuffer::VertexBuffer( VertexBuffer&& other ) noexcept {
@@ -74,9 +69,6 @@ VertexBuffer::~VertexBuffer() noexcept {
 
 void VertexBuffer::SetVertexAttributes( const VertexLayout& layout,
 										size_t stride ) {
-	glPushDebugGroup( GL_DEBUG_SOURCE_APPLICATION, 0, -1,
-					  "SetVertexAttributes" );
-
 	glBindVertexArray( vao_ );
 
 	size_t offset_in_bytes = 0;
@@ -100,15 +92,10 @@ void VertexBuffer::SetVertexAttributes( const VertexLayout& layout,
 	layout_ = layout;
 
 	glBindVertexArray( 0 );
-
-	glPopDebugGroup();
 }
 
 VertexBuffer& VertexBuffer::operator=( const VertexBuffer& other ) noexcept {
 	SELF_REFERENCE_CHECK( other );
-
-	glPushDebugGroup( GL_DEBUG_SOURCE_APPLICATION, 0, -1,
-					  "Vertex buffer copy assignment" );
 
 	glGenBuffers( 1, &vbo_ );
 
@@ -124,8 +111,6 @@ VertexBuffer& VertexBuffer::operator=( const VertexBuffer& other ) noexcept {
 
 	vertex_count_ = other.vertex_count_;
 	layout_ = other.layout_;
-
-	glPopDebugGroup();
 
 	return *this;
 }
