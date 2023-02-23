@@ -30,23 +30,15 @@ uint64_t PlatformGLFW::GetPerformanceFrequency() const {
 }
 
 PlatformName PlatformGLFW::GetName() const {
-	const int glfw_platform = glfwGetPlatform();
-
-	assert( glfwPlatformSupported( glfw_platform ) == GLFW_TRUE );
-	assert( glfw_platform != GLFW_NOT_INITIALIZED );
-	assert( glfw_platform != GLFW_PLATFORM_NULL );
-
-	switch ( glfw_platform ) {
-		case GLFW_PLATFORM_COCOA:
-			return PlatformName::Mac;
-		case GLFW_PLATFORM_WAYLAND:
-		case GLFW_PLATFORM_X11:
-			return PlatformName::Linux;
-		case GLFW_PLATFORM_WIN32:
-			return PlatformName::Windows;
-		default:
-			assert( false );
-	}
+#if defined(OCTAVE_PLATFORM_WINDOWS)
+	return PlatformName::Windows;
+#elif defined(OCTAVE_PLATFORM_MACOS)
+	return PlatformName::Mac;
+#elif defined(OCTAVE_PLATFORM_LINUX)
+	return PlatformName::Linux;
+#else
+#error Unsupported platform
+#endif
 }
 
 void PlatformGLFW::PollEvents() noexcept {

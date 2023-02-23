@@ -8,7 +8,7 @@
 #elif defined( __linux__ )
 #define OCTAVE_PLATFORM_LINUX
 #else
-#error "Unknown platform"
+#error Unknown platform
 #endif
 
 #include "Window.hpp"
