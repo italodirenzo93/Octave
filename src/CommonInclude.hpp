@@ -56,22 +56,22 @@ public:
 	explicit OpenGLError( GLenum error ) noexcept {
 		switch ( error ) {
 			case GL_INVALID_ENUM:
-				message_ = "INVALID_ENUM";
+				message_ = "GL_INVALID_ENUM";
 				break;
 			case GL_INVALID_VALUE:
-				message_ = "INVALID_VALUE";
+				message_ = "GL_INVALID_VALUE";
 				break;
 			case GL_INVALID_OPERATION:
-				message_ = "INVALID_OPERATION";
+				message_ = "GL_INVALID_OPERATION";
 				break;
 			case GL_STACK_OVERFLOW:
-				message_ = "STACK_OVERFLOW";
+				message_ = "GL_STACK_OVERFLOW";
 				break;
 			case GL_STACK_UNDERFLOW:
-				message_ = "STACK_UNDERFLOW";
+				message_ = "GL_STACK_UNDERFLOW";
 				break;
 			case GL_OUT_OF_MEMORY:
-				message_ = "OUT_OF_MEMORY";
+				message_ = "GL_OUT_OF_MEMORY";
 				break;
 			default:
 				message_ = "Unknown error";
@@ -87,6 +87,46 @@ inline void ThrowIfFailed() {
 	}
 }
 
+inline void CheckErrors( const char* file, int line ) {
+	GLenum error = GL_NO_ERROR;
+	while ( ( error = glGetError() ) ) {
+		const char* message;
+
+		switch ( error ) {
+			case GL_INVALID_ENUM:
+				message = "GL_INVALID_ENUM";
+				break;
+			case GL_INVALID_VALUE:
+				message = "GL_INVALID_VALUE";
+				break;
+			case GL_INVALID_OPERATION:
+				message = "GL_INVALID_OPERATION";
+				break;
+			case GL_STACK_OVERFLOW:
+				message = "GL_STACK_OVERFLOW";
+				break;
+			case GL_STACK_UNDERFLOW:
+				message = "GL_STACK_UNDERFLOW";
+				break;
+			case GL_OUT_OF_MEMORY:
+				message = "GL_OUT_OF_MEMORY";
+				break;
+			default:
+				message = "Unknown error";
+				break;
+		}
+
+		std::cerr << "OpenGL error:" << std::endl
+				  << "---------------" << std::endl
+				  << file << ":" << line << " - " << message << std::endl
+				  << std::endl;
+	}
+}
+
+#define GL_CALL( func ) \
+	func;               \
+	octave::graphics::gl::CheckErrors( __FILE__, __LINE__ )
+
 }  // namespace octave::graphics::gl
 
 namespace octave::audio::al {
@@ -96,19 +136,19 @@ public:
 	explicit OpenALError( ALenum error ) noexcept {
 		switch ( error ) {
 			case AL_INVALID_NAME:
-				message_ = "INVALID_NAME";
+				message_ = "AL_INVALID_NAME";
 				break;
 			case AL_INVALID_ENUM:
-				message_ = "INVALID_ENUM";
+				message_ = "AL_INVALID_ENUM";
 				break;
 			case AL_INVALID_VALUE:
-				message_ = "INVALID_VALUE";
+				message_ = "AL_INVALID_VALUE";
 				break;
 			case AL_INVALID_OPERATION:
-				message_ = "INVALID_OPERATION";
+				message_ = "AL_INVALID_OPERATION";
 				break;
 			case AL_OUT_OF_MEMORY:
-				message_ = "OUT_OF_MEMORY";
+				message_ = "AL_OUT_OF_MEMORY";
 				break;
 			default:
 				message_ = "Unknown error";
@@ -123,6 +163,43 @@ inline void ThrowIfFailed() {
 		throw OpenALError( error );
 	}
 }
+
+inline void CheckErrors( const char* file, int line ) {
+	ALenum error = AL_NO_ERROR;
+	while ( ( error = alGetError() ) ) {
+		const char* message;
+
+		switch ( error ) {
+			case AL_INVALID_NAME:
+				message = "AL_INVALID_NAME";
+				break;
+			case AL_INVALID_ENUM:
+				message = "AL_INVALID_ENUM";
+				break;
+			case AL_INVALID_VALUE:
+				message = "AL_INVALID_VALUE";
+				break;
+			case AL_INVALID_OPERATION:
+				message = "AL_INVALID_OPERATION";
+				break;
+			case AL_OUT_OF_MEMORY:
+				message = "AL_OUT_OF_MEMORY";
+				break;
+			default:
+				message = "Unknown error";
+				break;
+		}
+
+		std::cerr << "OpenAL error:" << std::endl
+				  << "---------------" << std::endl
+				  << file << ":" << line << " - " << message << std::endl
+				  << std::endl;
+	}
+}
+
+#define AL_CALL( func ) \
+	func;               \
+	octave::audio::al::CheckErrors( __FILE__, __LINE__ )
 
 }  // namespace octave::audio::al
 

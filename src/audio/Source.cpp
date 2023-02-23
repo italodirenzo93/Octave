@@ -15,13 +15,12 @@ Source::~Source() noexcept {
 		Stop();
 	}
 
-	alSourcei( id_, AL_BUFFER, 0 );
+	AL_CALL( alSourcei( id_, AL_BUFFER, 0 ) );
 	alDeleteSources( 1, &id_ );
 }
 
 Source& Source::SetBuffer( const Buffer& buffer ) {
-	alSourcei( id_, AL_BUFFER, static_cast<int>( buffer.id_ ) );
-	al::ThrowIfFailed();
+	AL_CALL( alSourcei( id_, AL_BUFFER, static_cast<int>( buffer.id_ ) ) );
 	return *this;
 }
 
@@ -32,8 +31,7 @@ float Source::GetGain() const noexcept {
 }
 
 Source& Source::SetGain( float gain ) {
-	alSourcef( id_, AL_GAIN, std::max( gain, 0.0f ) );
-	al::ThrowIfFailed();
+	AL_CALL( alSourcef( id_, AL_GAIN, std::max( gain, 0.0f ) ) );
 	return *this;
 }
 
@@ -44,8 +42,7 @@ bool Source::IsLooping() const noexcept {
 }
 
 Source& Source::SetLooping( bool loop ) {
-	alSourcei( id_, AL_LOOPING, loop );
-	al::ThrowIfFailed();
+	AL_CALL( alSourcei( id_, AL_LOOPING, loop ) );
 	return *this;
 }
 
@@ -62,20 +59,17 @@ float Source::GetPitch() const noexcept {
 }
 
 Source& Source::SetPitch( float pitch ) {
-	alSourcef( id_, AL_PITCH, std::max( pitch, 0.0f ) );
-	al::ThrowIfFailed();
+	AL_CALL( alSourcef( id_, AL_PITCH, std::max( pitch, 0.0f ) ) );
 	return *this;
 }
 
 Source& Source::SetPosition( const glm::vec3& position ) {
-	alSourcefv( id_, AL_POSITION, glm::value_ptr( position ) );
-	al::ThrowIfFailed();
+	AL_CALL( alSourcefv( id_, AL_POSITION, glm::value_ptr( position ) ) );
 	return *this;
 }
 
 Source& Source::SetPosition( float x, float y, float z ) {
-	alSource3f( id_, AL_POSITION, x, y, z );
-	al::ThrowIfFailed();
+	AL_CALL( alSource3f( id_, AL_POSITION, x, y, z ) );
 	return *this;
 }
 
@@ -97,18 +91,15 @@ PlaybackState Source::GetState() const noexcept {
 }
 
 void Source::Play() {
-	alSourcePlay( id_ );
-	al::ThrowIfFailed();
+	AL_CALL( alSourcePlay( id_ ) );
 }
 
 void Source::Pause() {
-	alSourcePause( id_ );
-	al::ThrowIfFailed();
+	AL_CALL( alSourcePause( id_ ) );
 }
 
 void Source::Stop() {
-	alSourceStop( id_ );
-	al::ThrowIfFailed();
+	AL_CALL( alSourceStop( id_ ) );
 }
 
 }  // namespace octave::audio

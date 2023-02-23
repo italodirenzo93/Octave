@@ -9,8 +9,7 @@ float Listener::GetGain() noexcept {
 }
 
 void Listener::SetGain( float gain ) {
-	alListenerf( AL_GAIN, glm::clamp( gain, 0.0f, 1.0f ) );
-	al::ThrowIfFailed();
+	AL_CALL( alListenerf( AL_GAIN, glm::clamp( gain, 0.0f, 1.0f ) ) );
 }
 
 glm::vec3 Listener::GetPosition() noexcept {
@@ -20,13 +19,11 @@ glm::vec3 Listener::GetPosition() noexcept {
 }
 
 void Listener::SetPosition( const glm::vec3& position ) {
-	alListenerfv( AL_POSITION, glm::value_ptr( position ) );
-	al::ThrowIfFailed();
+	AL_CALL( alListenerfv( AL_POSITION, glm::value_ptr( position ) ) );
 }
 
 void Listener::SetPosition( float x, float y, float z ) {
-	alListener3f( AL_POSITION, x, y, z );
-	al::ThrowIfFailed();
+	AL_CALL( alListener3f( AL_POSITION, x, y, z ) );
 }
 
 glm::vec3 Listener::GetVelocity() noexcept {
@@ -36,13 +33,11 @@ glm::vec3 Listener::GetVelocity() noexcept {
 }
 
 void Listener::SetVelocity( const glm::vec3& velocity ) {
-	alListenerfv( AL_VELOCITY, glm::value_ptr( velocity ) );
-	al::ThrowIfFailed();
+	AL_CALL( alListenerfv( AL_VELOCITY, glm::value_ptr( velocity ) ) );
 }
 
 void Listener::SetVelocity( float x, float y, float z ) {
-	alListener3f( AL_VELOCITY, x, y, z );
-	al::ThrowIfFailed();
+	AL_CALL( alListener3f( AL_VELOCITY, x, y, z ) );
 }
 
 void Listener::SetOrientation( const glm::vec3& direction,
@@ -50,8 +45,7 @@ void Listener::SetOrientation( const glm::vec3& direction,
 	const ALfloat orientation[] = { direction.x, direction.y, direction.z,
 									up.x,        up.y,        up.z };
 
-	alListenerfv( AL_ORIENTATION, orientation );
-	al::ThrowIfFailed();
+	AL_CALL( alListenerfv( AL_ORIENTATION, orientation ) );
 }
 
 }  // namespace octave::audio
