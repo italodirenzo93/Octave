@@ -1,3 +1,5 @@
+#include <optional>
+
 #include "Camera.hpp"
 #include "Config.hpp"
 #include "GeometricPrimitive.hpp"
@@ -44,6 +46,37 @@ struct Transform {
 		model = glm::scale( model, scale );
 
 		return model;
+	}
+};
+
+struct Object {
+	optional<VertexBuffer> vbo;
+	optional<IndexBuffer> ibo;
+	vector<shared_ptr<Texture>> textures;
+
+	glm::vec3 position = glm::vec3( 0.0f );
+	glm::vec3 scale = glm::vec3( 1.0f );
+
+	void Draw( Shader& shader, const Renderer& renderer ) const noexcept {
+		if ( !vbo ) return;
+
+		auto model_matrix = glm::identity<glm::mat4>();
+		model_matrix = glm::scale( model_matrix, scale );
+		model_matrix = glm::translate( model_matrix, position );
+
+		shader.SetMat4( "uMatModel", model_matrix );
+
+		int n = 0;
+		for ( const auto& texture : textures ) {
+			shader.SetTexture( "uTextures", n++, *texture );
+		}
+
+		if ( ibo ) {
+			renderer.DrawIndexedPrimitives( PrimitiveType::kTriangleList, *vbo,
+											*ibo );
+		} else {
+			renderer.DrawPrimitives( PrimitiveType::kTriangleList, *vbo );
+		}
 	}
 };
 
@@ -176,6 +209,21 @@ int main( int argc, char* argv[] ) {
 		Keyboard keyboard( window );
 		StepTimer step_timer;
 
+		Object floor;
+		{
+			VertexBuffer vbo;
+			IndexBuffer ibo;
+			GeometricPrimitive::CreateCube( vbo, ibo );
+			floor.vbo = vbo;
+			floor.ibo = ibo;
+
+			auto texture = make_shared<Texture>();
+			texture->LoadFromFile( "./resources/textures/wood.png" );
+			floor.textures.emplace_back( texture );
+		}
+		floor.position = glm::vec3( 0.0f, -3.0f, 0.0f );
+		floor.scale = glm::vec3( 10, 0, 10 );
+
 		// Main loop
 		while ( window.IsOpen() ) {
 			step_timer.Tick();
@@ -195,11 +243,13 @@ int main( int argc, char* argv[] ) {
 			renderer.Clear( true, true, 0.1f, 0.1f, 0.1f );
 
 			// Draw scene
-			model_matrix =
-				glm::rotate( model_matrix, glm::radians( delta * 25.0f ),
-							 glm::vec3( 0.0f, 1.0f, 0.0f ) );
-			shader->SetMat4( "uMatModel", model_matrix );
-			model.Draw( *shader, renderer );
+			//			model_matrix =
+			//				glm::rotate( model_matrix, glm::radians( delta * 25.0f
+			//), 							 glm::vec3( 0.0f, 1.0f, 0.0f ) ); 			shader->SetMat4( "uMatModel",
+			//model_matrix ); 			model.Draw( *shader, renderer );
+
+			// Draw the floor
+			floor.Draw( *shader, renderer );
 
 			// Show the result
 			renderer.Present();
