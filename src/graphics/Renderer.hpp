@@ -25,7 +25,6 @@ public:
 								const IndexBuffer& ibo ) const noexcept;
 
 	[[nodiscard]] std::string GetDescription() const noexcept;
-	void GetFramebufferSize( int& width, int& height ) const noexcept;
 
 	void SetShader( const Shader& shader ) noexcept;
 	void SetViewport( int x, int y, int width, int height ) noexcept;
