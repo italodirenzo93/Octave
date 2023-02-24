@@ -47,9 +47,9 @@ public:
 	}
 
 	void OnUpdate() override {
-		m_renderer->Clear( true, false );
-		m_renderer->SetShader( *m_shader );
-		m_renderer->Draw( *m_vbo );
+		// m_renderer->Clear( true, false );
+		m_renderer->Clear();
+		m_renderer->Draw( *m_shader, *m_vbo );
 	}
 
 private:

@@ -24,22 +24,26 @@ Shader::~Shader() noexcept {
 }
 
 Shader& Shader::SetBool( const std::string& name, bool value ) noexcept {
+	glUseProgram( id_ );
 	glUniform1i( GetUniform( name ), static_cast<int>( value ) );
 	return *this;
 }
 
 Shader& Shader::SetInt( const std::string& name, int value ) noexcept {
+	glUseProgram( id_ );
 	glUniform1i( GetUniform( name ), value );
 	return *this;
 }
 
 Shader& Shader::SetFloat( const std::string& name, float value ) noexcept {
+	glUseProgram( id_ );
 	glUniform1f( GetUniform( name ), value );
 	return *this;
 }
 
 Shader& Shader::SetMat3( const std::string& name, const glm::mat3& value,
 						 bool transpose ) noexcept {
+	glUseProgram( id_ );
 	glUniformMatrix3fv( GetUniform( name ), 1, transpose,
 						glm::value_ptr( value ) );
 	return *this;
@@ -47,6 +51,7 @@ Shader& Shader::SetMat3( const std::string& name, const glm::mat3& value,
 
 Shader& Shader::SetMat4( const std::string& name, const glm::mat4& value,
 						 bool transpose ) noexcept {
+	glUseProgram( id_ );
 	glUniformMatrix4fv( GetUniform( name ), 1, transpose,
 						glm::value_ptr( value ) );
 	return *this;
@@ -54,12 +59,14 @@ Shader& Shader::SetMat4( const std::string& name, const glm::mat4& value,
 
 Shader& Shader::SetVec3( const std::string& name,
 						 const glm::vec3& value ) noexcept {
+	glUseProgram( id_ );
 	glUniform3fv( GetUniform( name ), 1, glm::value_ptr( value ) );
 	return *this;
 }
 
 Shader& Shader::SetVec3( const std::string& name, float x, float y,
 						 float z ) noexcept {
+	glUseProgram( id_ );
 	glUniform3f( GetUniform( name ), x, y, z );
 	return *this;
 }
@@ -67,6 +74,8 @@ Shader& Shader::SetVec3( const std::string& name, float x, float y,
 Shader& Shader::SetTexture( const std::string& name, int index,
 							const Texture& texture ) noexcept {
 	assert( index >= 0 );
+
+	glUseProgram( id_ );
 
 	const auto uniform_name = name + "[" + to_string( index ) + "]";
 	const auto location = GetUniform( uniform_name );

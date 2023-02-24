@@ -10,21 +10,20 @@ namespace Octave {
 
 class Renderer {
 public:
-	Renderer() noexcept;
-	~Renderer() noexcept = default;
+	Renderer() = default;
+	virtual ~Renderer() noexcept = default;
 
-	void Clear( bool color = true, bool depth = true, float r = 0.0f,
-				float g = 0.0f, float b = 0.0f, float a = 1.0f ) const noexcept;
+	virtual void Clear( bool color = true, bool depth = true, float r = 0.0f,
+				float g = 0.0f, float b = 0.0f, float a = 1.0f ) const noexcept = 0;
 
-	void Draw( const VertexBuffer& vbo ) const noexcept;
-	void DrawIndexed( const VertexBuffer& vbo,
-					  const IndexBuffer& ibo ) const noexcept;
+	virtual void Draw( const Shader& shader, const VertexBuffer& vbo ) const noexcept = 0;
+	virtual void DrawIndexed( const Shader& shader, const VertexBuffer& vbo,
+					  const IndexBuffer& ibo ) const noexcept = 0;
 
-	[[nodiscard]] std::string GetDescription() const noexcept;
+	[[nodiscard]] virtual std::string GetDescription() const noexcept = 0;
 
-	void SetDepthTestEnabled( bool enabled ) noexcept;
-	void SetShader( const Shader& shader ) noexcept;
-	void SetViewport( int x, int y, int width, int height ) noexcept;
+	virtual void SetDepthTestEnabled( bool enabled ) noexcept = 0;
+	virtual void SetViewport( int x, int y, int width, int height ) noexcept = 0;
 
 public:
 	Renderer( const Renderer& ) = delete;
@@ -32,6 +31,7 @@ public:
 	Renderer& operator=( const Renderer& ) = delete;
 	Renderer& operator=( Renderer&& ) = delete;
 };
+
 }  // namespace Octave
 
 #endif

@@ -8,7 +8,7 @@ void Sample::OnInitialize() {
 
 	GetWindow().AddCloseCallback( [this]() { Exit(); } );
 
-	renderer_ = make_unique<Renderer>();
+	renderer_ = GetGraphicsSystem().CreateRenderer();
 	const auto [default_width, default_height] = GetWindow().GetSize();
 	renderer_->SetViewport( 0, 0, default_width, default_height );
 

@@ -21,7 +21,6 @@ source += [
 	'graphics/Mesh.hpp',
 	'graphics/Model.cpp',
 	'graphics/Model.hpp',
-	'graphics/Renderer.cpp',
 	'graphics/Renderer.hpp',
 	'graphics/Shader.cpp',
 	'graphics/Shader.hpp',
@@ -30,7 +29,9 @@ source += [
 	'graphics/VertexBuffer.cpp',
 	'graphics/VertexBuffer.hpp',
 	'graphics/OpenGL/GraphicsSystemGL.cpp',
-	'graphics/OpenGL/GraphicsSystemGL.hpp'
+	'graphics/OpenGL/GraphicsSystemGL.hpp',
+	'graphics/OpenGL/RendererGL.cpp',
+	'graphics/OpenGL/RendererGL.hpp'
 ]
 
 # Helpers

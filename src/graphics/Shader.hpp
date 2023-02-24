@@ -10,8 +10,13 @@
 #include "Texture.hpp"
 
 namespace Octave {
+
+namespace Impl {
+	class RendererGL;
+}
+
 class Shader {
-	friend class Renderer;
+	friend class Impl::RendererGL;
 
 public:
 	class CompileError : public Exception {

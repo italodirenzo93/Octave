@@ -225,7 +225,6 @@ void ModelViewerSample::OnStep() {
 void ModelViewerSample::OnRender() {
 	renderer_->Clear( true, true, 0.1f, 0.1f, 0.1f );
 
-	renderer_->SetShader( *shader_ );
 	SetDefaultLighting( *shader_ );
 
 	{
@@ -248,7 +247,7 @@ void ModelViewerSample::OnRender() {
 		shader_->SetMat4( "uMatModel", model );
 		shader_->SetMat3( "uMatNormal", MakeNormalMatrix( model ) );
 
-		renderer_->Draw( *floor_vbo_ );
+		renderer_->Draw( *shader_, *floor_vbo_ );
 	}
 }
 

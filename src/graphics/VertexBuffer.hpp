@@ -34,8 +34,12 @@ struct LayoutBinding {
 	}
 };
 
+namespace Impl {
+	class RendererGL;
+}
+
 class VertexBuffer {
-	friend class Renderer;
+	friend class Impl::RendererGL;
 	friend class Mesh;
 
 public:

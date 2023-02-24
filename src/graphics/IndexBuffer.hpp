@@ -5,9 +5,13 @@
 
 namespace Octave {
 
+namespace Impl {
+	class RendererGL;
+}
+
 class IndexBuffer {
 	friend class Mesh;
-	friend class Renderer;
+	friend class Impl::RendererGL;
 
 public:
 	IndexBuffer() noexcept;

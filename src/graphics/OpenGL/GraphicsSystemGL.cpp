@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 
 #include "core/Log.hpp"
+#include "RendererGL.hpp"
 
 using namespace std;
 
@@ -137,7 +138,7 @@ std::string GraphicsSystemGL::TryDequeueError() noexcept {
 }
 
 std::unique_ptr<Renderer> GraphicsSystemGL::CreateRenderer() noexcept {
-	return make_unique<Renderer>();
+	return make_unique<RendererGL>();
 }
 
 }  // namespace Octave::Impl

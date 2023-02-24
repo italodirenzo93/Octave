@@ -1,4 +1,4 @@
-#include "Renderer.hpp"
+#include "RendererGL.hpp"
 
 #include <glad/glad.h>
 
@@ -8,9 +8,9 @@
 
 using namespace std;
 
-namespace Octave {
+namespace Octave::Impl {
 
-Renderer::Renderer() noexcept {
+RendererGL::RendererGL() {
 	const Config& config = Config::Instance();
 
 	// Always enabled
@@ -24,8 +24,11 @@ Renderer::Renderer() noexcept {
 	}
 }
 
-void Renderer::Clear( bool color, bool depth, float r, float g, float b,
-					  float a ) const noexcept {
+RendererGL::~RendererGL() noexcept {
+}
+
+void RendererGL::Clear( bool color, bool depth, float r, float g, float b,
+						float a ) const noexcept {
 	int clear_flags = 0;
 
 	if ( color ) {
@@ -41,16 +44,22 @@ void Renderer::Clear( bool color, bool depth, float r, float g, float b,
 	glClear( clear_flags );
 }
 
-void Renderer::Draw( const VertexBuffer& vbo ) const noexcept {
+void RendererGL::Draw( const Shader& shader,
+					   const VertexBuffer& vbo ) const noexcept {
+	glUseProgram( shader.id_ );
+
 	glBindVertexArray( vbo.vao_ );
 
 	glDrawArrays( GL_TRIANGLES, 0, static_cast<int>( vbo.GetVertexCount() ) );
 
 	glBindVertexArray( 0 );
+
+	glUseProgram( 0 );
 }
 
-void Renderer::DrawIndexed( const VertexBuffer& vbo,
-							const IndexBuffer& ibo ) const noexcept {
+void RendererGL::DrawIndexed( const Shader& shader, const VertexBuffer& vbo,
+							  const IndexBuffer& ibo ) const noexcept {
+	glUseProgram( shader.id_ );
 	glBindVertexArray( vbo.vao_ );
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo.id_ );
 
@@ -59,9 +68,10 @@ void Renderer::DrawIndexed( const VertexBuffer& vbo,
 
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
 	glBindVertexArray( 0 );
+	glUseProgram( 0 );
 }
 
-std::string Renderer::GetDescription() const noexcept {
+std::string RendererGL::GetDescription() const noexcept {
 	ostringstream oss;
 
 	// Print OpenGL context information
@@ -74,7 +84,7 @@ std::string Renderer::GetDescription() const noexcept {
 	return oss.str();
 }
 
-void Renderer::SetDepthTestEnabled( bool enabled ) noexcept {
+void RendererGL::SetDepthTestEnabled( bool enabled ) noexcept {
 	if ( enabled ) {
 		glEnable( GL_DEPTH_TEST );
 	} else {
@@ -82,11 +92,7 @@ void Renderer::SetDepthTestEnabled( bool enabled ) noexcept {
 	}
 }
 
-void Renderer::SetShader( const Shader& shader ) noexcept {
-	glUseProgram( shader.id_ );
-}
-
-void Renderer::SetViewport( int x, int y, int width, int height ) noexcept {
+void RendererGL::SetViewport( int x, int y, int width, int height ) noexcept {
 	assert( x >= 0 );
 	assert( y >= 0 );
 	assert( width > 0 );
@@ -95,4 +101,4 @@ void Renderer::SetViewport( int x, int y, int width, int height ) noexcept {
 	glViewport( x, y, width, height );
 }
 
-}  // namespace Octave
+}  // namespace Octave::Impl
