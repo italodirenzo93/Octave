@@ -6,13 +6,13 @@ using namespace Octave;
 void Sample::OnInitialize() {
 	step_timer_ = make_unique<StepTimer>();
 
-	window_->AddCloseCallback( [this]() { Exit(); } );
+	GetWindow().AddCloseCallback( [this]() { Exit(); } );
 
 	renderer_ = make_unique<Renderer>();
-	const auto [default_width, default_height] = window_->GetSize();
+	const auto [default_width, default_height] = GetWindow().GetSize();
 	renderer_->SetViewport( 0, 0, default_width, default_height );
 
-	window_->AddSizeChangedCallback( [this]( int width, int height ) {
+	GetWindow().AddSizeChangedCallback( [this]( int width, int height ) {
 		if ( width > 0 && height > 0 ) {
 			renderer_->SetViewport( 0, 0, width, height );
 			camera_.width_ = static_cast<float>( width );

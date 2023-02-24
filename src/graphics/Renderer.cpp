@@ -74,6 +74,14 @@ std::string Renderer::GetDescription() const noexcept {
 	return oss.str();
 }
 
+void Renderer::SetDepthTestEnabled( bool enabled ) noexcept {
+	if ( enabled ) {
+		glEnable( GL_DEPTH_TEST );
+	} else {
+		glDisable( GL_DEPTH_TEST );
+	}
+}
+
 void Renderer::SetShader( const Shader& shader ) noexcept {
 	glUseProgram( shader.id_ );
 }

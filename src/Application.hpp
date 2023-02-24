@@ -4,6 +4,7 @@
 // clang-format off
 #include "input/InputSystem.hpp"
 #include "core/Platform.hpp"
+#include "graphics/GraphicsSystem.hpp"
 // clang-format on
 
 namespace Octave {
@@ -17,7 +18,8 @@ public:
 
 	// Getter/setter pairs
 	[[nodiscard]] Window& GetWindow() const noexcept { return *window_; }
-	[[nodiscard]] InputSystem& GetInput() const noexcept { return *input_; }
+	[[nodiscard]] InputSystem& GetInputSystem() const noexcept { return *input_; }
+	[[nodiscard]] GraphicsSystem& GetGraphicsSystem() const noexcept { return *graphics_; }
 
 	// Methods
 	void Run();
@@ -31,14 +33,12 @@ protected:
 	virtual void OnUpdate();
 	virtual void OnExit() noexcept;
 
+private:
 	// Fields
 	std::unique_ptr<Window> window_;
 	std::unique_ptr<InputSystem> input_;
+	std::unique_ptr<GraphicsSystem> graphics_;
 
-private:
-	// Methods
-
-	// Fields
 	bool is_running_;
 
 public:

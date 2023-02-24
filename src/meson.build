@@ -14,6 +14,7 @@ source = [
 
 # Graphics
 source += [
+	'graphics/GraphicsSystem.hpp',
 	'graphics/IndexBuffer.cpp',
 	'graphics/IndexBuffer.hpp',
 	'graphics/Mesh.cpp',
@@ -27,7 +28,9 @@ source += [
 	'graphics/Texture.cpp',
 	'graphics/Texture.hpp',
 	'graphics/VertexBuffer.cpp',
-	'graphics/VertexBuffer.hpp'
+	'graphics/VertexBuffer.hpp',
+	'graphics/OpenGL/GraphicsSystemGL.cpp',
+	'graphics/OpenGL/GraphicsSystemGL.hpp'
 ]
 
 # Helpers

@@ -39,52 +39,53 @@ private:
 void ModelViewerSample::DebugCameraControls( DebugCamera& camera,
 											 float camera_speed,
 											 float delta ) noexcept {
-	const auto& keyboard = GetInput();
+	const auto& window = GetWindow();
+	const auto& keyboard = GetInputSystem();
 
 	// Strafe Left
-	if ( keyboard.IsKeyDown( *window_, Key::A ) ) {
+	if ( keyboard.IsKeyDown( window, Key::A ) ) {
 		camera.position_ -=
 			glm::normalize( glm::cross( camera.front_, camera.up_ ) ) *
 			camera_speed * delta;
 	}
 	// Strafe right
-	if ( keyboard.IsKeyDown( *window_, Key::D ) ) {
+	if ( keyboard.IsKeyDown( window, Key::D ) ) {
 		camera.position_ +=
 			glm::normalize( glm::cross( camera.front_, camera.up_ ) ) *
 			camera_speed * delta;
 	}
 	// Forward
-	if ( keyboard.IsKeyDown( *window_, Key::W ) ) {
+	if ( keyboard.IsKeyDown( window, Key::W ) ) {
 		camera.position_ += camera_speed * delta * camera.front_;
 	}
 	// Backward
-	if ( keyboard.IsKeyDown( *window_, Key::S ) ) {
+	if ( keyboard.IsKeyDown( window, Key::S ) ) {
 		camera.position_ -= camera_speed * delta * camera.front_;
 	}
 	// Up
-	if ( keyboard.IsKeyDown( *window_, Key::E ) ) {
+	if ( keyboard.IsKeyDown( window, Key::E ) ) {
 		camera.position_ += camera_speed * delta * camera.up_;
 	}
 	// Down
-	if ( keyboard.IsKeyDown( *window_, Key::Q ) ) {
+	if ( keyboard.IsKeyDown( window, Key::Q ) ) {
 		camera.position_ -= camera_speed * delta * camera.up_;
 	}
 
 	// Turn left
 	const float turn_speed = camera_speed * 3.0f;
-	if ( keyboard.IsKeyDown( *window_, Key::Left ) ) {
+	if ( keyboard.IsKeyDown( window, Key::Left ) ) {
 		camera.yaw_ -= turn_speed * delta;
 	}
 	// Turn right
-	if ( keyboard.IsKeyDown( *window_, Key::Right ) ) {
+	if ( keyboard.IsKeyDown( window, Key::Right ) ) {
 		camera.yaw_ += turn_speed * delta;
 	}
 	// Look up
-	if ( keyboard.IsKeyDown( *window_, Key::Up ) ) {
+	if ( keyboard.IsKeyDown( window, Key::Up ) ) {
 		camera.pitch_ += turn_speed * delta;
 	}
 	// Look down
-	if ( keyboard.IsKeyDown( *window_, Key::Down ) ) {
+	if ( keyboard.IsKeyDown( window, Key::Down ) ) {
 		camera.pitch_ -= turn_speed * delta;
 	}
 }
@@ -149,7 +150,7 @@ void ModelViewerSample::OnInitialize() {
 
 	cout << renderer_->GetDescription() << endl;
 
-	pad_ = input_->GetGamepad( 0 );
+	pad_ = GetInputSystem().GetGamepad( 0 );
 	if ( pad_ != nullptr ) {
 		cout << "Gamepad: " << pad_->GetName() << endl;
 	}
@@ -163,7 +164,7 @@ void ModelViewerSample::OnInitialize() {
 		throw Exception( "Shader program not found" );
 	}
 
-	const auto [width, height] = window_->GetSize();
+	const auto [width, height] = GetWindow().GetSize();
 	camera_.width_ = static_cast<float>( width );
 	camera_.height_ = static_cast<float>( height );
 	camera_.field_of_view_ = Config::Instance().GetFieldOfView();
@@ -206,7 +207,7 @@ void ModelViewerSample::OnInitialize() {
 void ModelViewerSample::OnStep() {
 	const auto delta = static_cast<float>( step_timer_->GetElapsedSeconds() );
 
-	if ( input_->IsKeyDown( *window_, Key::Escape ) ||
+	if ( GetInputSystem().IsKeyDown( GetWindow(), Key::Escape ) ||
 		 ( pad_ && pad_->IsButtonDown( GamepadButton::Select ) ) ) {
 		Exit();
 	}

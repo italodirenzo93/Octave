@@ -2,6 +2,7 @@
 
 #include "core/Log.hpp"
 #include "input/glfw/InputSystemGLFW.hpp"
+#include "graphics/OpenGL/GraphicsSystemGL.hpp"
 
 namespace Octave {
 
@@ -13,6 +14,7 @@ Application::Application( int argc, char* argv[] ) : is_running_( true ) {
 
 	input_ = std::make_unique<Impl::InputSystemGLFW>();
 	window_ = Window::Create( WindowOptions() );
+	graphics_ = std::make_unique<Impl::GraphicsSystemGL>();
 }
 
 Application::~Application() noexcept {

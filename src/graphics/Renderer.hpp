@@ -22,6 +22,7 @@ public:
 
 	[[nodiscard]] std::string GetDescription() const noexcept;
 
+	void SetDepthTestEnabled( bool enabled ) noexcept;
 	void SetShader( const Shader& shader ) noexcept;
 	void SetViewport( int x, int y, int width, int height ) noexcept;
 
