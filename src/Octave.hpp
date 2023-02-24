@@ -8,6 +8,7 @@
 #include "Config.hpp"
 #include "Camera.hpp"
 
+#include "core/Log.hpp"
 #include "core/Platform.hpp"
 #include "core/Window.hpp"
 

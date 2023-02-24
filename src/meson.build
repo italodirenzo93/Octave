@@ -40,6 +40,8 @@ source += [
 
 # Core
 source += [
+	'core/Log.cpp',
+	'core/Log.hpp',
 	'core/Platform.hpp',
 	'core/Window.cpp',
 	'core/Window.hpp',
@@ -74,9 +76,10 @@ stb_image_dep = subproject('stb_image').get_variable('stb_image_dep')
 
 glfw3_dep = dependency('glfw3')
 glm_dep = dependency('glm')
+spdlog_dep = dependency('spdlog')
 
 octave = static_library(
-	'octave',
+	'Octave',
 	source,
 	include_directories: include_directories(''),
 	dependencies: [
@@ -84,6 +87,7 @@ octave = static_library(
 		glfw3_dep,
 		glm_dep,
 		simpleini_dep,
+		spdlog_dep,
 		stb_image_dep
 	],
 	cpp_pch: ['pch/pch.hpp', 'pch/pch.cpp']
@@ -97,6 +101,7 @@ octave_dep = declare_dependency(
 		glfw3_dep,
 		glm_dep,
 		simpleini_dep,
+		spdlog_dep,
 		stb_image_dep
 	]
 )

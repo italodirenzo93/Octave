@@ -13,6 +13,8 @@ public:
 		window_->AddCloseCallback( [this]() { Exit(); } );
 
 		m_renderer = make_unique<Octave::Renderer>();
+
+		Octave::Log::Info( "Hello World!" );
 	}
 
 	void OnUpdate() override {

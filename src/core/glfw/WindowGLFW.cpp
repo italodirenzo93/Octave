@@ -8,23 +8,27 @@
 
 #include "Config.hpp"
 #include "GLFWError.hpp"
+#include "core/Log.hpp"
 
 namespace Octave::Impl {
 
 static uint32_t g_window_count = 0;
 
 static void ErrorCallback( int error_code, const char* description ) {
-	std::cerr << "GLFW Error - " << error_code << std::endl << description << std::endl;
+	Log::GetCoreLogger()->error( "GLFW Error {} - {}", error_code, description );
 }
 
 WindowGLFW::WindowGLFW( const WindowOptions& options ) {
 	// Init GLFW
 	if ( g_window_count == 0 ) {
+		Log::GetCoreLogger()->trace( "Initializing GLFW" );
 		if ( !glfwInit() ) {
 			throw Exception( "Unable to initialize GLFW" );
 		}
-		glfwSetErrorCallback(ErrorCallback);
+		glfwSetErrorCallback( ErrorCallback );
 	}
+
+	Log::GetCoreLogger()->trace( "Creating GLFW window" );
 
 	// Set defaults as a baseline
 	glfwDefaultWindowHints();
@@ -36,7 +40,7 @@ WindowGLFW::WindowGLFW( const WindowOptions& options ) {
 	glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
 	glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE );
 
-#ifdef OCTAVE_DEBUG
+#ifdef OGT_DEBUG
 	glfwWindowHint( GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE );
 #endif
 
@@ -100,11 +104,13 @@ WindowGLFW::WindowGLFW( const WindowOptions& options ) {
 }
 
 WindowGLFW::~WindowGLFW() noexcept {
+	Log::GetCoreLogger()->trace( "Destroying GLFW window" );
 	glfwDestroyWindow( window_ );
 	g_window_count -= 1;
 
 	// Quit GLFW if no windows left
 	if ( g_window_count == 0 ) {
+		Log::GetCoreLogger()->trace( "Shutting down GLFW" );
 		glfwTerminate();
 	}
 }

@@ -5,11 +5,11 @@
 namespace Octave {
 
 PlatformName Platform::GetName() noexcept {
-#if defined( OCTAVE_PLATFORM_WINDOWS )
+#if defined( OGT_PLATFORM_WINDOWS )
 	return PlatformName::Windows;
-#elif defined( OCTAVE_PLATFORM_MACOS )
+#elif defined( OGT_PLATFORM_MACOS )
 	return PlatformName::Mac;
-#elif defined( OCTAVE_PLATFORM_LINUX )
+#elif defined( OGT_PLATFORM_LINUX )
 	return PlatformName::Linux;
 #else
 #error "Unsupported platform"

@@ -12,3 +12,4 @@ cmake-build-*
 subprojects/packagecache
 subprojects/glfw-3.3.8
 subprojects/glm-0.9.9.8
+subprojects/spdlog-1.11.0

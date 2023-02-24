@@ -1,5 +1,6 @@
 #include "Application.hpp"
 
+#include "core/Log.hpp"
 #include "input/glfw/InputSystemGLFW.hpp"
 
 namespace Octave {
@@ -8,6 +9,8 @@ Application::Application() : Application( 0, nullptr ) {
 }
 
 Application::Application( int argc, char* argv[] ) : is_running_( true ) {
+	Log::Init();
+
 	input_ = std::make_unique<Impl::InputSystemGLFW>();
 	window_ = Window::Create( WindowOptions() );
 }
