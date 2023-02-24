@@ -15,6 +15,9 @@ Application::Application( int argc, char* argv[] ) : is_running_( true ) {
 	input_ = std::make_unique<Impl::InputSystemGLFW>();
 	window_ = Window::Create( WindowOptions() );
 	graphics_ = std::make_unique<Impl::GraphicsSystemGL>();
+
+	// Set window close callback
+	window_->AddCloseCallback( [this]() { Exit(); } );
 }
 
 Application::~Application() noexcept {

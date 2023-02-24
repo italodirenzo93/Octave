@@ -30,8 +30,6 @@ public:
 	void OnInitialize() override {
 		Octave::Log::Info( "Hello World!" );
 
-		GetWindow().AddCloseCallback( [this]() { Exit(); } );
-
 		m_renderer = GetGraphicsSystem().CreateRenderer();
 		m_renderer->SetDepthTestEnabled( false );
 
