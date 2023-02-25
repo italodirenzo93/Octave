@@ -1,82 +1,6 @@
-# Top-level
-source = [
-	'Application.cpp',
-	'Application.hpp',
-	'Camera.cpp',
-	'Camera.hpp',
-	'Config.cpp',
-	'Config.hpp',
-	'EntryPoint.hpp',
-	'Exception.cpp',
-	'Exception.hpp',
-	'Octave.hpp'
-]
-
-# Graphics
-source += [
-	'graphics/GraphicsSystem.hpp',
-	'graphics/IndexBuffer.cpp',
-	'graphics/IndexBuffer.hpp',
-	'graphics/Mesh.cpp',
-	'graphics/Mesh.hpp',
-	'graphics/Model.cpp',
-	'graphics/Model.hpp',
-	'graphics/Renderer.hpp',
-	'graphics/Shader.cpp',
-	'graphics/Shader.hpp',
-	'graphics/Texture.cpp',
-	'graphics/Texture.hpp',
-	'graphics/VertexBuffer.cpp',
-	'graphics/VertexBuffer.hpp',
-	'graphics/OpenGL/GraphicsSystemGL.cpp',
-	'graphics/OpenGL/GraphicsSystemGL.hpp',
-	'graphics/OpenGL/RendererGL.cpp',
-	'graphics/OpenGL/RendererGL.hpp'
-]
-
-# Helpers
-source += [
-	'helpers/GeometricPrimitive.cpp',
-	'helpers/GeometricPrimitive.hpp',
-	'helpers/StepTimer.cpp',
-	'helpers/StepTimer.hpp',
-]
-
-# Core
-source += [
-	'core/Log.cpp',
-	'core/Log.hpp',
-	'core/Platform.hpp',
-	'core/Window.cpp',
-	'core/Window.hpp',
-	'core/glfw/GLFWError.cpp',
-	'core/glfw/GLFWError.hpp',
-	'core/glfw/PlatformGLFW.cpp',
-	'core/glfw/WindowGLFW.cpp',
-	'core/glfw/WindowGLFW.hpp'
-]
-
-# Input
-source += [
-	'input/Gamepad.hpp',
-	'input/InputSystem.hpp',
-	'input/glfw/GamepadGLFW.cpp',
-	'input/glfw/GamepadGLFW.hpp',
-	'input/glfw/InputSystemGLFW.cpp',
-	'input/glfw/InputSystemGLFW.hpp'
-]
-
-# Resources
-source += [
-	'resources/ResourceManager.hpp',
-	'resources/ShaderManager.cpp',
-	'resources/ShaderManager.hpp'
-]
-
 glad_dep = subproject('glad').get_variable('glad_dep')
 simpleini_dep = subproject('simpleini').get_variable('simpleini_dep')
 stb_image_dep = subproject('stb_image').get_variable('stb_image_dep')
-# imgui = subproject('imgui').get_variable('imgui_dep')
 
 glfw3_dep = dependency('glfw3')
 glm_dep = dependency('glm')
@@ -84,7 +8,70 @@ spdlog_dep = dependency('spdlog')
 
 octave = static_library(
 	'Octave',
-	source,
+	[
+		# Top-level
+		'Application.cpp',
+		'Application.hpp',
+		'Camera.cpp',
+		'Camera.hpp',
+		'Config.cpp',
+		'Config.hpp',
+		'EntryPoint.hpp',
+		'Exception.cpp',
+		'Exception.hpp',
+		'Octave.hpp',
+
+		# Core
+		'core/Log.cpp',
+		'core/Log.hpp',
+		'core/Platform.hpp',
+		'core/Window.cpp',
+		'core/Window.hpp',
+		'core/glfw/GLFWError.cpp',
+		'core/glfw/GLFWError.hpp',
+		'core/glfw/PlatformGLFW.cpp',
+		'core/glfw/WindowGLFW.cpp',
+		'core/glfw/WindowGLFW.hpp',
+
+		# Graphics
+		'graphics/GraphicsSystem.hpp',
+		'graphics/IndexBuffer.cpp',
+		'graphics/IndexBuffer.hpp',
+		'graphics/Mesh.cpp',
+		'graphics/Mesh.hpp',
+		'graphics/Model.cpp',
+		'graphics/Model.hpp',
+		'graphics/Renderer.hpp',
+		'graphics/Shader.cpp',
+		'graphics/Shader.hpp',
+		'graphics/Texture.cpp',
+		'graphics/Texture.hpp',
+		'graphics/VertexBuffer.cpp',
+		'graphics/VertexBuffer.hpp',
+		'graphics/OpenGL/GraphicsSystemGL.cpp',
+		'graphics/OpenGL/GraphicsSystemGL.hpp',
+		'graphics/OpenGL/RendererGL.cpp',
+		'graphics/OpenGL/RendererGL.hpp',
+
+		# Helpers
+		'helpers/GeometricPrimitive.cpp',
+		'helpers/GeometricPrimitive.hpp',
+		'helpers/StepTimer.cpp',
+		'helpers/StepTimer.hpp',
+
+		# Input
+		'input/Gamepad.hpp',
+		'input/InputSystem.hpp',
+		'input/glfw/GamepadGLFW.cpp',
+		'input/glfw/GamepadGLFW.hpp',
+		'input/glfw/InputSystemGLFW.cpp',
+		'input/glfw/InputSystemGLFW.hpp',
+
+		# Resources
+		'resources/ResourceManager.hpp',
+		'resources/ShaderManager.cpp',
+		'resources/ShaderManager.hpp',
+	],
 	include_directories: include_directories(''),
 	dependencies: [
 		glad_dep,

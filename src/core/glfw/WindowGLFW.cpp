@@ -86,7 +86,7 @@ WindowGLFW::WindowGLFW( const WindowOptions& options ) {
 
 	glfwMakeContextCurrent( window_ );
 
-	SetSyncInterval( config.GetSyncInterval() );
+	glfwSwapInterval( config.GetSyncInterval() );
 
 	// Pass a pointer to this class instance to the window
 	// so we can access in from our callback functions
