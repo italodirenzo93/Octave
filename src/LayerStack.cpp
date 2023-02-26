@@ -1,6 +1,7 @@
 #include "pch/pch.hpp"
 #include "LayerStack.hpp"
 
+
 namespace Octave {
 
 LayerStack::LayerStack() noexcept {
@@ -15,7 +16,7 @@ LayerStack& LayerStack::PushLayer( LayerPtr layer ) noexcept {
 LayerStack::LayerPtr LayerStack::PopLayer() noexcept {
 	if ( layers_.empty() ) return nullptr;
 
-	auto ptr = std::move(*(insert_pos_));
+	auto ptr = std::move( *insert_pos_ );
 
 	layers_.erase( insert_pos_ );
 

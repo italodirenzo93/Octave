@@ -13,7 +13,12 @@ public:
 	using LayerPtr = std::unique_ptr<Layer>;
 
 	LayerStack() noexcept;
+	LayerStack( const LayerStack& other ) = delete;
+	LayerStack( LayerStack&& other ) noexcept = default;
 	~LayerStack() noexcept = default;
+
+	LayerStack& operator=( const LayerStack& other ) = delete;
+	LayerStack& operator=( LayerStack&& other ) noexcept = default;
 
 	LayerStack& PushLayer( LayerPtr layer ) noexcept;
 	[[nodiscard]] LayerPtr PopLayer() noexcept;
