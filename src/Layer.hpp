@@ -6,6 +6,9 @@
 namespace Octave {
 
 class Layer {
+	friend class Application;
+	friend class LayerStack;
+
 public:
 	explicit Layer( std::string name = "Layer" ) noexcept;
 	Layer( const Layer& other ) noexcept = default;
@@ -20,6 +23,7 @@ public:
 
 	void SetEnabled( bool enabled ) noexcept;
 
+protected:
 	virtual void OnAttach() {}
 	virtual void OnDetach() {}
 	virtual void OnEnabled() {}
@@ -27,7 +31,6 @@ public:
 	virtual void OnUpdate() {}
 	virtual void OnEvent() {}
 
-protected:
 	std::string name_;
 	bool enabled_;
 };

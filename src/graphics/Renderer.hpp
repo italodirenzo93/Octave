@@ -21,6 +21,7 @@ public:
 					  const IndexBuffer& ibo ) const noexcept = 0;
 
 	[[nodiscard]] virtual std::string GetDescription() const noexcept = 0;
+	[[nodiscard]] virtual std::array<int, 4> GetViewport() const noexcept = 0;
 
 	virtual void SetDepthTestEnabled( bool enabled ) noexcept = 0;
 	virtual void SetViewport( int x, int y, int width, int height ) noexcept = 0;

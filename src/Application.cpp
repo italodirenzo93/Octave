@@ -20,14 +20,15 @@ Application::Application( int argc, char* argv[] ) : is_running_( true ) {
 	window_->AddCloseCallback( [this]() { Exit(); } );
 }
 
-Application::~Application() noexcept {
-}
-
 void Application::Run() {
 	OnInitialize();
 	while ( is_running_ ) {
 		window_->PollEvents();
-		OnUpdate();
+
+		for ( const auto& layer : layers_ ) {
+			layer->OnUpdate();
+		}
+
 		window_->SwapBuffers();
 	}
 	OnExit();
@@ -37,13 +38,13 @@ void Application::Exit() {
 	is_running_ = false;
 }
 
-void Application::OnInitialize() {
+Application& Application::PushLayer( LayerStack::LayerPtr layer ) noexcept {
+	layers_.PushLayer( std::move( layer ) );
+	return *this;
 }
 
-void Application::OnUpdate() {
-}
-
-void Application::OnExit() noexcept {
+LayerStack::LayerPtr Application::PopLayer() noexcept {
+	return layers_.PopLayer();
 }
 
 }  // namespace Octave

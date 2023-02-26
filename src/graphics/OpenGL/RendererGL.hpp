@@ -20,6 +20,7 @@ public:
 					  const IndexBuffer& ibo ) const noexcept override;
 
 	[[nodiscard]] std::string GetDescription() const noexcept override;
+	[[nodiscard]] std::array<int, 4> GetViewport() const noexcept override;
 
 	void SetDepthTestEnabled( bool enabled ) noexcept override;
 	void SetViewport( int x, int y, int width, int height ) noexcept override;

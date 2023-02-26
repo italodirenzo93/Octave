@@ -7,6 +7,8 @@
 #include "Exception.hpp"
 #include "Config.hpp"
 #include "Camera.hpp"
+#include "Layer.hpp"
+#include "LayerStack.hpp"
 
 #include "core/Log.hpp"
 #include "core/Platform.hpp"
