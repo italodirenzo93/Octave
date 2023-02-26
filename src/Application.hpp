@@ -5,6 +5,7 @@
 #include "input/InputSystem.hpp"
 #include "core/Platform.hpp"
 #include "graphics/GraphicsSystem.hpp"
+#include "LayerStack.hpp"
 // clang-format on
 
 namespace Octave {
@@ -25,8 +26,6 @@ public:
 	void Run();
 	void Exit();
 
-	// Fields
-
 protected:
 	// Methods
 	virtual void OnInitialize();
@@ -34,10 +33,11 @@ protected:
 	virtual void OnExit() noexcept;
 
 private:
-	// Fields
 	std::unique_ptr<Window> window_;
 	std::unique_ptr<InputSystem> input_;
 	std::unique_ptr<GraphicsSystem> graphics_;
+    
+    LayerStack layers_;
 
 	bool is_running_;
 

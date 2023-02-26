@@ -19,3 +19,4 @@ endif
 
 subdir('src')
 subdir('examples')
+subdir('tests')

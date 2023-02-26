@@ -57,7 +57,7 @@ Config::Config() noexcept {
 		}
 	} else {
 		// Try to copy template
-		if ( !fs::copy_file( kConfigTemplate, configFile ) ) {
+		if ( !fs::exists(kConfigTemplate) || !fs::copy_file( kConfigTemplate, configFile ) ) {
 			// Could not copy template, set built-in defaults
 			SetDefaultConfig( ini_ );
 			result = ini_.SaveFile( configFile );

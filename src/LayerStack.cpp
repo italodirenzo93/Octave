@@ -8,12 +8,18 @@ LayerStack::LayerStack() noexcept {
 }
 
 LayerStack& LayerStack::PushLayer( LayerPtr layer ) noexcept {
-	insert_pos_ = layers_.emplace( insert_pos_, layer );
+	insert_pos_ = layers_.emplace( insert_pos_, std::move( layer ) );
 	return *this;
 }
 
 LayerStack::LayerPtr LayerStack::PopLayer() noexcept {
-	return nullptr;
+	if ( layers_.empty() ) return nullptr;
+
+	auto ptr = std::move(*(insert_pos_));
+
+	layers_.erase( insert_pos_ );
+
+	return ptr;
 }
 
 }  // namespace Octave
