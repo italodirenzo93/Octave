@@ -19,6 +19,10 @@ octave = static_library(
 		'EntryPoint.hpp',
 		'Exception.cpp',
 		'Exception.hpp',
+		'Layer.cpp',
+		'Layer.hpp',
+		'LayerStack.cpp',
+		'LayerStack.hpp',
 		'Octave.hpp',
 
 		# Core
