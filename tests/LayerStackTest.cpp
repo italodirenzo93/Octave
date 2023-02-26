@@ -23,6 +23,19 @@ TEST_CASE( "move constructor", "[LayerStack]" ) {
 	REQUIRE( ( *( stack2.begin() + 1 ) )->GetName() == "Layer 1" );
 }
 
+TEST_CASE( "move assignment operator", "[LayerStack]" ) {
+	LayerStack stack1;
+	stack1.PushLayer( make_unique<Layer>( "Layer 1" ) )
+		.PushLayer( make_unique<Layer>( "Layer 2" ) );
+
+	LayerStack stack2 = std::move( stack1 );
+
+	REQUIRE( stack1.GetSize() == 0 );
+	REQUIRE( stack2.GetSize() == 2 );
+	REQUIRE( ( *stack2.begin() )->GetName() == "Layer 2" );
+	REQUIRE( ( *( stack2.begin() + 1 ) )->GetName() == "Layer 1" );
+}
+
 TEST_CASE( "pushes a layer onto the front of the stack", "[LayerStack]" ) {
 	LayerStack stack;
 	stack.PushLayer( make_unique<Layer>( "Bottom Layer" ) )
