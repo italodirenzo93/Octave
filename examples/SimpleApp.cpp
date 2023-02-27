@@ -49,6 +49,14 @@ public:
 			layout, { { 0.0f, 1.0f }, { 1.0f, -1.0f }, { -1.0f, -1.0f } } );
 	}
 
+	void OnAttach() override {
+		Octave::Log::Info( "Attaching SimpleApp layer" );
+	}
+
+	void OnDetach() override {
+		Octave::Log::Info( "Detaching SimpleApp layer" );
+	}
+
 	void OnUpdate() override {
 		m_renderer_->Clear();
 

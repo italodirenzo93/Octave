@@ -15,7 +15,7 @@ public:
 	// Constructors
 	Application();
 	Application( int argc, char* argv[] );
-	virtual ~Application() noexcept = default;
+	virtual ~Application() noexcept;
 
 	// Getter/setter pairs
 	[[nodiscard]] Window& GetWindow() const noexcept { return *window_; }
@@ -32,7 +32,7 @@ protected:
 	virtual void OnExit() noexcept {};
 
 	Application& PushLayer( LayerStack::LayerPtr layer ) noexcept;
-	[[nodiscard]] LayerStack::LayerPtr PopLayer() noexcept;
+	LayerStack::LayerPtr PopLayer() noexcept;
 
 private:
 	std::unique_ptr<Window> window_;

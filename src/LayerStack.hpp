@@ -21,7 +21,7 @@ public:
 	LayerStack& operator=( LayerStack&& other ) noexcept = default;
 
 	LayerStack& PushLayer( LayerPtr layer ) noexcept;
-	[[nodiscard]] LayerPtr PopLayer() noexcept;
+	LayerPtr PopLayer() noexcept;
 
 	[[nodiscard]] std::vector<LayerPtr>::iterator begin() noexcept { return layers_.begin(); }
 	[[nodiscard]] std::vector<LayerPtr>::iterator end() noexcept { return layers_.end(); }

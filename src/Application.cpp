@@ -20,6 +20,14 @@ Application::Application( int argc, char* argv[] ) : is_running_( true ) {
 	window_->AddCloseCallback( [this]() { Exit(); } );
 }
 
+Application::~Application() noexcept {
+	// Release all the layers
+	while ( !layers_.IsEmpty() ) {
+		PopLayer();
+	}
+}
+
+
 void Application::Run() {
 	OnInitialize();
 	while ( is_running_ ) {
@@ -39,12 +47,15 @@ void Application::Exit() {
 }
 
 Application& Application::PushLayer( LayerStack::LayerPtr layer ) noexcept {
+	layer->OnAttach();
 	layers_.PushLayer( std::move( layer ) );
 	return *this;
 }
 
 LayerStack::LayerPtr Application::PopLayer() noexcept {
-	return layers_.PopLayer();
+	auto layer = layers_.PopLayer();
+	layer->OnDetach();
+	return layer;
 }
 
 }  // namespace Octave
