@@ -1,10 +1,7 @@
 #include "pch/pch.hpp"
 #include "WindowGLFW.hpp"
 
-// clang-format off
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
-// clang-format on
 
 #include "Config.hpp"
 #include "GLFWError.hpp"
@@ -28,7 +25,7 @@ WindowGLFW::WindowGLFW( const WindowOptions& options ) {
 		glfwSetErrorCallback( ErrorCallback );
 	}
 
-	Log::GetCoreLogger()->trace( "Creating GLFW window" );
+	Log::GetCoreLogger()->trace( "Creating GLFW window {}x{} Title: {}", options.width, options.height, options.title );
 
 	// Set defaults as a baseline
 	glfwDefaultWindowHints();
@@ -43,8 +40,6 @@ WindowGLFW::WindowGLFW( const WindowOptions& options ) {
 #ifdef OGT_DEBUG
 	glfwWindowHint( GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE );
 #endif
-
-	const Config& config = Config::Instance();
 
 	// Fullscreen
 	GLFWmonitor* monitor = nullptr;
@@ -84,10 +79,6 @@ WindowGLFW::WindowGLFW( const WindowOptions& options ) {
 	// Increment window count
 	g_window_count += 1;
 
-	glfwMakeContextCurrent( window_ );
-
-	glfwSwapInterval( config.GetSyncInterval() );
-
 	// Pass a pointer to this class instance to the window
 	// so we can access in from our callback functions
 	glfwSetWindowUserPointer( window_, this );
@@ -95,12 +86,6 @@ WindowGLFW::WindowGLFW( const WindowOptions& options ) {
 	// Set callback wrapper functions
 	glfwSetFramebufferSizeCallback( window_, WindowSizeCallback );
 	glfwSetWindowCloseCallback( window_, CloseCallback );
-
-	// Initialize Open GL extension loader
-	if ( !gladLoadGLLoader(
-			 reinterpret_cast<GLADloadproc>( glfwGetProcAddress ) ) ) {
-		throw Exception( "Unable to initialize GLAD OpenGL extension loader" );
-	}
 }
 
 WindowGLFW::~WindowGLFW() noexcept {
@@ -137,10 +122,6 @@ Window& WindowGLFW::SetSyncInterval( int interval ) noexcept {
 
 void WindowGLFW::Close() const noexcept {
 	glfwSetWindowShouldClose( window_, GLFW_TRUE );
-}
-
-void WindowGLFW::SwapBuffers() noexcept {
-	glfwSwapBuffers( window_ );
 }
 
 void WindowGLFW::PollEvents() noexcept {

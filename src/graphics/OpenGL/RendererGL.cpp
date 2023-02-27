@@ -88,7 +88,7 @@ std::string RendererGL::GetDescription() const noexcept {
 std::array<int, 4> RendererGL::GetViewport() const noexcept {
 	std::array<int, 4> vp;
 	glGetIntegerv( GL_VIEWPORT, vp.data() );
-	return std::move( vp );
+	return vp;
 }
 
 void RendererGL::SetDepthTestEnabled( bool enabled ) noexcept {

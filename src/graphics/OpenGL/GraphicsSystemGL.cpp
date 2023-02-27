@@ -1,9 +1,13 @@
 #include "pch/pch.hpp"
 #include "GraphicsSystemGL.hpp"
 
+// clang-format off
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
+// clang-format on
 
 #include "core/Log.hpp"
+#include "Config.hpp"
 #include "RendererGL.hpp"
 
 using namespace std;
@@ -13,90 +17,23 @@ namespace Octave::Impl {
 static void APIENTRY DebugCallback( GLenum source, GLenum type, unsigned int id,
 									GLenum severity, GLsizei length,
 									const char* message,
-									const void* userParam ) {
-	// ignore non-significant error/warning codes
-	if ( id == 131169 || id == 131185 || id == 131218 || id == 131204 ) return;
+                                   const void* userParam );
 
-	string str_source;
-	switch ( source ) {
-		case GL_DEBUG_SOURCE_API:
-			str_source = "API";
-			break;
-		case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
-			str_source = "Window System";
-			break;
-		case GL_DEBUG_SOURCE_SHADER_COMPILER:
-			str_source = "Shader Compiler";
-			break;
-		case GL_DEBUG_SOURCE_THIRD_PARTY:
-			str_source = "Third Party";
-			break;
-		case GL_DEBUG_SOURCE_APPLICATION:
-			str_source = "Application";
-			break;
-		case GL_DEBUG_SOURCE_OTHER:
-			str_source = "Other";
-			break;
-	}
+GraphicsSystemGL::GraphicsSystemGL( GLFWwindow* window ) : window_(window) {
+    Log::GetCoreLogger()->trace("Creating OpenGL 4.1 Core rendering context");
+    
+    const Config& config = Config::Instance();
+    
+    glfwMakeContextCurrent( window_ );
+    glfwSwapInterval( config.GetSyncInterval() );
+    
+    // Initialize Open GL extension loader
+    if ( !gladLoadGLLoader(
+             reinterpret_cast<GLADloadproc>( glfwGetProcAddress ) ) ) {
+        throw Exception( "Unable to initialize GLAD OpenGL extension loader" );
+    }
 
-	string str_type;
-	switch ( type ) {
-		case GL_DEBUG_TYPE_ERROR:
-			str_type = "Error";
-			break;
-		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-			str_type = "Deprecated Behaviour";
-			break;
-		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-			str_type = "Undefined Behaviour";
-			break;
-		case GL_DEBUG_TYPE_PORTABILITY:
-			str_type = "Portability";
-			break;
-		case GL_DEBUG_TYPE_PERFORMANCE:
-			str_type = "Performance";
-			break;
-		case GL_DEBUG_TYPE_MARKER:
-			str_type = "Marker";
-			break;
-		case GL_DEBUG_TYPE_PUSH_GROUP:
-			str_type = "Push Group";
-			break;
-		case GL_DEBUG_TYPE_POP_GROUP:
-			str_type = "Pop Group";
-			break;
-		case GL_DEBUG_TYPE_OTHER:
-			str_type = "Other";
-			break;
-	}
-
-	string str_severity;
-	spdlog::level::level_enum log_level = spdlog::level::trace;
-	switch ( severity ) {
-		case GL_DEBUG_SEVERITY_HIGH:
-			str_severity = "high";
-			log_level = spdlog::level::critical;
-			break;
-		case GL_DEBUG_SEVERITY_MEDIUM:
-			str_severity = "medium";
-			log_level = spdlog::level::err;
-			break;
-		case GL_DEBUG_SEVERITY_LOW:
-			str_severity = "low";
-			log_level = spdlog::level::warn;
-			break;
-		case GL_DEBUG_SEVERITY_NOTIFICATION:
-			str_severity = "notification";
-			log_level = spdlog::level::info;
-			break;
-	}
-
-	Log::GetCoreLogger()->log(
-		log_level, "OpenGL Error {} | Source: {} Type: {} Severity: {} | {}",
-		id, str_source, str_type, str_severity, message );
-}
-
-GraphicsSystemGL::GraphicsSystemGL() {
+    // Get context information
 	int context_flags;
 	glGetIntegerv( GL_CONTEXT_FLAGS, &context_flags );
 
@@ -110,7 +47,13 @@ GraphicsSystemGL::GraphicsSystemGL() {
 	}
 }
 
-GraphicsSystemGL::~GraphicsSystemGL() noexcept {}
+GraphicsSystemGL::~GraphicsSystemGL() noexcept {
+    Log::GetCoreLogger()->trace("Deleting OpenGL rendering context");
+}
+
+void GraphicsSystemGL::SwapBuffers() {
+    glfwSwapBuffers( window_ );
+}
 
 std::string GraphicsSystemGL::TryDequeueError() noexcept {
 	const GLenum error = glGetError();
@@ -139,6 +82,92 @@ std::string GraphicsSystemGL::TryDequeueError() noexcept {
 
 std::unique_ptr<Renderer> GraphicsSystemGL::CreateRenderer() noexcept {
 	return make_unique<RendererGL>();
+}
+
+static void APIENTRY DebugCallback( GLenum source, GLenum type, unsigned int id,
+                                    GLenum severity, GLsizei length,
+                                    const char* message,
+                                    const void* userParam ) {
+    // ignore non-significant error/warning codes
+    if ( id == 131169 || id == 131185 || id == 131218 || id == 131204 ) return;
+
+    string str_source;
+    switch ( source ) {
+        case GL_DEBUG_SOURCE_API:
+            str_source = "API";
+            break;
+        case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+            str_source = "Window System";
+            break;
+        case GL_DEBUG_SOURCE_SHADER_COMPILER:
+            str_source = "Shader Compiler";
+            break;
+        case GL_DEBUG_SOURCE_THIRD_PARTY:
+            str_source = "Third Party";
+            break;
+        case GL_DEBUG_SOURCE_APPLICATION:
+            str_source = "Application";
+            break;
+        case GL_DEBUG_SOURCE_OTHER:
+            str_source = "Other";
+            break;
+    }
+
+    string str_type;
+    switch ( type ) {
+        case GL_DEBUG_TYPE_ERROR:
+            str_type = "Error";
+            break;
+        case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+            str_type = "Deprecated Behaviour";
+            break;
+        case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+            str_type = "Undefined Behaviour";
+            break;
+        case GL_DEBUG_TYPE_PORTABILITY:
+            str_type = "Portability";
+            break;
+        case GL_DEBUG_TYPE_PERFORMANCE:
+            str_type = "Performance";
+            break;
+        case GL_DEBUG_TYPE_MARKER:
+            str_type = "Marker";
+            break;
+        case GL_DEBUG_TYPE_PUSH_GROUP:
+            str_type = "Push Group";
+            break;
+        case GL_DEBUG_TYPE_POP_GROUP:
+            str_type = "Pop Group";
+            break;
+        case GL_DEBUG_TYPE_OTHER:
+            str_type = "Other";
+            break;
+    }
+
+    string str_severity;
+    spdlog::level::level_enum log_level = spdlog::level::trace;
+    switch ( severity ) {
+        case GL_DEBUG_SEVERITY_HIGH:
+            str_severity = "high";
+            log_level = spdlog::level::critical;
+            break;
+        case GL_DEBUG_SEVERITY_MEDIUM:
+            str_severity = "medium";
+            log_level = spdlog::level::err;
+            break;
+        case GL_DEBUG_SEVERITY_LOW:
+            str_severity = "low";
+            log_level = spdlog::level::warn;
+            break;
+        case GL_DEBUG_SEVERITY_NOTIFICATION:
+            str_severity = "notification";
+            log_level = spdlog::level::info;
+            break;
+    }
+
+    Log::GetCoreLogger()->log(
+        log_level, "OpenGL Error {} | Source: {} Type: {} Severity: {} | {}",
+        id, str_source, str_type, str_severity, message );
 }
 
 }  // namespace Octave::Impl

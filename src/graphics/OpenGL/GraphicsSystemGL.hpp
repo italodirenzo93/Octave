@@ -3,12 +3,14 @@
 
 #include "graphics/GraphicsSystem.hpp"
 
+struct GLFWwindow;
+
 namespace Octave::Impl {
 
 class GraphicsSystemGL : public GraphicsSystem {
 public:
 	// Constructors
-	GraphicsSystemGL();
+	explicit GraphicsSystemGL( GLFWwindow* window );
 	GraphicsSystemGL( const GraphicsSystemGL& other ) = delete;
 	GraphicsSystemGL( GraphicsSystemGL&& other ) noexcept = delete;
 	~GraphicsSystemGL() noexcept override;
@@ -18,9 +20,14 @@ public:
 	GraphicsSystemGL& operator=( GraphicsSystemGL&& other ) noexcept = delete;
 
 	// Methods
+    void SwapBuffers() override;
+    
 	[[nodiscard]] std::string TryDequeueError() noexcept override;
 
 	[[nodiscard]] std::unique_ptr<Renderer> CreateRenderer() noexcept override;
+    
+private:
+    GLFWwindow* window_;
 };
 
 }

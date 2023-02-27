@@ -33,7 +33,6 @@ public:
 
 	// Actions
 	virtual void Close() const noexcept = 0;
-	virtual void SwapBuffers() noexcept = 0;
 	virtual void PollEvents() noexcept = 0;
 
 	// Callbacks

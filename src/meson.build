@@ -38,6 +38,7 @@ octave = static_library(
 		'core/glfw/WindowGLFW.hpp',
 
 		# Graphics
+        'graphics/GraphicsSystem.cpp',
 		'graphics/GraphicsSystem.hpp',
 		'graphics/IndexBuffer.cpp',
 		'graphics/IndexBuffer.hpp',

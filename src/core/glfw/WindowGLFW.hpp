@@ -20,7 +20,6 @@ public:
 	Window& SetSyncInterval( int interval ) noexcept override;
 
 	void Close() const noexcept override;
-	void SwapBuffers() noexcept override;
 	void PollEvents() noexcept override;
 
 private:

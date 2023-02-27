@@ -2,7 +2,6 @@
 
 #include "core/Log.hpp"
 #include "input/glfw/InputSystemGLFW.hpp"
-#include "graphics/OpenGL/GraphicsSystemGL.hpp"
 
 namespace Octave {
 
@@ -14,7 +13,7 @@ Application::Application( int argc, char* argv[] ) : is_running_( true ) {
 
 	input_ = std::make_unique<Impl::InputSystemGLFW>();
 	window_ = Window::Create( WindowOptions() );
-	graphics_ = std::make_unique<Impl::GraphicsSystemGL>();
+    graphics_ = GraphicsSystem::Create( *window_ );
 
 	// Set window close callback
 	window_->AddCloseCallback( [this]() { Exit(); } );
@@ -37,7 +36,7 @@ void Application::Run() {
 			layer->OnUpdate();
 		}
 
-		window_->SwapBuffers();
+		graphics_->SwapBuffers();
 	}
 	OnExit();
 }
