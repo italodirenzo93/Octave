@@ -96,9 +96,9 @@ static unordered_map<string, shared_ptr<Texture>> texture_cache;
 // 	}
 
 // 	// Populate the buffers
-// 	vbo->SetData( { { LayoutSemantic::kPosition, 3, GL_FLOAT, false },
-// 					{ LayoutSemantic::kNormal, 3, GL_FLOAT, false },
-// 					{ LayoutSemantic::kTexCoord, 2, GL_FLOAT, false } },
+// 	vbo->SetData( { { VertexAttributeName::kPosition, 3, GL_FLOAT, false },
+// 					{ VertexAttributeName::kNormal, 3, GL_FLOAT, false },
+// 					{ VertexAttributeName::kTexCoord, 2, GL_FLOAT, false } },
 // 				  vertices );
 
 // 	ibo->SetData( indices );

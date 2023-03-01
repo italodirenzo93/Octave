@@ -28,7 +28,8 @@ struct VertexType {
 
 class SimpleAppLayer final : public Octave::Layer {
 public:
-	explicit SimpleAppLayer( const Octave::Application& app ) : Layer( "Default Layer" ) {
+	explicit SimpleAppLayer( const Octave::Application& app )
+		: Layer( "Default Layer" ) {
 		m_renderer_ = app.GetGraphicsSystem().CreateRenderer();
 		m_renderer_->SetDepthTestEnabled( false );
 
@@ -39,14 +40,17 @@ public:
 
 		m_shader_ = make_unique<Octave::Shader>();
 		m_shader_->CompileFromString( kVertexShaderSource,
-									 kFragmentShaderSource );
+									  kFragmentShaderSource );
 
 		const Octave::VertexBuffer::VertexLayout layout{
-			{ Octave::LayoutSemantic::kPosition, 2, GL_FLOAT, false } };
+			{ Octave::VertexAttributeName::kPosition, 2,
+			  Octave::VertexAttributeType::kFloat, false } };
 
-		m_vbo_ = make_unique<Octave::VertexBuffer>();
-		m_vbo_->SetData<VertexType>(
-			layout, { { 0.0f, 1.0f }, { 1.0f, -1.0f }, { -1.0f, -1.0f } } );
+		vector<VertexType> vertices{
+			{ 0.0f, 1.0f }, { 1.0f, -1.0f }, { -1.0f, -1.0f } };
+
+		m_vbo_ = app.GetGraphicsSystem().CreateVertexBuffer();
+		m_vbo_->SetData( layout, vertices );
 	}
 
 	void OnAttach() override {

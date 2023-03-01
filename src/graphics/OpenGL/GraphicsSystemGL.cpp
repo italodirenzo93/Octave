@@ -9,6 +9,7 @@
 #include "core/Log.hpp"
 #include "Config.hpp"
 #include "RendererGL.hpp"
+#include "VertexBufferGL.hpp"
 
 using namespace std;
 
@@ -21,12 +22,12 @@ static void APIENTRY DebugCallback( GLenum source, GLenum type, unsigned int id,
 
 GraphicsSystemGL::GraphicsSystemGL( GLFWwindow* window ) : window_(window) {
     Log::GetCoreLogger()->trace("Creating OpenGL 4.1 Core rendering context");
-    
+
     const Config& config = Config::Instance();
-    
+
     glfwMakeContextCurrent( window_ );
     glfwSwapInterval( config.GetSyncInterval() );
-    
+
     // Initialize Open GL extension loader
     if ( !gladLoadGLLoader(
              reinterpret_cast<GLADloadproc>( glfwGetProcAddress ) ) ) {
@@ -82,6 +83,10 @@ std::string GraphicsSystemGL::TryDequeueError() noexcept {
 
 std::unique_ptr<Renderer> GraphicsSystemGL::CreateRenderer() noexcept {
 	return make_unique<RendererGL>();
+}
+
+std::unique_ptr<VertexBuffer> GraphicsSystemGL::CreateVertexBuffer() noexcept {
+	return make_unique<VertexBufferGL>();
 }
 
 static void APIENTRY DebugCallback( GLenum source, GLenum type, unsigned int id,
