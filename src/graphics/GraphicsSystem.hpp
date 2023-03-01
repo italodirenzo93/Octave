@@ -7,6 +7,7 @@
 #include "core/Window.hpp"
 #include "Renderer.hpp"
 #include "VertexBuffer.hpp"
+#include "IndexBuffer.hpp"
 
 namespace Octave {
 
@@ -21,6 +22,7 @@ public:
 
 	[[nodiscard]] virtual std::unique_ptr<Renderer> CreateRenderer() noexcept = 0;
 	[[nodiscard]] virtual std::unique_ptr<VertexBuffer> CreateVertexBuffer() noexcept = 0;
+	[[nodiscard]] virtual std::unique_ptr<IndexBuffer> CreateIndexBuffer() noexcept = 0;
 
     static std::unique_ptr<GraphicsSystem> Create( const Window& window );
 };

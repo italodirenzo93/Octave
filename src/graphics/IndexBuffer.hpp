@@ -5,38 +5,22 @@
 
 namespace Octave {
 
-namespace Impl {
-	class RendererGL;
-}
-
 class IndexBuffer {
 	friend class Mesh;
-	friend class Impl::RendererGL;
 
 public:
-	IndexBuffer() noexcept;
-	IndexBuffer( const IndexBuffer& other ) noexcept;
-	IndexBuffer( IndexBuffer&& other ) noexcept;
-	~IndexBuffer() noexcept;
+	IndexBuffer() noexcept = default;
+	IndexBuffer( const IndexBuffer& other ) = default;
+	IndexBuffer( IndexBuffer&& other ) noexcept = default;
+	virtual ~IndexBuffer() noexcept = default;
 
-	[[nodiscard]] uint32_t GetElementCount() const noexcept {
-		return element_count_;
-	}
+	IndexBuffer& operator=( const IndexBuffer& other ) = default;
+	IndexBuffer& operator=( IndexBuffer&& other ) noexcept = default;
 
-	[[nodiscard]] std::vector<uint32_t> GetData() const noexcept;
+	[[nodiscard]] virtual uint32_t GetElementCount() const noexcept = 0;
+	[[nodiscard]] virtual std::vector<uint32_t> GetData() const noexcept = 0;
 
-	void SetData( std::initializer_list<uint32_t> initializerList ) noexcept;
-	void SetData( const std::vector<uint32_t>& indices ) noexcept;
-
-private:
-	uint32_t id_ = 0;
-	uint32_t element_count_ = 0;
-
-public:
-	IndexBuffer& operator=( const IndexBuffer& other ) noexcept;
-	IndexBuffer& operator=( IndexBuffer&& other ) noexcept;
-
-	bool operator==( const IndexBuffer& other ) const noexcept;
+	virtual void SetData( const std::vector<uint32_t>& indices ) noexcept = 0;
 };
 
 }  // namespace Octave

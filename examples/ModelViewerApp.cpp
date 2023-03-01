@@ -58,7 +58,7 @@ public:
 		// Load model file or basic cube if not provided
 		if ( file_name.empty() ) {
 			shared_ptr<VertexBuffer> vbo = app.GetGraphicsSystem().CreateVertexBuffer();
-			auto ibo = make_shared<IndexBuffer>();
+			shared_ptr<IndexBuffer> ibo = app.GetGraphicsSystem().CreateIndexBuffer();
 			auto diffuse = make_shared<Texture>();
 
 			GeometricPrimitive::CreateCube( *vbo, *ibo );
