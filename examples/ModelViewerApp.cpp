@@ -31,7 +31,8 @@ static glm::mat3 MakeNormalMatrix( const glm::mat4& model_matrix ) {
 
 class ApplicationLayer : public Layer {
 public:
-	ApplicationLayer( Application& app, const string& file_name ) : app_( app ) {
+	ApplicationLayer( Application& app, const string& file_name )
+		: app_( app ) {
 		renderer_ = app.GetGraphicsSystem().CreateRenderer();
 
 		pad_ = app.GetInputSystem().GetGamepad( 0 );
@@ -56,7 +57,7 @@ public:
 
 		// Load model file or basic cube if not provided
 		if ( file_name.empty() ) {
-			auto vbo = make_shared<VertexBuffer>();
+			shared_ptr<VertexBuffer> vbo = app.GetGraphicsSystem().CreateVertexBuffer();
 			auto ibo = make_shared<IndexBuffer>();
 			auto diffuse = make_shared<Texture>();
 
@@ -75,7 +76,7 @@ public:
 		model_matrix_ = glm::identity<glm::mat4>();
 
 		// Load floor
-		floor_vbo_ = make_unique<VertexBuffer>();
+		floor_vbo_ = app.GetGraphicsSystem().CreateVertexBuffer();
 		floor_texture_diffuse_ = make_unique<Texture>();
 		floor_texture_specular_ = make_unique<Texture>();
 

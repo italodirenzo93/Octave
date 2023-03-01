@@ -1,3 +1,4 @@
+#include "pch/pch.hpp"
 #include "RendererGL.hpp"
 
 #include <glad/glad.h>
@@ -6,6 +7,7 @@
 #include <sstream>
 
 #include "Config.hpp"
+#include "VertexBufferGL.hpp"
 
 using namespace std;
 
@@ -16,6 +18,7 @@ RendererGL::RendererGL() {
 
 	// Always enabled
 	glEnable( GL_DEPTH_TEST );
+	glDepthFunc( GL_LEQUAL );
 	glClearDepth( 1.0 );
 
 	if ( config.IsCullFaceEnabled() ) {
@@ -49,7 +52,7 @@ void RendererGL::Draw( const Shader& shader,
 					   const VertexBuffer& vbo ) const noexcept {
 	glUseProgram( shader.id_ );
 
-	glBindVertexArray( vbo.vao_ );
+	glBindVertexArray( ( dynamic_cast<const VertexBufferGL&>( vbo ) ).vao_ );
 
 	glDrawArrays( GL_TRIANGLES, 0, static_cast<int>( vbo.GetVertexCount() ) );
 
@@ -61,7 +64,7 @@ void RendererGL::Draw( const Shader& shader,
 void RendererGL::DrawIndexed( const Shader& shader, const VertexBuffer& vbo,
 							  const IndexBuffer& ibo ) const noexcept {
 	glUseProgram( shader.id_ );
-	glBindVertexArray( vbo.vao_ );
+	glBindVertexArray( ( dynamic_cast<const VertexBufferGL&>( vbo ) ).vao_ );
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo.id_ );
 
 	glDrawElements( GL_TRIANGLES, static_cast<int>( ibo.GetElementCount() ),
