@@ -40,7 +40,6 @@ octave = static_library(
 		# Graphics
         'graphics/GraphicsSystem.cpp',
 		'graphics/GraphicsSystem.hpp',
-		'graphics/IndexBuffer.cpp',
 		'graphics/IndexBuffer.hpp',
 		'graphics/Mesh.cpp',
 		'graphics/Mesh.hpp',
@@ -57,6 +56,8 @@ octave = static_library(
 		'graphics/OpenGL/GraphicsSystemGL.hpp',
 		'graphics/OpenGL/RendererGL.cpp',
 		'graphics/OpenGL/RendererGL.hpp',
+		'graphics/OpenGL/IndexBufferGL.cpp',
+		'graphics/OpenGL/IndexBufferGL.hpp',
 		'graphics/OpenGL/VertexBufferGL.cpp',
 		'graphics/OpenGL/VertexBufferGL.hpp',
 

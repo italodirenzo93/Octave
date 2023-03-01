@@ -8,6 +8,7 @@
 
 #include "Config.hpp"
 #include "VertexBufferGL.hpp"
+#include "IndexBufferGL.hpp"
 
 using namespace std;
 
@@ -65,7 +66,7 @@ void RendererGL::DrawIndexed( const Shader& shader, const VertexBuffer& vbo,
 							  const IndexBuffer& ibo ) const noexcept {
 	glUseProgram( shader.id_ );
 	glBindVertexArray( ( dynamic_cast<const VertexBufferGL&>( vbo ) ).vao_ );
-	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo.id_ );
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ( dynamic_cast<const IndexBufferGL&>( ibo ) ).id_ );
 
 	glDrawElements( GL_TRIANGLES, static_cast<int>( ibo.GetElementCount() ),
 					GL_UNSIGNED_INT, nullptr );
