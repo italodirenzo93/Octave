@@ -11,6 +11,8 @@
 #include "Config.hpp"
 #include "stb_include.h"
 
+#include "OpenGL/TextureGL.hpp"
+
 using namespace std;
 
 namespace Octave {
@@ -80,6 +82,8 @@ Shader& Shader::SetVec3( const std::string& name, float x, float y,
 
 Shader& Shader::SetTexture( const std::string& name, int index,
 							const Texture& texture ) noexcept {
+	const auto& gl_texture = dynamic_cast<const Impl::TextureGL&>( texture );
+
 	assert( index >= 0 );
 
 	glUseProgram( id_ );
@@ -89,7 +93,7 @@ Shader& Shader::SetTexture( const std::string& name, int index,
 	glUniform1i( location, index );
 
 	glActiveTexture( GL_TEXTURE0 + index );
-	glBindTexture( GL_TEXTURE_2D, texture.id_ );
+	glBindTexture( GL_TEXTURE_2D, gl_texture.GetId() );
 
 	glUseProgram( 0 );
 

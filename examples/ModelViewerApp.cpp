@@ -59,10 +59,10 @@ public:
 		if ( file_name.empty() ) {
 			shared_ptr<VertexBuffer> vbo = app.GetGraphicsSystem().CreateVertexBuffer();
 			shared_ptr<IndexBuffer> ibo = app.GetGraphicsSystem().CreateIndexBuffer();
-			auto diffuse = make_shared<Texture>();
+			shared_ptr<Texture> diffuse = app.GetGraphicsSystem().CreateTexture();
 
 			GeometricPrimitive::CreateCube( *vbo, *ibo );
-			diffuse->LoadFromFile( "./resources/textures/container.jpg" );
+			TextureManager::LoadFromFile( *diffuse, "resources/textures/container.jpg" );
 
 			Mesh cube_mesh;
 			cube_mesh.SetVertexBuffer( vbo );
@@ -77,14 +77,12 @@ public:
 
 		// Load floor
 		floor_vbo_ = app.GetGraphicsSystem().CreateVertexBuffer();
-		floor_texture_diffuse_ = make_unique<Texture>();
-		floor_texture_specular_ = make_unique<Texture>();
+		floor_texture_diffuse_ = app.GetGraphicsSystem().CreateTexture();
+		floor_texture_specular_ = app.GetGraphicsSystem().CreateTexture();
 
 		GeometricPrimitive::CreatePlane( *floor_vbo_ );
-		floor_texture_diffuse_->LoadFromFile(
-			"./resources/textures/wood_diffuse.png" );
-		floor_texture_specular_->LoadFromFile(
-			"./resources/textures/wood_specular.png" );
+		TextureManager::LoadFromFile( *floor_texture_diffuse_, "resources/textures/wood_diffuse.png" );
+		TextureManager::LoadFromFile( *floor_texture_specular_, "resources/textures/wood_specular.png" );
 
 		floor_position_ = glm::vec3( 0, -3, 0 );
 	}

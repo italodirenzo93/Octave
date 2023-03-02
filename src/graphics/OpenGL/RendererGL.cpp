@@ -53,7 +53,7 @@ void RendererGL::Draw( const Shader& shader,
 					   const VertexBuffer& vbo ) const noexcept {
 	glUseProgram( shader.id_ );
 
-	glBindVertexArray( ( dynamic_cast<const VertexBufferGL&>( vbo ) ).vao_ );
+	glBindVertexArray( ( dynamic_cast<const VertexBufferGL&>( vbo ) ).GetVaoId() );
 
 	glDrawArrays( GL_TRIANGLES, 0, static_cast<int>( vbo.GetVertexCount() ) );
 
@@ -65,8 +65,8 @@ void RendererGL::Draw( const Shader& shader,
 void RendererGL::DrawIndexed( const Shader& shader, const VertexBuffer& vbo,
 							  const IndexBuffer& ibo ) const noexcept {
 	glUseProgram( shader.id_ );
-	glBindVertexArray( ( dynamic_cast<const VertexBufferGL&>( vbo ) ).vao_ );
-	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ( dynamic_cast<const IndexBufferGL&>( ibo ) ).id_ );
+	glBindVertexArray( ( dynamic_cast<const VertexBufferGL&>( vbo ) ).GetVaoId() );
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ( dynamic_cast<const IndexBufferGL&>( ibo ) ).GetId() );
 
 	glDrawElements( GL_TRIANGLES, static_cast<int>( ibo.GetElementCount() ),
 					GL_UNSIGNED_INT, nullptr );

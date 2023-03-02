@@ -48,7 +48,6 @@ octave = static_library(
 		'graphics/Renderer.hpp',
 		'graphics/Shader.cpp',
 		'graphics/Shader.hpp',
-		'graphics/Texture.cpp',
 		'graphics/Texture.hpp',
 		'graphics/VertexBuffer.cpp',
 		'graphics/VertexBuffer.hpp',
@@ -58,6 +57,8 @@ octave = static_library(
 		'graphics/OpenGL/RendererGL.hpp',
 		'graphics/OpenGL/IndexBufferGL.cpp',
 		'graphics/OpenGL/IndexBufferGL.hpp',
+		'graphics/OpenGL/TextureGL.cpp',
+		'graphics/OpenGL/TextureGL.hpp',
 		'graphics/OpenGL/VertexBufferGL.cpp',
 		'graphics/OpenGL/VertexBufferGL.hpp',
 
@@ -79,6 +80,8 @@ octave = static_library(
 		'resources/ResourceManager.hpp',
 		'resources/ShaderManager.cpp',
 		'resources/ShaderManager.hpp',
+		'resources/TextureManager.cpp',
+		'resources/TextureManager.hpp'
 	],
 	include_directories: include_directories(''),
 	dependencies: [
