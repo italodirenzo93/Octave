@@ -11,6 +11,7 @@
 #include "RendererGL.hpp"
 #include "VertexBufferGL.hpp"
 #include "IndexBufferGL.hpp"
+#include "TextureGL.hpp"
 
 using namespace std;
 
@@ -92,6 +93,10 @@ std::unique_ptr<VertexBuffer> GraphicsSystemGL::CreateVertexBuffer() noexcept {
 
 std::unique_ptr<IndexBuffer> GraphicsSystemGL::CreateIndexBuffer() noexcept {
 	return make_unique<IndexBufferGL>();
+}
+
+std::unique_ptr<Texture> GraphicsSystemGL::CreateTexture() noexcept {
+	return make_unique<TextureGL>();
 }
 
 static void APIENTRY DebugCallback( GLenum source, GLenum type, unsigned int id,

@@ -27,12 +27,9 @@
 
 #include "resources/ResourceManager.hpp"
 #include "resources/ShaderManager.hpp"
+#include "resources/TextureManager.hpp"
 
 #include "helpers/GeometricPrimitive.hpp"
 #include "helpers/StepTimer.hpp"
-
-#if defined( _WIN32 ) && defined( CreateWindow )
-#undef CreateWindow
-#endif
 
 #endif  // OCTAVE_OCTAVE_HPP

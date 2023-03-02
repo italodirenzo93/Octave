@@ -6,12 +6,11 @@
 namespace Octave::Impl {
 
 class IndexBufferGL : public IndexBuffer {
-	friend class RendererGL;
-
 public:
 	IndexBufferGL();
 	~IndexBufferGL() noexcept override;
 
+	[[nodiscard]] uint32_t GetId() const noexcept { return id_; }
 	[[nodiscard]] uint32_t GetElementCount() const noexcept override;
 	[[nodiscard]] std::vector<uint32_t> GetData() const noexcept override;
 

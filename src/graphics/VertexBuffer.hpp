@@ -19,8 +19,6 @@ struct LayoutBinding {
 };
 
 class VertexBuffer {
-	friend class Mesh;
-
 public:
 	VertexBuffer() noexcept = default;
 	VertexBuffer( const VertexBuffer& other ) = default;

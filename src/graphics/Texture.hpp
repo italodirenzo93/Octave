@@ -5,31 +5,21 @@
 
 namespace Octave {
 
+enum class TextureFormat { kRgb, kRgba, kBgra };
+
 class Texture {
-	friend class Renderer;
-	friend class Shader;
-
 public:
-	Texture() noexcept;
-	Texture( Texture&& other ) noexcept;
-	~Texture() noexcept;
-
-	void LoadFromFile( const std::string& file_name );
-
-private:
-	uint32_t id_ = 0;
-	int format_ = 0;
-
-	int width_ = 0, height_ = 0;
-
-public:
-	Texture& operator=( Texture&& other ) noexcept;
-
-	bool operator==( const Texture& other ) const noexcept;
-
-public:
+	Texture() noexcept = default;
 	Texture( const Texture& ) = delete;
+	Texture( Texture&& other ) noexcept = default;
+	virtual ~Texture() noexcept = default;
+
 	Texture& operator=( const Texture& ) = delete;
+	Texture& operator=( Texture&& other ) noexcept = default;
+
+	[[nodiscard]] virtual TextureFormat GetFormat() const noexcept = 0;
+
+	virtual void SetData( TextureFormat format, int width, int height, bool use_mipmaps, const void* pixels ) = 0;
 };
 
 }  // namespace Octave

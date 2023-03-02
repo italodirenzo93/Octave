@@ -6,12 +6,12 @@
 namespace Octave::Impl {
 
 class VertexBufferGL : public VertexBuffer {
-	friend class RendererGL;
-
 public:
 	VertexBufferGL() noexcept;
 	~VertexBufferGL() noexcept override;
 
+	[[nodiscard]] uint32_t GetVboId() const noexcept { return vbo_; }
+	[[nodiscard]] uint32_t GetVaoId() const noexcept { return vao_; }
 	[[nodiscard]] uint32_t GetVertexCount() const noexcept override;
 
 protected:
