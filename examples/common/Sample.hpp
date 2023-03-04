@@ -17,6 +17,6 @@ public:
 protected:
 	Octave::DebugCamera camera_;
 	std::unique_ptr<Octave::StepTimer> step_timer_;
-	std::unique_ptr<Octave::Renderer> renderer_;
+	std::unique_ptr<Octave::GraphicsContext> renderer_;
 };
 

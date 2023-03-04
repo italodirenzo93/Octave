@@ -33,7 +33,7 @@ class ApplicationLayer : public Layer {
 public:
 	ApplicationLayer( Application& app, const string& file_name )
 		: app_( app ) {
-		renderer_ = app.GetGraphicsSystem().CreateRenderer();
+		renderer_ = app.GetGraphicsDevice().CreateRenderer();
 
 		pad_ = app.GetInputSystem().GetGamepad( 0 );
 		if ( pad_ != nullptr ) {
@@ -57,9 +57,9 @@ public:
 
 		// Load model file or basic cube if not provided
 		if ( file_name.empty() ) {
-			shared_ptr<VertexBuffer> vbo = app.GetGraphicsSystem().CreateVertexBuffer();
-			shared_ptr<IndexBuffer> ibo = app.GetGraphicsSystem().CreateIndexBuffer();
-			shared_ptr<Texture> diffuse = app.GetGraphicsSystem().CreateTexture();
+			shared_ptr<VertexBuffer> vbo = app.GetGraphicsDevice().CreateVertexBuffer();
+			shared_ptr<IndexBuffer> ibo = app.GetGraphicsDevice().CreateIndexBuffer();
+			shared_ptr<Texture> diffuse = app.GetGraphicsDevice().CreateTexture();
 
 			GeometricPrimitive::CreateCube( *vbo, *ibo );
 			TextureManager::LoadFromFile( *diffuse, "resources/textures/container.jpg" );
@@ -76,9 +76,9 @@ public:
 		model_matrix_ = glm::identity<glm::mat4>();
 
 		// Load floor
-		floor_vbo_ = app.GetGraphicsSystem().CreateVertexBuffer();
-		floor_texture_diffuse_ = app.GetGraphicsSystem().CreateTexture();
-		floor_texture_specular_ = app.GetGraphicsSystem().CreateTexture();
+		floor_vbo_ = app.GetGraphicsDevice().CreateVertexBuffer();
+		floor_texture_diffuse_ = app.GetGraphicsDevice().CreateTexture();
+		floor_texture_specular_ = app.GetGraphicsDevice().CreateTexture();
 
 		GeometricPrimitive::CreatePlane( *floor_vbo_ );
 		TextureManager::LoadFromFile( *floor_texture_diffuse_, "resources/textures/wood_diffuse.png" );
@@ -224,7 +224,7 @@ protected:
 private:
 	Application& app_;
 
-	unique_ptr<Renderer> renderer_;
+	unique_ptr<GraphicsContext> renderer_;
 	std::shared_ptr<Octave::Shader> shader_;
 	std::unique_ptr<Octave::Gamepad> pad_;
 

@@ -12,11 +12,11 @@
 namespace Octave {
 
 namespace Impl {
-	class RendererGL;
+	class GraphicsContextGL;
 }
 
 class Shader {
-	friend class Impl::RendererGL;
+	friend class Impl::GraphicsContextGL;
 
 public:
 	class CompileError : public Exception {

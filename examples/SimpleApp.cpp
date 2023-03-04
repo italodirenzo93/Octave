@@ -30,7 +30,7 @@ class SimpleAppLayer final : public Octave::Layer {
 public:
 	explicit SimpleAppLayer( const Octave::Application& app )
 		: Layer( "Default Layer" ) {
-		m_renderer_ = app.GetGraphicsSystem().CreateRenderer();
+		m_renderer_ = app.GetGraphicsDevice().CreateRenderer();
 		m_renderer_->SetDepthTestEnabled( false );
 
 		app.GetWindow().AddSizeChangedCallback(
@@ -49,7 +49,7 @@ public:
 		vector<VertexType> vertices{
 			{ 0.0f, 1.0f }, { 1.0f, -1.0f }, { -1.0f, -1.0f } };
 
-		m_vbo_ = app.GetGraphicsSystem().CreateVertexBuffer();
+		m_vbo_ = app.GetGraphicsDevice().CreateVertexBuffer();
 		m_vbo_->SetData( layout, vertices );
 	}
 
@@ -78,7 +78,7 @@ public:
 	}
 
 private:
-	unique_ptr<Octave::Renderer> m_renderer_;
+	unique_ptr<Octave::GraphicsContext> m_renderer_;
 	unique_ptr<Octave::Shader> m_shader_;
 	unique_ptr<Octave::VertexBuffer> m_vbo_;
 };

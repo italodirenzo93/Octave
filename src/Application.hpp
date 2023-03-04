@@ -4,7 +4,7 @@
 // clang-format off
 #include "input/InputSystem.hpp"
 #include "core/Platform.hpp"
-#include "graphics/GraphicsSystem.hpp"
+#include "graphics/GraphicsDevice.hpp"
 #include "LayerStack.hpp"
 // clang-format on
 
@@ -20,7 +20,7 @@ public:
 	// Getter/setter pairs
 	[[nodiscard]] Window& GetWindow() const noexcept { return *window_; }
 	[[nodiscard]] InputSystem& GetInputSystem() const noexcept { return *input_; }
-	[[nodiscard]] GraphicsSystem& GetGraphicsSystem() const noexcept { return *graphics_; }
+	[[nodiscard]] GraphicsDevice& GetGraphicsDevice() const noexcept { return *graphics_; }
 
 	// Methods
 	void Run();
@@ -37,8 +37,8 @@ protected:
 private:
 	std::unique_ptr<Window> window_;
 	std::unique_ptr<InputSystem> input_;
-	std::unique_ptr<GraphicsSystem> graphics_;
-    
+	std::unique_ptr<GraphicsDevice> graphics_;
+
     LayerStack layers_;
 
 	bool is_running_;
