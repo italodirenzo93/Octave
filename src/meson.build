@@ -38,6 +38,7 @@ octave = static_library(
 		'core/glfw/WindowGLFW.hpp',
 
 		# Graphics
+		'graphics/Buffer.hpp',
         'graphics/GraphicsSystem.cpp',
 		'graphics/GraphicsSystem.hpp',
 		'graphics/IndexBuffer.hpp',
@@ -51,6 +52,8 @@ octave = static_library(
 		'graphics/Texture.hpp',
 		'graphics/VertexBuffer.cpp',
 		'graphics/VertexBuffer.hpp',
+		'graphics/OpenGL/BufferGL.cpp',
+		'graphics/OpenGL/BufferGL.hpp',
 		'graphics/OpenGL/GraphicsSystemGL.cpp',
 		'graphics/OpenGL/GraphicsSystemGL.hpp',
 		'graphics/OpenGL/RendererGL.cpp',

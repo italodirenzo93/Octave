@@ -7,10 +7,9 @@
 // clang-format on
 
 #include "core/Log.hpp"
+#include "BufferGL.hpp"
 #include "Config.hpp"
 #include "RendererGL.hpp"
-#include "VertexBufferGL.hpp"
-#include "IndexBufferGL.hpp"
 #include "TextureGL.hpp"
 
 using namespace std;
@@ -87,12 +86,8 @@ std::unique_ptr<Renderer> GraphicsSystemGL::CreateRenderer() noexcept {
 	return make_unique<RendererGL>();
 }
 
-std::unique_ptr<VertexBuffer> GraphicsSystemGL::CreateVertexBuffer() noexcept {
-	return make_unique<VertexBufferGL>();
-}
-
-std::unique_ptr<IndexBuffer> GraphicsSystemGL::CreateIndexBuffer() noexcept {
-	return make_unique<IndexBufferGL>();
+std::unique_ptr<Buffer> CreateBuffer( BufferBinding binding, size_t byteWidth ) noexcept {
+	return make_unique<BufferGL>( binding, size );
 }
 
 std::unique_ptr<Texture> GraphicsSystemGL::CreateTexture() noexcept {
