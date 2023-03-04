@@ -1,5 +1,5 @@
 #include "pch/pch.hpp"
-#include "GraphicsSystemGL.hpp"
+#include "GraphicsDeviceGL.hpp"
 
 // clang-format off
 #include <glad/glad.h>
@@ -9,7 +9,7 @@
 #include "core/Log.hpp"
 #include "BufferGL.hpp"
 #include "Config.hpp"
-#include "RendererGL.hpp"
+#include "GraphicsContextGL.hpp"
 #include "TextureGL.hpp"
 
 using namespace std;
@@ -21,7 +21,7 @@ static void APIENTRY DebugCallback( GLenum source, GLenum type, unsigned int id,
 									const char* message,
                                    const void* userParam );
 
-GraphicsSystemGL::GraphicsSystemGL( GLFWwindow* window ) : window_(window) {
+GraphicsDeviceGL::GraphicsDeviceGL( GLFWwindow* window ) : window_(window) {
     Log::GetCoreLogger()->trace("Creating OpenGL 4.1 Core rendering context");
 
     const Config& config = Config::Instance();
@@ -49,15 +49,15 @@ GraphicsSystemGL::GraphicsSystemGL( GLFWwindow* window ) : window_(window) {
 	}
 }
 
-GraphicsSystemGL::~GraphicsSystemGL() noexcept {
+GraphicsDeviceGL::~GraphicsDeviceGL() noexcept {
     Log::GetCoreLogger()->trace("Deleting OpenGL rendering context");
 }
 
-void GraphicsSystemGL::SwapBuffers() {
+void GraphicsDeviceGL::SwapBuffers() {
     glfwSwapBuffers( window_ );
 }
 
-std::string GraphicsSystemGL::TryDequeueError() noexcept {
+std::string GraphicsDeviceGL::TryDequeueError() noexcept {
 	const GLenum error = glGetError();
 
 	switch ( error ) {
@@ -82,15 +82,15 @@ std::string GraphicsSystemGL::TryDequeueError() noexcept {
 	}
 }
 
-std::unique_ptr<Renderer> GraphicsSystemGL::CreateRenderer() noexcept {
-	return make_unique<RendererGL>();
+std::unique_ptr<GraphicsContext> GraphicsDeviceGL::CreateContext() noexcept {
+	return make_unique<GraphicsContextGL>();
 }
 
-std::unique_ptr<Buffer> CreateBuffer( BufferBinding binding, size_t byteWidth ) noexcept {
-	return make_unique<BufferGL>( binding, size );
+std::unique_ptr<Buffer> GraphicsDeviceGL::CreateBuffer( BufferBinding binding, size_t byte_width ) noexcept {
+	return make_unique<BufferGL>( binding, byte_width );
 }
 
-std::unique_ptr<Texture> GraphicsSystemGL::CreateTexture() noexcept {
+std::unique_ptr<Texture> GraphicsDeviceGL::CreateTexture() noexcept {
 	return make_unique<TextureGL>();
 }
 

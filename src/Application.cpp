@@ -13,7 +13,7 @@ Application::Application( int argc, char* argv[] ) : is_running_( true ) {
 
 	input_ = std::make_unique<Impl::InputSystemGLFW>();
 	window_ = Window::Create( WindowOptions() );
-    graphics_ = GraphicsSystem::Create( *window_ );
+    graphics_ = GraphicsDevice::Create( *window_ );
 
 	// Set window close callback
 	window_->AddCloseCallback( [this]() { Exit(); } );

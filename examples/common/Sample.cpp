@@ -6,7 +6,7 @@ using namespace Octave;
 SampleLayer::SampleLayer( const Sample& app ) {
 	step_timer_ = make_unique<StepTimer>();
 
-	renderer_ = app.GetGraphicsSystem().CreateRenderer();
+	renderer_ = app.GetGraphicsDevice().CreateRenderer();
 
 	app.GetWindow().AddSizeChangedCallback( [this]( int width, int height ) {
 		renderer_->SetViewport( 0, 0, width, height );
@@ -15,5 +15,5 @@ SampleLayer::SampleLayer( const Sample& app ) {
 
 
 void Sample::OnInitialize() {
-	
+
 }

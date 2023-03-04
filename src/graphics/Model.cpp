@@ -130,7 +130,7 @@ Model::Model( Model&& other ) noexcept {
 	meshes_ = std::move( other.meshes_ );
 }
 
-void Model::Draw( Shader& shader, const Renderer& renderer ) const {
+void Model::Draw( Shader& shader, const GraphicsContext& renderer ) const {
 	for ( const auto& mesh : meshes_ ) {
 		mesh.Draw( shader, renderer );
 	}
