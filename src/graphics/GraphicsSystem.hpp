@@ -6,8 +6,7 @@
 
 #include "core/Window.hpp"
 #include "Renderer.hpp"
-#include "VertexBuffer.hpp"
-#include "IndexBuffer.hpp"
+#include "Buffer.hpp"
 #include "Texture.hpp"
 
 namespace Octave {
@@ -22,8 +21,7 @@ public:
 	[[nodiscard]] virtual std::string TryDequeueError() noexcept = 0;
 
 	[[nodiscard]] virtual std::unique_ptr<Renderer> CreateRenderer() noexcept = 0;
-	[[nodiscard]] virtual std::unique_ptr<VertexBuffer> CreateVertexBuffer() noexcept = 0;
-	[[nodiscard]] virtual std::unique_ptr<IndexBuffer> CreateIndexBuffer() noexcept = 0;
+	[[nodiscard]] virtual std::unique_ptr<Buffer> CreateBuffer( BufferBinding binding, size_t byteWidth ) noexcept = 0;
 	[[nodiscard]] virtual std::unique_ptr<Texture> CreateTexture() noexcept = 0;
 
     static std::unique_ptr<GraphicsSystem> Create( const Window& window );

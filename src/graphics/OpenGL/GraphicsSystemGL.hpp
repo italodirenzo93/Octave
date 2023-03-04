@@ -25,8 +25,7 @@ public:
 	[[nodiscard]] std::string TryDequeueError() noexcept override;
 
 	[[nodiscard]] std::unique_ptr<Renderer> CreateRenderer() noexcept override;
-	[[nodiscard]] std::unique_ptr<VertexBuffer> CreateVertexBuffer() noexcept override;
-	[[nodiscard]] std::unique_ptr<IndexBuffer> CreateIndexBuffer() noexcept override;
+	[[nodiscard]] std::unique_ptr<Buffer> CreateBuffer( BufferBinding binding, size_t byteWidth ) noexcept override;
 	[[nodiscard]] std::unique_ptr<Texture> CreateTexture() noexcept override;
 
 private:
