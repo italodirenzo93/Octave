@@ -4,7 +4,6 @@
 #include <glad/glad.h>
 
 #include <array>
-#include <sstream>
 
 #include "Config.hpp"
 #include "BufferGL.hpp"
@@ -52,13 +51,26 @@ void GraphicsContextGL::Draw( size_t vertex_count,
 							  size_t offset ) const noexcept {
 	// glUseProgram( shader.id_ );
 
-	// glBindVertexArray( ( dynamic_cast<const VertexBufferGL&>( vbo )
-	// ).GetVaoId() );
+	assert( vbo_ != nullptr );
+	assert( vao_ != nullptr );
+
+	vbo_->Bind();
+	vao_->Bind();
+
+	uint32_t attr_index = 0;
+	for ( const auto& attr : *vao_ ) {
+		glVertexAttribPointer(
+			attr.index, attr.size, attr.type, attr.normalized,
+			static_cast<GLsizei>( vertex_stride_ ),
+			reinterpret_cast<const void*>( attr_index++ * sizeof( float ) ) );
+	}
+
+	vbo_->Unbind();
 
 	glDrawArrays( GL_TRIANGLES, static_cast<GLint>( offset ),
 				  static_cast<GLsizei>( vertex_count ) );
 
-	// glBindVertexArray( 0 );
+	vao_->Unbind();
 
 	// glUseProgram( 0 );
 }
@@ -66,36 +78,36 @@ void GraphicsContextGL::Draw( size_t vertex_count,
 void GraphicsContextGL::DrawIndexed( size_t index_count, size_t offset,
 									 size_t base_vertex ) const noexcept {
 	// glUseProgram( shader.id_ );
-	// glBindVertexArray( ( dynamic_cast<const VertexBufferGL&>( vbo )
-	// ).GetVaoId() ); glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, (
-	// dynamic_cast<const IndexBufferGL&>( ibo ) ).GetId() );
 
-	// glDrawElements( GL_TRIANGLES, static_cast<GLsizei>( index_count ),
-	// 				GL_UNSIGNED_INT, reinterpret_cast<const void*>( offset ) );
+	assert( vbo_ != nullptr );
+	assert( vao_ != nullptr );
+	assert( ibo_ != nullptr );
 
-	// TODO: check the currently bound index buffer for the **end** parameter
+	vbo_->Bind();
+	vao_->Bind();
+
+	uint32_t attr_index = 0;
+	for ( const auto& attr : *vao_ ) {
+		glVertexAttribPointer(
+			attr.index, attr.size, attr.type, attr.normalized,
+			static_cast<GLsizei>( vertex_stride_ ),
+			reinterpret_cast<const void*>( attr_index++ * sizeof( float ) ) );
+	}
+
+	vbo_->Unbind();
+
+	ibo_->Bind();
 
 	glDrawRangeElementsBaseVertex( GL_TRIANGLES, static_cast<GLuint>( offset ),
-								   static_cast<GLuint>( offset + index_count ), static_cast<GLsizei>( index_count ),
+								   static_cast<GLuint>( ibo_->GetSize() ),
+								   static_cast<GLsizei>( index_count ),
 								   GL_UNSIGNED_SHORT, nullptr,
 								   static_cast<GLint>( base_vertex ) );
 
-	// glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
-	// glBindVertexArray( 0 );
+	ibo_->Unbind();
+	vao_->Unbind();
+
 	// glUseProgram( 0 );
-}
-
-std::string GraphicsContextGL::GetDescription() const noexcept {
-	ostringstream oss;
-
-	// Print OpenGL context information
-	oss << "OpenGL Context Version: " << glGetString( GL_VERSION ) << endl
-		<< "GLSL Version: " << glGetString( GL_SHADING_LANGUAGE_VERSION )
-		<< endl
-		<< "GPU Vendor: " << glGetString( GL_VENDOR ) << endl
-		<< "GPU Model: " << glGetString( GL_RENDERER ) << endl;
-
-	return oss.str();
 }
 
 std::array<int, 4> GraphicsContextGL::GetViewport() const noexcept {
@@ -110,6 +122,20 @@ void GraphicsContextGL::SetDepthTestEnabled( bool enabled ) noexcept {
 	} else {
 		glDisable( GL_DEPTH_TEST );
 	}
+}
+
+void GraphicsContextGL::SetVertexBuffer( SharedRef<Buffer> vertex_buffer,
+										 size_t stride ) {
+	vbo_ = dynamic_pointer_cast<BufferGL>( vertex_buffer );
+	vertex_stride_ = static_cast<GLuint>( stride );
+}
+
+void GraphicsContextGL::SetIndexBuffer( SharedRef<Buffer> index_buffer ) {
+	ibo_ = dynamic_pointer_cast<BufferGL>( index_buffer );
+}
+
+void GraphicsContextGL::SetVertexLayout( SharedRef<VertexArrayLayout> layout ) {
+	vao_ = dynamic_pointer_cast<VertexArrayLayoutGL>( layout );
 }
 
 void GraphicsContextGL::SetViewport( int x, int y, int width,

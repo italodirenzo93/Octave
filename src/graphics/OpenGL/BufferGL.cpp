@@ -48,7 +48,9 @@ void BufferGL::Bind() const noexcept {
 }
 
 void BufferGL::Unbind() const noexcept {
+#ifdef OGT_DEBUG
 	glBindBuffer( BindingToGLType( binding_ ), 0 );
+#endif
 }
 
 }  // namespace Octave::Impl

@@ -14,14 +14,15 @@ public:
 	BufferGL( BufferBinding binding, size_t byteWidth );
 	~BufferGL() noexcept override;
 
+	void Bind() const noexcept;
+	void Unbind() const noexcept;
+
+	[[nodiscard]] size_t GetSize() const noexcept override { return width_; };
 	[[nodiscard]] uint32_t GetId() const noexcept { return id_; }
 
 	void SetData( const void* data, size_t size ) override;
 
 protected:
-	void Bind() const noexcept;
-	void Unbind() const noexcept;
-
 	uint32_t id_;
 	BufferBinding binding_;
 	size_t width_;

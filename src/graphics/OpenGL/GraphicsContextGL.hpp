@@ -2,6 +2,8 @@
 #define OCTAVE_GRAPHICS_OPENGL_GRAPHICSCONTEXTGL_HPP
 
 #include "graphics/GraphicsContext.hpp"
+#include "BufferGL.hpp"
+#include "VertexArrayLayoutGL.hpp"
 
 namespace Octave::Impl {
 
@@ -17,11 +19,19 @@ public:
 	void Draw( size_t vertex_count, size_t offset ) const noexcept override;
 	void DrawIndexed( size_t index_count, size_t offset, size_t base_vertex ) const noexcept override;
 
-	[[nodiscard]] std::string GetDescription() const noexcept override;
 	[[nodiscard]] std::array<int, 4> GetViewport() const noexcept override;
 
 	void SetDepthTestEnabled( bool enabled ) noexcept override;
+	void SetVertexBuffer( SharedRef<Buffer> vertex_buffer, size_t stride ) override;
+	void SetIndexBuffer( SharedRef<Buffer> index_buffer ) override;
+	void SetVertexLayout( SharedRef<VertexArrayLayout> layout ) override;
 	void SetViewport( int x, int y, int width, int height ) noexcept override;
+
+private:
+	SharedRef<BufferGL> vbo_;
+	SharedRef<BufferGL> ibo_;
+	SharedRef<VertexArrayLayoutGL> vao_;
+	uint32_t vertex_stride_ = 0;
 };
 
 }  // namespace Octave::Impl

@@ -12,18 +12,21 @@
 
 #include "core/Log.hpp"
 #include "core/Platform.hpp"
+#include "core/Types.hpp"
 #include "core/Window.hpp"
 
 #include "input/Gamepad.hpp"
 #include "input/InputSystem.hpp"
 
-#include "graphics/IndexBuffer.hpp"
-#include "graphics/Mesh.hpp"
-#include "graphics/Model.hpp"
-#include "graphics/Renderer.hpp"
+#include "graphics/Buffer.hpp"
+// #include "graphics/IndexBuffer.hpp"
+// #include "graphics/Mesh.hpp"
+// #include "graphics/Model.hpp"
+#include "graphics/GraphicsContext.hpp"
+#include "graphics/GraphicsDevice.hpp"
 #include "graphics/Shader.hpp"
 #include "graphics/Texture.hpp"
-#include "graphics/VertexBuffer.hpp"
+// #include "graphics/VertexBuffer.hpp"
 
 #include "resources/ResourceManager.hpp"
 #include "resources/ShaderManager.hpp"
