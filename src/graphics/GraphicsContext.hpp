@@ -1,11 +1,10 @@
 #ifndef OCTAVE_GRAPHICSCONTEXT_HPP
 #define OCTAVE_GRAPHICSCONTEXT_HPP
 
-#include "Buffer.hpp"
-// #include "Shader.hpp"
+#include "core/Types.hpp"
 
-#include <array>
-#include <string>
+#include "Buffer.hpp"
+#include "VertexArrayLayout.hpp"
 
 namespace Octave {
 
@@ -20,10 +19,12 @@ public:
 	virtual void Draw( size_t vertex_count, size_t offset ) const noexcept = 0;
 	virtual void DrawIndexed( size_t index_count, size_t offset, size_t base_vertex ) const noexcept = 0;
 
-	[[nodiscard]] virtual std::string GetDescription() const noexcept = 0;
 	[[nodiscard]] virtual std::array<int, 4> GetViewport() const noexcept = 0;
 
 	virtual void SetDepthTestEnabled( bool enabled ) noexcept = 0;
+	virtual void SetVertexBuffer( SharedRef<Buffer> vertex_buffer, size_t stride ) = 0;
+	virtual void SetIndexBuffer( SharedRef<Buffer> index_buffer ) = 0;
+	virtual void SetVertexLayout( SharedRef<VertexArrayLayout> layout ) = 0;
 	virtual void SetViewport( int x, int y, int width, int height ) noexcept = 0;
 
 public:

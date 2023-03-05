@@ -31,6 +31,7 @@ octave = static_library(
 		'core/Platform.hpp',
 		'core/Window.cpp',
 		'core/Window.hpp',
+		'core/Types.hpp',
 		'core/glfw/GLFWError.cpp',
 		'core/glfw/GLFWError.hpp',
 		'core/glfw/PlatformGLFW.cpp',
@@ -49,6 +50,7 @@ octave = static_library(
 		'graphics/Shader.cpp',
 		'graphics/Shader.hpp',
 		'graphics/Texture.hpp',
+		'graphics/VertexArrayLayout.hpp',
 		'graphics/OpenGL/BufferGL.cpp',
 		'graphics/OpenGL/BufferGL.hpp',
 		'graphics/OpenGL/GraphicsDeviceGL.cpp',
@@ -57,6 +59,8 @@ octave = static_library(
 		'graphics/OpenGL/GraphicsContextGL.hpp',
 		'graphics/OpenGL/TextureGL.cpp',
 		'graphics/OpenGL/TextureGL.hpp',
+		'graphics/OpenGL/VertexArrayLayoutGL.cpp',
+		'graphics/OpenGL/VertexArrayLayoutGL.hpp',
 
 		# Helpers
 		'helpers/GeometricPrimitive.cpp',
