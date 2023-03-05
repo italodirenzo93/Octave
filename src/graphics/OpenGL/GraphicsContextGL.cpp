@@ -49,53 +49,27 @@ void GraphicsContextGL::Clear( bool color, bool depth, float r, float g,
 
 void GraphicsContextGL::Draw( size_t vertex_count,
 							  size_t offset ) const noexcept {
-	// glUseProgram( shader.id_ );
-
-	assert( vbo_ != nullptr );
+	assert( program_ != nullptr );
 	assert( vao_ != nullptr );
 
-	vbo_->Bind();
+	program_->Use();
 	vao_->Bind();
-
-	uint32_t attr_index = 0;
-	for ( const auto& attr : *vao_ ) {
-		glVertexAttribPointer(
-			attr.index, attr.size, attr.type, attr.normalized,
-			static_cast<GLsizei>( vertex_stride_ ),
-			reinterpret_cast<const void*>( attr_index++ * sizeof( float ) ) );
-	}
-
-	vbo_->Unbind();
 
 	glDrawArrays( GL_TRIANGLES, static_cast<GLint>( offset ),
 				  static_cast<GLsizei>( vertex_count ) );
 
 	vao_->Unbind();
-
-	// glUseProgram( 0 );
+	program_->Unuse();
 }
 
 void GraphicsContextGL::DrawIndexed( size_t index_count, size_t offset,
 									 size_t base_vertex ) const noexcept {
-	// glUseProgram( shader.id_ );
-
-	assert( vbo_ != nullptr );
+	assert( program_ != nullptr );
 	assert( vao_ != nullptr );
 	assert( ibo_ != nullptr );
 
-	vbo_->Bind();
+	program_->Use();
 	vao_->Bind();
-
-	uint32_t attr_index = 0;
-	for ( const auto& attr : *vao_ ) {
-		glVertexAttribPointer(
-			attr.index, attr.size, attr.type, attr.normalized,
-			static_cast<GLsizei>( vertex_stride_ ),
-			reinterpret_cast<const void*>( attr_index++ * sizeof( float ) ) );
-	}
-
-	vbo_->Unbind();
-
 	ibo_->Bind();
 
 	glDrawRangeElementsBaseVertex( GL_TRIANGLES, static_cast<GLuint>( offset ),
@@ -106,8 +80,7 @@ void GraphicsContextGL::DrawIndexed( size_t index_count, size_t offset,
 
 	ibo_->Unbind();
 	vao_->Unbind();
-
-	// glUseProgram( 0 );
+	program_->Unuse();
 }
 
 std::array<int, 4> GraphicsContextGL::GetViewport() const noexcept {
@@ -125,17 +98,40 @@ void GraphicsContextGL::SetDepthTestEnabled( bool enabled ) noexcept {
 }
 
 void GraphicsContextGL::SetVertexBuffer( SharedRef<Buffer> vertex_buffer,
-										 size_t stride ) {
-	vbo_ = dynamic_pointer_cast<BufferGL>( vertex_buffer );
+										 size_t stride,
+										 SharedRef<VertexArrayLayout> layout ) {
+	const auto vbo = dynamic_pointer_cast<BufferGL>( vertex_buffer );
+	const auto vao = dynamic_pointer_cast<VertexArrayLayoutGL>( layout );
+
+	// Define vertex data layout
+	vao->Bind();
+	vbo->Bind();
+
+	uint32_t attr_index = 0;
+	// TODO: map the attribute type to the correct number of bytes in offset (currently hardcoded to sizeof(float))
+	for ( const auto& attr : *vao_ ) {
+		glVertexAttribPointer(
+			attr.index, attr.size, attr.type, attr.normalized,
+			static_cast<GLsizei>( vertex_stride_ ),
+			reinterpret_cast<const void*>( attr_index++ * sizeof( float ) ) );
+		glEnableVertexAttribArray( attr.index );
+	}
+
+	vbo->Unbind();
+	vao->Unbind();
+
+	// Save references for draw time
 	vertex_stride_ = static_cast<GLuint>( stride );
+	vao_ = std::move( vao );
 }
 
 void GraphicsContextGL::SetIndexBuffer( SharedRef<Buffer> index_buffer ) {
 	ibo_ = dynamic_pointer_cast<BufferGL>( index_buffer );
 }
 
-void GraphicsContextGL::SetVertexLayout( SharedRef<VertexArrayLayout> layout ) {
-	vao_ = dynamic_pointer_cast<VertexArrayLayoutGL>( layout );
+void GraphicsContextGL::SetShaderProgram( SharedRef<Program> program ) {
+	// TODO: assert link status
+	program_ = dynamic_pointer_cast<ProgramGL>( program );
 }
 
 void GraphicsContextGL::SetViewport( int x, int y, int width,

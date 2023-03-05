@@ -24,9 +24,10 @@ public:
 
 	[[nodiscard]] std::string TryDequeueError() noexcept override;
 
-	[[nodiscard]] std::unique_ptr<GraphicsContext> CreateContext() noexcept override;
-	[[nodiscard]] std::unique_ptr<Buffer> CreateBuffer( BufferBinding binding, size_t byte_width ) noexcept override;
-	[[nodiscard]] std::unique_ptr<Texture> CreateTexture() noexcept override;
+	[[nodiscard]] Ref<GraphicsContext> CreateContext() noexcept override;
+	[[nodiscard]] Ref<Buffer> CreateBuffer( BufferBinding binding, size_t byte_width ) noexcept override;
+	[[nodiscard]] Ref<Program> CreateProgram() noexcept override;
+	[[nodiscard]] Ref<Texture> CreateTexture() noexcept override;
 
 private:
     GLFWwindow* window_;
