@@ -4,6 +4,7 @@
 #include "core/Types.hpp"
 
 #include "Buffer.hpp"
+#include "Program.hpp"
 #include "VertexArrayLayout.hpp"
 
 namespace Octave {
@@ -22,9 +23,9 @@ public:
 	[[nodiscard]] virtual std::array<int, 4> GetViewport() const noexcept = 0;
 
 	virtual void SetDepthTestEnabled( bool enabled ) noexcept = 0;
-	virtual void SetVertexBuffer( SharedRef<Buffer> vertex_buffer, size_t stride ) = 0;
+	virtual void SetVertexBuffer( SharedRef<Buffer> vertex_buffer, size_t stride, SharedRef<VertexArrayLayout> layout ) = 0;
 	virtual void SetIndexBuffer( SharedRef<Buffer> index_buffer ) = 0;
-	virtual void SetVertexLayout( SharedRef<VertexArrayLayout> layout ) = 0;
+	virtual void SetShaderProgram( SharedRef<Program> program ) = 0;
 	virtual void SetViewport( int x, int y, int width, int height ) noexcept = 0;
 
 public:

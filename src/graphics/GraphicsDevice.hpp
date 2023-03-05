@@ -1,12 +1,13 @@
 #ifndef OCTAVE_GRAPHICSDEVICE_HPP
 #define OCTAVE_GRAPHICSDEVICE_HPP
 
-#include <memory>
 #include <string>
 
+#include "core/Types.hpp"
 #include "core/Window.hpp"
 #include "GraphicsContext.hpp"
 #include "Buffer.hpp"
+#include "Program.hpp"
 #include "Texture.hpp"
 
 namespace Octave {
@@ -19,11 +20,12 @@ public:
 
 	[[nodiscard]] virtual std::string TryDequeueError() noexcept = 0;
 
-	[[nodiscard]] virtual std::unique_ptr<GraphicsContext> CreateContext() noexcept = 0;
-	[[nodiscard]] virtual std::unique_ptr<Buffer> CreateBuffer( BufferBinding binding, size_t byte_width ) noexcept = 0;
-	[[nodiscard]] virtual std::unique_ptr<Texture> CreateTexture() noexcept = 0;
+	[[nodiscard]] virtual Ref<GraphicsContext> CreateContext() noexcept = 0;
+	[[nodiscard]] virtual Ref<Buffer> CreateBuffer( BufferBinding binding, size_t byte_width ) noexcept = 0;
+	[[nodiscard]] virtual Ref<Program> CreateProgram() noexcept = 0;
+	[[nodiscard]] virtual Ref<Texture> CreateTexture() noexcept = 0;
 
-    static std::unique_ptr<GraphicsDevice> Create( const Window& window );
+    static Ref<GraphicsDevice> Create( const Window& window );
 };
 
 }
