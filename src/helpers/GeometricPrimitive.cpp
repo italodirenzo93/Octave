@@ -20,15 +20,9 @@ GeometricPrimitive::VertexType::VertexType(
 	tex_coord.y = *( it++ );
 }
 
-void GeometricPrimitive::CreateCube( VertexBuffer& vbo, IndexBuffer& ibo ) {
-	const VertexBuffer::VertexLayout layout{
-		{ VertexAttributeName::kPosition, 3, VertexAttributeType::kFloat,
-		  false },
-		{ VertexAttributeName::kNormal, 3, VertexAttributeType::kFloat, false },
-		{ VertexAttributeName::kTexCoord, 2, VertexAttributeType::kFloat,
-		  false } };
-
-	std::vector<VertexType> vertices{
+void GeometricPrimitive::CreateCube( VertexCollection& vertices,
+									 IndexCollection& indices ) {
+	vertices.assign( {
 		VertexType{ 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f },
 		VertexType{ 1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 		VertexType{ -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f },
@@ -53,48 +47,30 @@ void GeometricPrimitive::CreateCube( VertexBuffer& vbo, IndexBuffer& ibo ) {
 		VertexType{ 1.0f, -1.0f, -1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f },
 		VertexType{ -1.0f, -1.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f },
 		VertexType{ -1.0f, -1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f },
-	};
+	} );
 
-	vbo.SetData( layout, vertices );
-
-	ibo.SetData( { 0,  1,  2,  0,  2,  3,  4,  5,  6,  4,  6,  7,
-				   8,  9,  10, 8,  10, 11, 12, 13, 14, 12, 14, 15,
-				   16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23 } );
+	indices.assign( { 0,  1,  2,  0,  2,  3,  4,  5,  6,  4,  6,  7,
+					  8,  9,  10, 8,  10, 11, 12, 13, 14, 12, 14, 15,
+					  16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23 } );
 }
 
-void GeometricPrimitive::CreateQuad( VertexBuffer& vbo ) {
-	const VertexBuffer::VertexLayout layout{
-		{ VertexAttributeName::kPosition, 3, VertexAttributeType::kFloat,
-		  false },
-		{ VertexAttributeName::kNormal, 3, VertexAttributeType::kFloat, false },
-		{ VertexAttributeName::kTexCoord, 2, VertexAttributeType::kFloat,
-		  false } };
-
-	std::vector<VertexType> vertices{
+void GeometricPrimitive::CreateQuad( VertexCollection& vertices ) {
+	vertices.assign({
 		// pos // tex
 		VertexType::PositionTexture( 0.0f, 1.0f, 0.0f, 0.0f, 1.0f ),
 		VertexType::PositionTexture( 1.0f, 0.0f, 0.0f, 1.0f, 0.0f ),
 		VertexType::PositionTexture( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f ),
 		VertexType::PositionTexture( 0.0f, 1.0f, 0.0f, 0.0f, 1.0f ),
 		VertexType::PositionTexture( 1.0f, 1.0f, 0.0f, 1.0f, 1.0f ),
-		VertexType::PositionTexture( 1.0f, 0.0f, 0.0f, 1.0f, 0.0f ) };
-
-	vbo.SetData( layout, vertices );
+		VertexType::PositionTexture( 1.0f, 0.0f, 0.0f, 1.0f, 0.0f ) });
 }
 
 static constexpr float kPlaneExtent = 10.0f;
 
-void GeometricPrimitive::CreatePlane( VertexBuffer& vbo ) {
-	const VertexBuffer::VertexLayout layout{
-		{ VertexAttributeName::kPosition, 3, VertexAttributeType::kFloat,
-		  false },
-		{ VertexAttributeName::kNormal, 3, VertexAttributeType::kFloat, false },
-		{ VertexAttributeName::kTexCoord, 2, VertexAttributeType::kFloat,
-		  false } };
-
+void GeometricPrimitive::CreatePlane( VertexCollection& vertices ) {
 	constexpr glm::vec3 normal_vector( 0.0f, 1.0f, 0.0f );
 
-	std::vector<VertexType> vertices{
+	vertices.assign({
 		// pos // tex
 		VertexType::PositionNormalTexture(
 			glm::vec3( -kPlaneExtent, 0.0f, -kPlaneExtent ), normal_vector,
@@ -115,9 +91,7 @@ void GeometricPrimitive::CreatePlane( VertexBuffer& vbo ) {
 		VertexType::PositionNormalTexture(
 			glm::vec3( -kPlaneExtent, 0.0f, kPlaneExtent ), normal_vector,
 			glm::vec2( 0.0f, kPlaneExtent ) ),
-	};
-
-	vbo.SetData( layout, vertices );
+	});
 }
 
 }  // namespace Octave

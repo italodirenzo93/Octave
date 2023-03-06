@@ -4,8 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/common.hpp>
 
-#include "graphics/IndexBuffer.hpp"
-#include "graphics/VertexBuffer.hpp"
+#include <vector>
 
 namespace Octave {
 
@@ -45,9 +44,12 @@ public:
 		}
 	};
 
-	static void CreateCube( VertexBuffer& vbo, IndexBuffer& ibo );
-	static void CreateQuad( VertexBuffer& vbo );
-	static void CreatePlane( VertexBuffer& vbo );
+	using VertexCollection = std::vector<VertexType>;
+	using IndexCollection = std::vector<uint16_t>;
+
+	static void CreateCube( VertexCollection& vertices, IndexCollection& indices );
+	static void CreateQuad( VertexCollection& vertices );
+	static void CreatePlane( VertexCollection& vertices );
 };
 
 }  // namespace Octave

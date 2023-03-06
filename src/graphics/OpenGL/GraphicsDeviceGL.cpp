@@ -10,7 +10,6 @@
 #include "BufferGL.hpp"
 #include "Config.hpp"
 #include "GraphicsContextGL.hpp"
-#include "ProgramGL.hpp"
 #include "TextureGL.hpp"
 
 using namespace std;
@@ -83,20 +82,16 @@ std::string GraphicsDeviceGL::TryDequeueError() noexcept {
 	}
 }
 
-std::unique_ptr<GraphicsContext> GraphicsDeviceGL::CreateContext() noexcept {
+Ref<GraphicsContext> GraphicsDeviceGL::CreateContext() noexcept {
 	return make_unique<GraphicsContextGL>();
 }
 
-std::unique_ptr<Buffer> GraphicsDeviceGL::CreateBuffer(
+Ref<Buffer> GraphicsDeviceGL::CreateBuffer(
 	BufferBinding binding, size_t byte_width ) noexcept {
 	return make_unique<BufferGL>( binding, byte_width );
 }
 
-Ref<Program> GraphicsDeviceGL::CreateProgram() noexcept {
-	return make_unique<ProgramGL>();
-}
-
-std::unique_ptr<Texture> GraphicsDeviceGL::CreateTexture() noexcept {
+Ref<Texture> GraphicsDeviceGL::CreateTexture() noexcept {
 	return make_unique<TextureGL>();
 }
 

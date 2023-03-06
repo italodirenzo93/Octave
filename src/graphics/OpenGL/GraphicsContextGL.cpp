@@ -7,12 +7,15 @@
 
 #include "Config.hpp"
 #include "BufferGL.hpp"
+#include "ShaderGL.hpp"
 
 using namespace std;
 
 namespace Octave::Impl {
 
 GraphicsContextGL::GraphicsContextGL() {
+	glGenProgramPipelines( 1, &pipeline_id_ );
+
 	const Config& config = Config::Instance();
 
 	// Always enabled
@@ -28,6 +31,7 @@ GraphicsContextGL::GraphicsContextGL() {
 }
 
 GraphicsContextGL::~GraphicsContextGL() noexcept {
+	glDeleteProgramPipelines( 1, &pipeline_id_ );
 }
 
 void GraphicsContextGL::Clear( bool color, bool depth, float r, float g,
@@ -49,26 +53,25 @@ void GraphicsContextGL::Clear( bool color, bool depth, float r, float g,
 
 void GraphicsContextGL::Draw( size_t vertex_count,
 							  size_t offset ) const noexcept {
-	assert( program_ != nullptr );
 	assert( vao_ != nullptr );
 
-	program_->Use();
+	glBindProgramPipeline( pipeline_id_ );
+
 	vao_->Bind();
 
 	glDrawArrays( GL_TRIANGLES, static_cast<GLint>( offset ),
 				  static_cast<GLsizei>( vertex_count ) );
 
 	vao_->Unbind();
-	program_->Unuse();
 }
 
 void GraphicsContextGL::DrawIndexed( size_t index_count, size_t offset,
 									 size_t base_vertex ) const noexcept {
-	assert( program_ != nullptr );
 	assert( vao_ != nullptr );
 	assert( ibo_ != nullptr );
 
-	program_->Use();
+	glBindProgramPipeline( pipeline_id_ );
+
 	vao_->Bind();
 	ibo_->Bind();
 
@@ -80,7 +83,6 @@ void GraphicsContextGL::DrawIndexed( size_t index_count, size_t offset,
 
 	ibo_->Unbind();
 	vao_->Unbind();
-	program_->Unuse();
 }
 
 std::array<int, 4> GraphicsContextGL::GetViewport() const noexcept {
@@ -129,9 +131,14 @@ void GraphicsContextGL::SetIndexBuffer( SharedRef<Buffer> index_buffer ) {
 	ibo_ = dynamic_pointer_cast<BufferGL>( index_buffer );
 }
 
-void GraphicsContextGL::SetShaderProgram( SharedRef<Program> program ) {
-	// TODO: assert link status
-	program_ = dynamic_pointer_cast<ProgramGL>( program );
+void GraphicsContextGL::SetVertexShader( SharedRef<Shader> vertex_shader ) {
+	const auto gl_shader = dynamic_pointer_cast<ShaderGL>( vertex_shader );
+	glUseProgramStages( pipeline_id_, GL_VERTEX_SHADER_BIT, gl_shader->GetId() );
+}
+
+void GraphicsContextGL::SetFragmentShader( SharedRef<Shader> fragment_shader ) {
+	const auto gl_shader = dynamic_pointer_cast<ShaderGL>( fragment_shader );
+	glUseProgramStages( pipeline_id_, GL_FRAGMENT_SHADER_BIT, gl_shader->GetId() );
 }
 
 void GraphicsContextGL::SetViewport( int x, int y, int width,
