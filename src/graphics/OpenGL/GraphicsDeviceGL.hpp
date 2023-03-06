@@ -26,7 +26,6 @@ public:
 
 	[[nodiscard]] Ref<GraphicsContext> CreateContext() noexcept override;
 	[[nodiscard]] Ref<Buffer> CreateBuffer( BufferBinding binding, size_t byte_width ) noexcept override;
-	[[nodiscard]] Ref<Program> CreateProgram() noexcept override;
 	[[nodiscard]] Ref<Texture> CreateTexture() noexcept override;
 
 private:

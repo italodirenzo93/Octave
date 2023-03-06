@@ -3,7 +3,6 @@
 
 #include "graphics/GraphicsContext.hpp"
 #include "BufferGL.hpp"
-#include "ProgramGL.hpp"
 #include "VertexArrayLayoutGL.hpp"
 
 namespace Octave::Impl {
@@ -25,12 +24,13 @@ public:
 	void SetDepthTestEnabled( bool enabled ) noexcept override;
 	void SetVertexBuffer( SharedRef<Buffer> vertex_buffer, size_t stride, SharedRef<VertexArrayLayout> layout ) override;
 	void SetIndexBuffer( SharedRef<Buffer> index_buffer ) override;
-	void SetShaderProgram( SharedRef<Program> program ) override;
+	void SetVertexShader( SharedRef<Shader> vertex_shader ) override;
+	void SetFragmentShader( SharedRef<Shader> fragment_shader ) override;
 	void SetViewport( int x, int y, int width, int height ) noexcept override;
 
 private:
+	uint32_t pipeline_id_ = 0;
 	SharedRef<BufferGL> ibo_;
-	SharedRef<ProgramGL> program_;
 	SharedRef<VertexArrayLayoutGL> vao_;
 	uint32_t vertex_stride_ = 0;
 };

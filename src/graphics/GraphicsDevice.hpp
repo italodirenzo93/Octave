@@ -7,7 +7,6 @@
 #include "core/Window.hpp"
 #include "GraphicsContext.hpp"
 #include "Buffer.hpp"
-#include "Program.hpp"
 #include "Texture.hpp"
 
 namespace Octave {
@@ -22,7 +21,6 @@ public:
 
 	[[nodiscard]] virtual Ref<GraphicsContext> CreateContext() noexcept = 0;
 	[[nodiscard]] virtual Ref<Buffer> CreateBuffer( BufferBinding binding, size_t byte_width ) noexcept = 0;
-	[[nodiscard]] virtual Ref<Program> CreateProgram() noexcept = 0;
 	[[nodiscard]] virtual Ref<Texture> CreateTexture() noexcept = 0;
 
     static Ref<GraphicsDevice> Create( const Window& window );
