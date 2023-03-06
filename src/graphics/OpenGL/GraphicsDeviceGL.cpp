@@ -1,16 +1,9 @@
 #include "pch/pch.hpp"
 #include "GraphicsDeviceGL.hpp"
 
-// clang-format off
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-// clang-format on
-
 #include "core/Log.hpp"
-#include "BufferGL.hpp"
 #include "Config.hpp"
 #include "GraphicsContextGL.hpp"
-#include "TextureGL.hpp"
 
 using namespace std;
 
@@ -24,10 +17,10 @@ static void APIENTRY DebugCallback( GLenum source, GLenum type, unsigned int id,
 GraphicsDeviceGL::GraphicsDeviceGL( GLFWwindow* window ) : window_( window ) {
 	Log::GetCoreLogger()->trace( "Creating OpenGL 4.1 Core rendering context" );
 
-	const Config& config = Config::Instance();
+	// const Config& config = Config::Instance();
 
 	glfwMakeContextCurrent( window_ );
-	glfwSwapInterval( config.GetSyncInterval() );
+	// glfwSwapInterval( config.GetSyncInterval() );
 
 	// Initialize Open GL extension loader
 	if ( !gladLoadGLLoader(
@@ -87,12 +80,21 @@ Ref<GraphicsContext> GraphicsDeviceGL::CreateContext() noexcept {
 }
 
 Ref<Buffer> GraphicsDeviceGL::CreateBuffer(
-	BufferBinding binding, size_t byte_width ) noexcept {
-	return make_unique<BufferGL>( binding, byte_width );
+	const BufferDescription& desc, const void* initial_data ) noexcept {
+	return make_unique<Buffer>( desc, initial_data );
 }
 
-Ref<Texture> GraphicsDeviceGL::CreateTexture() noexcept {
-	return make_unique<TextureGL>();
+Ref<VertexArray> GraphicsDeviceGL::CreateVertexArray(
+	const VertexArrayDescription& desc ) noexcept {
+	return make_unique<VertexArray>( desc );
+}
+
+Ref<Pipeline> GraphicsDeviceGL::CreatePipeline() noexcept {
+	return make_unique<Pipeline>();
+}
+
+Ref<Shader> GraphicsDeviceGL::CreateShader() noexcept {
+	return make_unique<Shader>();
 }
 
 static void APIENTRY DebugCallback( GLenum source, GLenum type, unsigned int id,

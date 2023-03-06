@@ -3,7 +3,10 @@
 
 #include "graphics/GraphicsDevice.hpp"
 
-struct GLFWwindow;
+// clang-format off
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+// clang-format on
 
 namespace Octave::Impl {
 
@@ -25,8 +28,10 @@ public:
 	[[nodiscard]] std::string TryDequeueError() noexcept override;
 
 	[[nodiscard]] Ref<GraphicsContext> CreateContext() noexcept override;
-	[[nodiscard]] Ref<Buffer> CreateBuffer( BufferBinding binding, size_t byte_width ) noexcept override;
-	[[nodiscard]] Ref<Texture> CreateTexture() noexcept override;
+	[[nodiscard]] Ref<Buffer> CreateBuffer( const BufferDescription& desc, const void* initial_data = nullptr ) noexcept override;
+	[[nodiscard]] Ref<VertexArray> CreateVertexArray( const VertexArrayDescription& desc ) noexcept override;
+	[[nodiscard]] Ref<Pipeline> CreatePipeline() noexcept override;
+	[[nodiscard]] Ref<Shader> CreateShader() noexcept override;
 
 private:
     GLFWwindow* window_;
