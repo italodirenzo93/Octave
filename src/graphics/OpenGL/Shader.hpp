@@ -9,7 +9,7 @@ namespace Octave {
 
 class Shader {
 public:
-	Shader();
+	Shader( ShaderType type, const char* source );
 	~Shader() noexcept;
 
 	[[nodiscard]] GLuint GetApiResource() const noexcept { return id_; }
