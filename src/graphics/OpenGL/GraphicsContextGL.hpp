@@ -2,15 +2,12 @@
 #define OCTAVE_GRAPHICS_OPENGL_GRAPHICSCONTEXTGL_HPP
 
 #include "graphics/GraphicsContext.hpp"
-#include "BufferGL.hpp"
-#include "VertexArrayLayoutGL.hpp"
 
 namespace Octave::Impl {
 
 class GraphicsContextGL : public GraphicsContext {
 public:
 	GraphicsContextGL();
-	virtual ~GraphicsContextGL() noexcept override;
 
 	void Clear( bool color = true, bool depth = true, float r = 0.0f,
 				float g = 0.0f, float b = 0.0f,
@@ -22,17 +19,17 @@ public:
 	[[nodiscard]] std::array<int, 4> GetViewport() const noexcept override;
 
 	void SetDepthTestEnabled( bool enabled ) noexcept override;
-	void SetVertexBuffer( SharedRef<Buffer> vertex_buffer, size_t stride, SharedRef<VertexArrayLayout> layout ) override;
+	void SetVertexBuffer( SharedRef<Buffer> vertex_buffer, SharedRef<VertexArray> layout ) override;
 	void SetIndexBuffer( SharedRef<Buffer> index_buffer ) override;
-	void SetVertexShader( SharedRef<Shader> vertex_shader ) override;
-	void SetFragmentShader( SharedRef<Shader> fragment_shader ) override;
+	void SetPipeline( SharedRef<Pipeline> pipeline ) override;
+	// void SetVertexShader( SharedRef<Shader> vertex_shader ) override;
+	// void SetFragmentShader( SharedRef<Shader> fragment_shader ) override;
 	void SetViewport( int x, int y, int width, int height ) noexcept override;
 
 private:
-	uint32_t pipeline_id_ = 0;
-	SharedRef<BufferGL> ibo_;
-	SharedRef<VertexArrayLayoutGL> vao_;
-	uint32_t vertex_stride_ = 0;
+	SharedRef<Pipeline> pipeline_;
+	SharedRef<Buffer> ibo_;
+	SharedRef<VertexArray> vao_;
 };
 
 }  // namespace Octave::Impl

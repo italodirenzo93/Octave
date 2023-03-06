@@ -6,8 +6,8 @@
 #include "core/Types.hpp"
 #include "core/Window.hpp"
 #include "GraphicsContext.hpp"
-#include "Buffer.hpp"
-#include "Texture.hpp"
+#include "Resources.hpp"
+#include "Structs.hpp"
 
 namespace Octave {
 
@@ -20,8 +20,10 @@ public:
 	[[nodiscard]] virtual std::string TryDequeueError() noexcept = 0;
 
 	[[nodiscard]] virtual Ref<GraphicsContext> CreateContext() noexcept = 0;
-	[[nodiscard]] virtual Ref<Buffer> CreateBuffer( BufferBinding binding, size_t byte_width ) noexcept = 0;
-	[[nodiscard]] virtual Ref<Texture> CreateTexture() noexcept = 0;
+	[[nodiscard]] virtual Ref<Buffer> CreateBuffer( const BufferDescription& desc, const void* initial_data = nullptr ) noexcept = 0;
+	[[nodiscard]] virtual Ref<VertexArray> CreateVertexArray( const VertexArrayDescription& desc ) noexcept = 0;
+	[[nodiscard]] virtual Ref<Pipeline> CreatePipeline() noexcept = 0;
+	[[nodiscard]] virtual Ref<Shader> CreateShader() noexcept = 0;
 
     static Ref<GraphicsDevice> Create( const Window& window );
 };

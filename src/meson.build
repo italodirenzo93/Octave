@@ -6,14 +6,16 @@ glfw3_dep = dependency('glfw3')
 glm_dep = dependency('glm')
 spdlog_dep = dependency('spdlog')
 
+subdir('graphics')
+
 octave = static_library(
 	'Octave',
 	[
 		# Top-level
 		'Application.cpp',
 		'Application.hpp',
-		'Camera.cpp',
-		'Camera.hpp',
+		# 'Camera.cpp',
+		# 'Camera.hpp',
 		'Config.cpp',
 		'Config.hpp',
 		'EntryPoint.hpp',
@@ -39,29 +41,23 @@ octave = static_library(
 		'core/glfw/WindowGLFW.hpp',
 
 		# Graphics
-		'graphics/Buffer.hpp',
-        'graphics/GraphicsDevice.cpp',
-		'graphics/GraphicsDevice.hpp',
+        # 'graphics/GraphicsDevice.cpp',
+		# 'graphics/GraphicsDevice.hpp',
 		# 'graphics/Mesh.cpp',
 		# 'graphics/Mesh.hpp',
 		# 'graphics/Model.cpp',
 		# 'graphics/Model.hpp',
-		'graphics/GraphicsContext.hpp',
-		'graphics/Shader.hpp',
-		'graphics/Texture.hpp',
-		'graphics/VertexArrayLayout.hpp',
-		'graphics/OpenGL/BufferGL.cpp',
-		'graphics/OpenGL/BufferGL.hpp',
-		'graphics/OpenGL/GraphicsDeviceGL.cpp',
-		'graphics/OpenGL/GraphicsDeviceGL.hpp',
-		'graphics/OpenGL/GraphicsContextGL.cpp',
-		'graphics/OpenGL/GraphicsContextGL.hpp',
-		'graphics/OpenGL/ShaderGL.cpp',
-		'graphics/OpenGL/ShaderGL.hpp',
-		'graphics/OpenGL/TextureGL.cpp',
-		'graphics/OpenGL/TextureGL.hpp',
-		'graphics/OpenGL/VertexArrayLayoutGL.cpp',
-		'graphics/OpenGL/VertexArrayLayoutGL.hpp',
+		# 'graphics/GraphicsContext.hpp',
+		# 'graphics/Resources.hpp',
+		# 'graphics/Structs.hpp',
+		# 'graphics/OpenGL/Buffer.cpp',
+		# 'graphics/OpenGL/Buffer.hpp',
+		# 'graphics/OpenGL/GraphicsDeviceGL.cpp',
+		# 'graphics/OpenGL/GraphicsDeviceGL.hpp',
+		# 'graphics/OpenGL/GraphicsContextGL.cpp',
+		# 'graphics/OpenGL/GraphicsContextGL.hpp',
+		# 'graphics/OpenGL/VertexArray.cpp',
+		# 'graphics/OpenGL/VertexArray.hpp',
 
 		# Helpers
 		'helpers/GeometricPrimitive.cpp',
@@ -79,13 +75,15 @@ octave = static_library(
 
 		# Resources
 		'resources/ResourceManager.hpp',
-		'resources/ShaderManager.cpp',
-		'resources/ShaderManager.hpp',
-		'resources/TextureManager.cpp',
-		'resources/TextureManager.hpp'
+		# 'resources/ShaderManager.cpp',
+		# 'resources/ShaderManager.hpp',
+		# 'resources/TextureManager.cpp',
+		# 'resources/TextureManager.hpp'
 	],
 	include_directories: include_directories(''),
 	dependencies: [
+		graphics_dep,
+
 		glad_dep,
 		glfw3_dep,
 		glm_dep,
