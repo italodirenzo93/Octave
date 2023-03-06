@@ -31,7 +31,7 @@ public:
 	[[nodiscard]] Ref<Buffer> CreateBuffer( const BufferDescription& desc, const void* initial_data = nullptr ) noexcept override;
 	[[nodiscard]] Ref<VertexArray> CreateVertexArray( const VertexArrayDescription& desc ) noexcept override;
 	[[nodiscard]] Ref<Pipeline> CreatePipeline() noexcept override;
-	[[nodiscard]] Ref<Shader> CreateShader() noexcept override;
+	[[nodiscard]] Ref<Shader> CreateShader( ShaderType type, const char* source ) noexcept override;
 
 private:
     GLFWwindow* window_;

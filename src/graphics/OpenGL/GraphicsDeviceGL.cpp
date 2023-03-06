@@ -93,8 +93,8 @@ Ref<Pipeline> GraphicsDeviceGL::CreatePipeline() noexcept {
 	return make_unique<Pipeline>();
 }
 
-Ref<Shader> GraphicsDeviceGL::CreateShader() noexcept {
-	return make_unique<Shader>();
+Ref<Shader> GraphicsDeviceGL::CreateShader( ShaderType type, const char* source ) noexcept {
+	return make_unique<Shader>( type, source );
 }
 
 static void APIENTRY DebugCallback( GLenum source, GLenum type, unsigned int id,

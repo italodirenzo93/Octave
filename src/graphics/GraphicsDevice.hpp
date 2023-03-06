@@ -23,7 +23,7 @@ public:
 	[[nodiscard]] virtual Ref<Buffer> CreateBuffer( const BufferDescription& desc, const void* initial_data = nullptr ) noexcept = 0;
 	[[nodiscard]] virtual Ref<VertexArray> CreateVertexArray( const VertexArrayDescription& desc ) noexcept = 0;
 	[[nodiscard]] virtual Ref<Pipeline> CreatePipeline() noexcept = 0;
-	[[nodiscard]] virtual Ref<Shader> CreateShader() noexcept = 0;
+	[[nodiscard]] virtual Ref<Shader> CreateShader( ShaderType type, const char* source ) noexcept = 0;
 
     static Ref<GraphicsDevice> Create( const Window& window );
 };
