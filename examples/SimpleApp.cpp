@@ -10,23 +10,37 @@ using namespace Octave;
 
 static constexpr const char* kVertexShaderSource = R"(#version 410
 layout( location = 0 ) in vec2 position;
+layout( location=1 ) in vec3 color;
+
 out gl_PerVertex {
 	vec4 gl_Position;
 };
+
+out vec3 vertex_color;
+
 void main() {
 	gl_Position = vec4(position, 0.0, 1.0);
+	vertex_color = color;
 }
 )";
 
 static constexpr const char* kFragmentShaderSource = R"(#version 410
+in vec3 vertex_color;
+
 out vec4 frag_color;
+
 void main() {
-	frag_color = vec4(0.0, 1.0, 0.0, 1.0);
+	frag_color = vec4(vertex_color, 1.0);
 }
 )";
 
 struct VertexType {
 	float position[2];
+	float color[3];
+};
+
+struct FragmentShaderParams {
+	float color[3];
 };
 
 class SimpleAppLayer final : public Layer {
@@ -43,8 +57,9 @@ public:
 
 		// Vertex Buffer
 		{
-			vector<VertexType> vertices{
-				{ 0.0f, 1.0f }, { 1.0f, -1.0f }, { -1.0f, -1.0f } };
+			vector<VertexType> vertices{ { {0.0f, 1.0f}, {1.0f, 0.0f, 0.0f} },
+										 { {1.0f, -1.0f}, {0.0f, 1.0f, 0.0f} },
+										 { {-1.0f, -1.0f}, {0.0f, 0.0f, 1.0f} } };
 
 			BufferDescription desc{};
 			desc.size = sizeof( VertexType ) * vertices.size();
@@ -58,47 +73,61 @@ public:
 
 		// Vertex Array
 		{
-			VertexAttribute attrs[] = { { VertexAttributeName::kPosition, 2,
-										  VertexAttributeType::kFloat,
-										  false } };
+			VertexAttribute attrs[] = {
+				{ VertexAttributeName::kPosition, 2,
+				  VertexAttributeType::kFloat, false },
+				{ VertexAttributeName::kColor, 3, VertexAttributeType::kFloat,
+				  false } };
 
 			VertexArrayDescription desc{};
 			desc.attributes = attrs;
-			desc.count = 1;
+			desc.count = 2;
 
 			vao_ = app.GetGraphicsDevice().CreateVertexArray( desc );
 		}
-
-		context_->SetVertexBuffer( vbo_, vao_ );
 
 		pipeline_ = app.GetGraphicsDevice().CreatePipeline();
 
 		// Vertex Shader
 		{
-			vertex_shader_ = app.GetGraphicsDevice().CreateShader( ShaderType::VertexShader, kVertexShaderSource );
+			vertex_shader_ = app.GetGraphicsDevice().CreateShader(
+				ShaderType::VertexShader, kVertexShaderSource );
 			pipeline_->SetVertexShader( vertex_shader_ );
 		}
 
 		// Fragment Shader
 		{
-			fragment_shader_ = app.GetGraphicsDevice().CreateShader( ShaderType::FragmentShader, kFragmentShaderSource );
+			fragment_shader_ = app.GetGraphicsDevice().CreateShader(
+				ShaderType::FragmentShader, kFragmentShaderSource );
 			pipeline_->SetFragmentShader( fragment_shader_ );
 		}
 
+		// Uniform buffer
+		{
+			FragmentShaderParams params = { 1.0f, 0.0f, 0.0f };
 
-		context_->SetPipeline( pipeline_ );
+			BufferDescription desc;
+			desc.size = sizeof( params );
+			desc.stride = 0;
+			desc.access_flags = BufferAccess::Write;
+			desc.bind_flags = BufferBinding::UniformBuffer;
+
+			ubo_ = app.GetGraphicsDevice().CreateBuffer( desc, &params );
+
+			// pipeline_->SetFragmentUniformBuffer( ubo_, 0, 0 );
+		}
 	}
 
-	void OnAttach() override {
-		Log::Info( "Attaching SimpleApp layer" );
-	}
+	void OnAttach() override { Log::Info( "Attaching SimpleApp layer" ); }
 
-	void OnDetach() override {
-		Log::Info( "Detaching SimpleApp layer" );
-	}
+	void OnDetach() override { Log::Info( "Detaching SimpleApp layer" ); }
 
 	void OnUpdate() override {
 		context_->Clear();
+
+		context_->SetVertexBuffer( vbo_, vao_ );
+		context_->SetPipeline( pipeline_ );
+
 		context_->Draw( 3, 0 );
 	}
 
@@ -109,6 +138,7 @@ private:
 	SharedRef<Pipeline> pipeline_;
 	SharedRef<Buffer> vbo_;
 	SharedRef<VertexArray> vao_;
+	SharedRef<Buffer> ubo_;
 };
 
 class SimpleApp final : public Application {

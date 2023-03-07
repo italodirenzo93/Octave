@@ -39,6 +39,19 @@ static GLenum AttrTypeToGLType( VertexAttributeType type ) noexcept {
 	}
 }
 
+static GLuint AttrTypeSize( VertexAttributeType type ) noexcept {
+	switch ( type ) {
+		case VertexAttributeType::kFloat:
+			return sizeof( GLfloat );
+		case VertexAttributeType::kUbyte:
+			return sizeof( GLubyte );
+		case VertexAttributeType::kUint:
+			return sizeof( GLuint );
+		default:
+			assert( false );
+	}
+}
+
 GraphicsContextGL::GraphicsContextGL() {
 	const Config& config = Config::Instance();
 
@@ -118,17 +131,18 @@ void GraphicsContextGL::SetVertexBuffer( SharedRef<Buffer> vertex_buffer,
 	glBindVertexArray( layout->GetApiResource() );
 	glBindBuffer( GL_ARRAY_BUFFER, vertex_buffer->GetApiResource() );
 
-	uint32_t attr_index = 0;
-	// TODO: map the attribute type to the correct number of bytes in offset
-	// (currently hardcoded to sizeof(float))
+	uint32_t offset = 0;
+
 	for ( const auto& attr : *layout ) {
 		glVertexAttribPointer(
 			AttrNameToIndex( attr.name ), static_cast<GLint>( attr.size ),
 			AttrTypeToGLType( attr.type ),
 			static_cast<GLboolean>( attr.normalized ),
 			static_cast<GLsizei>( vertex_buffer->GetStride() ),
-			reinterpret_cast<const void*>( attr_index++ * sizeof( float ) ) );
+			reinterpret_cast<const void*>( offset ) );
 		glEnableVertexAttribArray( AttrNameToIndex( attr.name ) );
+
+		offset += attr.size * AttrTypeSize( attr.type );
 	}
 
 	// Save references for draw time
@@ -142,16 +156,6 @@ void GraphicsContextGL::SetIndexBuffer( SharedRef<Buffer> index_buffer ) {
 void GraphicsContextGL::SetPipeline( SharedRef<Pipeline> pipeline ) {
 	pipeline_ = std::move( pipeline );
 }
-
-// void GraphicsContextGL::SetVertexShader( SharedRef<Shader> vertex_shader ) {
-// 	glUseProgramStages( pipeline_id_, GL_VERTEX_SHADER_BIT,
-// vertex_shader->GetApiResource() );
-// }
-
-// void GraphicsContextGL::SetFragmentShader( SharedRef<Shader> fragment_shader
-// ) { 	glUseProgramStages( pipeline_id_, GL_FRAGMENT_SHADER_BIT,
-// fragment_shader->GetApiResource() );
-// }
 
 void GraphicsContextGL::SetViewport( int x, int y, int width,
 									 int height ) noexcept {

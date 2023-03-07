@@ -22,8 +22,6 @@ public:
 	void SetVertexBuffer( SharedRef<Buffer> vertex_buffer, SharedRef<VertexArray> layout ) override;
 	void SetIndexBuffer( SharedRef<Buffer> index_buffer ) override;
 	void SetPipeline( SharedRef<Pipeline> pipeline ) override;
-	// void SetVertexShader( SharedRef<Shader> vertex_shader ) override;
-	// void SetFragmentShader( SharedRef<Shader> fragment_shader ) override;
 	void SetViewport( int x, int y, int width, int height ) noexcept override;
 
 private:
