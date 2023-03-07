@@ -10,7 +10,7 @@ namespace Octave {
 
 class LayerStack {
 public:
-	using LayerPtr = std::unique_ptr<Layer>;
+	using LayerPtr = Ref<Layer>;
 
 	LayerStack() noexcept;
 	LayerStack( const LayerStack& other ) = delete;

@@ -23,7 +23,7 @@ public:
 
 	template <typename... Ty>
 	Object& AddChild( const Ty&... args ) noexcept {
-		auto child = std::make_unique<Object>( args... );
+		auto child = MakeRef<Object>( args... );
 		child->parent_ = this;
 		children_.emplace_back( child );
 		return *this;
@@ -41,7 +41,7 @@ protected:
 	bool update_world_matrix_ = false;
 
 	Object* parent_ = nullptr;
-	std::list<std::unique_ptr<Object>> children_;
+	std::list<Ref<Object>> children_;
 
 public:
 	Object& operator=( const Object& other ) noexcept = default;

@@ -39,10 +39,6 @@ struct VertexType {
 	float color[3];
 };
 
-struct FragmentShaderParams {
-	float color[3];
-};
-
 class SimpleAppLayer final : public Layer {
 public:
 	explicit SimpleAppLayer( const Application& app )
@@ -101,21 +97,6 @@ public:
 				ShaderType::FragmentShader, kFragmentShaderSource );
 			pipeline_->SetFragmentShader( fragment_shader_ );
 		}
-
-		// Uniform buffer
-		{
-			FragmentShaderParams params = { 1.0f, 0.0f, 0.0f };
-
-			BufferDescription desc;
-			desc.size = sizeof( params );
-			desc.stride = 0;
-			desc.access_flags = BufferAccess::Write;
-			desc.bind_flags = BufferBinding::UniformBuffer;
-
-			ubo_ = app.GetGraphicsDevice().CreateBuffer( desc, &params );
-
-			// pipeline_->SetFragmentUniformBuffer( ubo_, 0, 0 );
-		}
 	}
 
 	void OnAttach() override { Log::Info( "Attaching SimpleApp layer" ); }
@@ -150,6 +131,6 @@ public:
 	}
 };
 
-unique_ptr<Application> Octave::CreateApplication( int argc, char* argv[] ) {
-	return make_unique<SimpleApp>();
+Ref<Application> Octave::CreateApplication( int argc, char* argv[] ) {
+	return MakeRef<SimpleApp>();
 }

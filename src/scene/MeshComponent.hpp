@@ -7,7 +7,7 @@ namespace Octave::scene {
 
 class MeshComponent {
 public:
-	std::shared_ptr<graphics::Mesh> mesh_;
+	SharedRef<graphics::Mesh> mesh_;
 };
 
 }  // namespace octave::scene
