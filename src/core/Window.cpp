@@ -26,9 +26,9 @@ WindowOptions::WindowOptions( int width, int height, std::string title,
 	  title( std::move( title ) ) {
 }
 
-std::unique_ptr<Window> Window::Create( const WindowOptions& options ) {
+Ref<Window> Window::Create( const WindowOptions& options ) {
 	// TODO: Conditionally choose implementation per platform
-	return std::make_unique<Impl::WindowGLFW>( options );
+	return MakeRef<Impl::WindowGLFW>( options );
 }
 
 }  // namespace Octave

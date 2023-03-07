@@ -76,25 +76,25 @@ std::string GraphicsDeviceGL::TryDequeueError() noexcept {
 }
 
 Ref<GraphicsContext> GraphicsDeviceGL::CreateContext() noexcept {
-	return make_unique<GraphicsContextGL>();
+	return MakeRef<GraphicsContextGL>();
 }
 
 Ref<Buffer> GraphicsDeviceGL::CreateBuffer(
 	const BufferDescription& desc, const void* initial_data ) noexcept {
-	return make_unique<Buffer>( desc, initial_data );
+	return MakeRef<Buffer>( desc, initial_data );
 }
 
 Ref<VertexArray> GraphicsDeviceGL::CreateVertexArray(
 	const VertexArrayDescription& desc ) noexcept {
-	return make_unique<VertexArray>( desc );
+	return MakeRef<VertexArray>( desc );
 }
 
 Ref<Pipeline> GraphicsDeviceGL::CreatePipeline() noexcept {
-	return make_unique<Pipeline>();
+	return MakeRef<Pipeline>();
 }
 
 Ref<Shader> GraphicsDeviceGL::CreateShader( ShaderType type, const char* source ) noexcept {
-	return make_unique<Shader>( type, source );
+	return MakeRef<Shader>( type, source );
 }
 
 static void APIENTRY DebugCallback( GLenum source, GLenum type, unsigned int id,

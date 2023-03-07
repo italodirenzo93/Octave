@@ -1,9 +1,7 @@
 #ifndef OCTAVE_WINDOW_HPP
 #define OCTAVE_WINDOW_HPP
 
-#include <functional>
-#include <string>
-#include <vector>
+#include "pch/pch.hpp"
 
 namespace Octave {
 
@@ -48,7 +46,7 @@ public:
 		return *this;
 	}
 
-	static std::unique_ptr<Window> Create( const WindowOptions& options );
+	static Ref<Window> Create( const WindowOptions& options );
 
 protected:
 	Window() = default;

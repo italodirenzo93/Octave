@@ -25,7 +25,7 @@ static ShaderManager::ResourcePtr LoadShaderProgram(
 	}
 
 	try {
-		auto program = make_shared<Shader>();
+		auto program = MakeShared<Shader>();
 		program->CompileFromFile( vertex_path, fragment_path );
 
 		return program;

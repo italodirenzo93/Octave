@@ -9,7 +9,7 @@ class InputSystemGLFW : public InputSystem {
 public:
 	[[nodiscard]] bool IsKeyDown( const Window& window, Key key ) const noexcept override;
 
-	[[nodiscard]] std::unique_ptr<Gamepad> GetGamepad(
+	[[nodiscard]] Ref<Gamepad> GetGamepad(
 		int player_index ) const noexcept override;
 };
 

@@ -1,7 +1,7 @@
 #ifndef OCTAVE_INPUTSYSTEM_HPP
 #define OCTAVE_INPUTSYSTEM_HPP
 
-#include <memory>
+#include "pch/pch.hpp"
 
 #include "Gamepad.hpp"
 #include "core/Window.hpp"
@@ -17,7 +17,7 @@ public:
 	[[nodiscard]] virtual bool IsKeyDown( const Window& window,
 										  Key key ) const noexcept = 0;
 
-	[[nodiscard]] virtual std::unique_ptr<Gamepad> GetGamepad(
+	[[nodiscard]] virtual Ref<Gamepad> GetGamepad(
 		int player_index ) const noexcept = 0;
 };
 

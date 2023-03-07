@@ -8,7 +8,7 @@ using namespace std;
 
 namespace Octave {
 
-static unordered_map<string, shared_ptr<Texture>> texture_cache;
+static unordered_map<string, SharedRef<Texture>> texture_cache;
 
 // static Mesh ProcessMesh( const string& directory, aiMesh* mesh,
 // 						 const aiScene* scene ) {
@@ -17,9 +17,9 @@ static unordered_map<string, shared_ptr<Texture>> texture_cache;
 // 	vector<VertexPositionNormalTexture> vertices;
 // 	vector<uint32_t> indices;
 
-// 	auto vbo = make_shared<VertexBuffer>();
-// 	auto ibo = make_shared<IndexBuffer>();
-// 	vector<shared_ptr<Texture>> textures;
+// 	auto vbo = MakeShared<VertexBuffer>();
+// 	auto ibo = MakeShared<IndexBuffer>();
+// 	vector<SharedRef<Texture>> textures;
 
 // 	// Process vertices
 // 	for ( uint32_t i = 0; i < mesh->mNumVertices; i++ ) {
@@ -67,7 +67,7 @@ static unordered_map<string, shared_ptr<Texture>> texture_cache;
 // 				return iter->second;
 // 			}
 
-// 			auto texture = make_shared<Texture>();
+// 			auto texture = MakeShared<Texture>();
 // 			try {
 // 				texture->LoadFromFile( full_path.string() );
 // 				texture_cache[full_path.string()] = texture;

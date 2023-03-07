@@ -6,10 +6,10 @@
 
 namespace Octave {
 
-std::unique_ptr<GraphicsDevice> GraphicsDevice::Create( const Window& window ) {
+Ref<GraphicsDevice> GraphicsDevice::Create( const Window& window ) {
     // TODO: Do this per platform
     const auto& glfw_window = dynamic_cast<const Impl::WindowGLFW&>( window );
-    return std::make_unique<Impl::GraphicsDeviceGL>( glfw_window.GetPointer() );
+    return MakeRef<Impl::GraphicsDeviceGL>( glfw_window.GetPointer() );
 }
 
 }

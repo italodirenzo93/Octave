@@ -1,12 +1,10 @@
 #ifndef OCTAVE_ENTRYPOINT_HPP
 #define OCTAVE_ENTRYPOINT_HPP
 
-#include <iostream>
-
 #include "Application.hpp"
 #include "core/Log.hpp"
 
-extern std::unique_ptr<Octave::Application> Octave::CreateApplication( int argc, char* argv[] );
+extern Octave::Ref<Octave::Application> Octave::CreateApplication( int argc, char* argv[] );
 
 int main( int argc, char* argv[] ) {
 	try {

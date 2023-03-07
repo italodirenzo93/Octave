@@ -11,7 +11,7 @@ Application::Application() : Application( 0, nullptr ) {
 Application::Application( int argc, char* argv[] ) : is_running_( true ) {
 	Log::Init();
 
-	input_ = std::make_unique<Impl::InputSystemGLFW>();
+	input_ = MakeRef<Impl::InputSystemGLFW>();
 	window_ = Window::Create( WindowOptions() );
     graphics_ = GraphicsDevice::Create( *window_ );
 

@@ -9,11 +9,11 @@ class Log {
 public:
 	static void Init() noexcept;
 
-	static std::shared_ptr<spdlog::logger>& GetCoreLogger() noexcept {
+	static SharedRef<spdlog::logger>& GetCoreLogger() noexcept {
 		return logger_core_;
 	}
 
-	static std::shared_ptr<spdlog::logger>& GetClientLogger() noexcept {
+	static SharedRef<spdlog::logger>& GetClientLogger() noexcept {
 		return logger_client_;
 	}
 
@@ -43,8 +43,8 @@ public:
 	}
 
 private:
-	static std::shared_ptr<spdlog::logger> logger_core_;
-	static std::shared_ptr<spdlog::logger> logger_client_;
+	static SharedRef<spdlog::logger> logger_core_;
+	static SharedRef<spdlog::logger> logger_client_;
 
 public:
 	Log() = delete;
