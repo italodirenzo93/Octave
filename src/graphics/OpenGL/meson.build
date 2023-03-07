@@ -11,6 +11,8 @@ rhi_opengl_dep = declare_dependency(
 		'Pipeline.hpp',
 		'Shader.cpp',
 		'Shader.hpp',
+		'Texture.cpp',
+		'Texture.hpp',
 		'VertexArray.cpp',
 		'VertexArray.hpp',
 	]

@@ -7,13 +7,12 @@
 #include "OpenGL/Pipeline.hpp"
 #include "OpenGL/Shader.hpp"
 #include "OpenGL/VertexArray.hpp"
-
-namespace Octave {
-class Texture {};
-}
+#include "OpenGL/Texture.hpp"
 
 #else
+
 #error Unsupported RHI
+
 #endif
 
 
