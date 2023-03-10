@@ -1,8 +1,33 @@
 #include "common/Sample.hpp"
 #include <EntryPoint.hpp>
 
+#include "helpers/GeometricPrimitive.hpp"
+#include "helpers/GeometricPrimitive.hpp"
+
 using namespace std;
 using namespace Octave;
+using namespace Octave::Samples;
+
+class Material {
+public:
+	SharedRef<Texture> diffuse;
+	SharedRef<Texture> specular;
+};
+
+class Mesh {
+public:
+	SharedRef<Buffer> vbo;
+	SharedRef<Buffer> ibo;
+	SharedRef<VertexArray> vao;
+	SharedRef<Material> material;
+
+	void Draw( GraphicsContext& context, SharedRef<Pipeline> pipeline ) {
+		context.SetVertexBuffer( vbo, vao );
+		context.SetIndexBuffer( ibo );
+		context.SetPipeline( pipeline );
+		context.DrawIndexed( ibo->GetSize(), 0, 0 );
+	}
+};
 
 inline void SetDefaultLighting( Shader& shader ) {
 	const glm::vec3 direction( 0.5f, 0.0f, -0.5f );
@@ -31,9 +56,10 @@ static glm::mat3 MakeNormalMatrix( const glm::mat4& model_matrix ) {
 
 class ApplicationLayer : public Layer {
 public:
-	ApplicationLayer( Application& app, const string& file_name )
+	explicit ApplicationLayer( Application& app )
 		: app_( app ) {
-		renderer_ = app.GetGraphicsDevice().CreateRenderer();
+
+		context_ = app.GetGraphicsDevice().CreateContext();
 
 		pad_ = app.GetInputSystem().GetGamepad( 0 );
 		if ( pad_ != nullptr ) {
@@ -55,14 +81,25 @@ public:
 		camera_.field_of_view_ = Config::Instance().GetFieldOfView();
 		camera_.position_ = glm::vec3( 0, 0, 7 );
 
-		// Load model file or basic cube if not provided
-		if ( file_name.empty() ) {
-			shared_ptr<VertexBuffer> vbo = app.GetGraphicsDevice().CreateVertexBuffer();
-			shared_ptr<IndexBuffer> ibo = app.GetGraphicsDevice().CreateIndexBuffer();
-			shared_ptr<Texture> diffuse = app.GetGraphicsDevice().CreateTexture();
+		// Load GPU resources for objects
+		{
+			GeometricPrimitive::VertexCollection vertices;
+			GeometricPrimitive::IndexCollection indices;
 
-			GeometricPrimitive::CreateCube( *vbo, *ibo );
-			TextureManager::LoadFromFile( *diffuse, "resources/textures/container.jpg" );
+			GeometricPrimitive::CreateCube( vertices, indices );
+
+			// Create cube GPU resources
+			SharedRef<Buffer> vbo =
+				CreateStaticBuffer( app.GetGraphicsDevice(), vertices,
+									sizeof( GeometricPrimitive::VertexType ),
+									BufferBinding::VertexBuffer );
+
+			SharedRef<Buffer> ibo =
+				CreateStaticBuffer( app.GetGraphicsDevice(), indices, 0,
+									BufferBinding::IndexBuffer );
+
+			SharedRef<Texture> diffuse = CreateTextureFromFile(
+				app.GetGraphicsDevice(), "resources/textures/container.jpg" );
 
 			Mesh cube_mesh;
 			cube_mesh.SetVertexBuffer( vbo );
@@ -70,19 +107,21 @@ public:
 			cube_mesh.SetTextures( { diffuse } );
 
 			model_.AddMesh( std::move( cube_mesh ) );
-		} else {
-			model_ = Model::LoadFromFile( file_name );
 		}
+
 		model_matrix_ = glm::identity<glm::mat4>();
 
 		// Load floor
-		floor_vbo_ = app.GetGraphicsDevice().CreateVertexBuffer();
-		floor_texture_diffuse_ = app.GetGraphicsDevice().CreateTexture();
-		floor_texture_specular_ = app.GetGraphicsDevice().CreateTexture();
+		GeometricPrimitive::VertexCollection floor_verts;
+		GeometricPrimitive::CreatePlane( floor_verts );
 
-		GeometricPrimitive::CreatePlane( *floor_vbo_ );
-		TextureManager::LoadFromFile( *floor_texture_diffuse_, "resources/textures/wood_diffuse.png" );
-		TextureManager::LoadFromFile( *floor_texture_specular_, "resources/textures/wood_specular.png" );
+		floor_vbo_ =
+			CreateStaticBuffer( app.GetGraphicsDevice(), floor_verts, sizeof(GeometricPrimitive::VertexType),
+										 BufferBinding::VertexBuffer );
+		floor_texture_diffuse_ = CreateTextureFromFile(
+			app.GetGraphicsDevice(), "resources/textures/wood_diffuse.png" );
+		floor_texture_specular_ = CreateTextureFromFile(
+			app.GetGraphicsDevice(), "resources/textures/wood_specular.png" );
 
 		floor_position_ = glm::vec3( 0, -3, 0 );
 	}
@@ -110,7 +149,7 @@ protected:
 							 glm::vec3( 0, 1, 0 ) );
 		} );
 
-		renderer_->Clear( true, true, 0.1f, 0.1f, 0.1f );
+		context_->Clear( true, true, 0.1f, 0.1f, 0.1f );
 
 		SetDefaultLighting( *shader_ );
 
@@ -138,7 +177,7 @@ protected:
 		}
 	}
 
-	void DebugCameraControls( Octave::DebugCamera& camera, float camera_speed,
+	void DebugCameraControls( DebugCamera& camera, float camera_speed,
 							  float delta ) noexcept {
 		const auto& window = app_.GetWindow();
 		const auto& keyboard = app_.GetInputSystem();
@@ -192,7 +231,7 @@ protected:
 	}
 
 	void DebugCameraControls( const Octave::Gamepad& gamepad,
-							  Octave::DebugCamera& camera, float camera_speed,
+							  DebugCamera& camera, float camera_speed,
 							  float delta ) noexcept {
 		const auto [left_x, left_y] = gamepad.GetLeftStick();
 
@@ -224,39 +263,34 @@ protected:
 private:
 	Application& app_;
 
-	unique_ptr<GraphicsContext> renderer_;
-	std::shared_ptr<Octave::Shader> shader_;
-	std::unique_ptr<Octave::Gamepad> pad_;
+	Ref<GraphicsContext> context_;
 
-	Octave::ShaderManager shaders_;
+	SharedRef<Shader> shader_;
+	Ref<Gamepad> pad_;
 
-	Octave::Model model_;
+	ShaderManager shaders_;
+
+	Model model_;
 	glm::mat4 model_matrix_;
 
 	StepTimer step_timer_;
 	DebugCamera camera_;
 
-	std::unique_ptr<Octave::VertexBuffer> floor_vbo_;
-	std::unique_ptr<Octave::Texture> floor_texture_diffuse_,
+	Ref<Buffer> floor_vbo_;
+	Ref<Texture> floor_texture_diffuse_,
 		floor_texture_specular_;
 	glm::vec3 floor_position_;
 };
 
 class ModelViewerSample : public Sample {
 public:
-	explicit ModelViewerSample( std::string file_name ) noexcept
-		: file_name_( std::move( file_name ) ) {}
+	explicit ModelViewerSample() noexcept {}
 
 	void OnInitialize() override {
-		PushLayer( make_unique<ApplicationLayer>( *this, file_name_ ) );
+		PushLayer( MakeRef<ApplicationLayer>( *this ) );
 	}
-
-private:
-	std::string file_name_;
 };
 
-unique_ptr<Octave::Application> Octave::CreateApplication( int argc,
-														   char* argv[] ) {
-	string filename = argc > 1 ? argv[1] : "";
-	return make_unique<ModelViewerSample>( filename );
+Ref<Application> Octave::CreateApplication( int argc, char* argv[] ) {
+	return MakeRef<ModelViewerSample>();
 }

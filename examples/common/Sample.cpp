@@ -3,17 +3,20 @@
 using namespace std;
 using namespace Octave;
 
-SampleLayer::SampleLayer( const Sample& app ) {
-	step_timer_ = make_unique<StepTimer>();
+namespace Octave::Samples {
 
-	renderer_ = app.GetGraphicsDevice().CreateRenderer();
+SampleLayer::SampleLayer( const Sample& app ) {
+	step_timer_ = MakeRef<StepTimer>();
+
+	context_ = app.GetGraphicsDevice().CreateContext();
 
 	app.GetWindow().AddSizeChangedCallback( [this]( int width, int height ) {
-		renderer_->SetViewport( 0, 0, width, height );
+		context_->SetViewport( 0, 0, width, height );
 	} );
 }
 
 
 void Sample::OnInitialize() {
-
 }
+
+}  // namespace Octave::Samples

@@ -60,7 +60,7 @@ public:
 			BufferDescription desc{};
 			desc.size = sizeof( VertexType ) * vertices.size();
 			desc.stride = sizeof( VertexType );
-			desc.access_flags = BufferAccess::Write;
+			desc.access_flags = ResourceAccess::Write;
 			desc.bind_flags = BufferBinding::VertexBuffer;
 
 			vbo_ = app.GetGraphicsDevice().CreateBuffer(

@@ -24,6 +24,8 @@ public:
 	[[nodiscard]] virtual Ref<VertexArray> CreateVertexArray( const VertexArrayDescription& desc ) noexcept = 0;
 	[[nodiscard]] virtual Ref<Pipeline> CreatePipeline() noexcept = 0;
 	[[nodiscard]] virtual Ref<Shader> CreateShader( ShaderType type, const char* source ) noexcept = 0;
+	[[nodiscard]] virtual Ref<Texture> CreateTexture2D(
+		const TextureDescription2D& desc, const void* data ) = 0;
 
     static Ref<GraphicsDevice> Create( const Window& window );
 };

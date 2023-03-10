@@ -16,13 +16,13 @@ static GLenum BindingToGLType( BufferBinding binding ) noexcept {
 	}
 }
 
-static GLenum AccessToGLType( BufferAccess access ) noexcept {
+static GLenum AccessToGLType( ResourceAccess access ) noexcept {
 	switch ( access ) {
-		case BufferAccess::Copy:
+		case ResourceAccess::Copy:
 			return GL_STATIC_COPY;
-		case BufferAccess::Read:
+		case ResourceAccess::Read:
 			return GL_STATIC_READ;
-		case BufferAccess::Write:
+		case ResourceAccess::Write:
 			return GL_STATIC_DRAW;
 		default:
 			assert( false );
