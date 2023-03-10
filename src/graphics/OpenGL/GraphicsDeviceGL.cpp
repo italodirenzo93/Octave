@@ -17,10 +17,10 @@ static void APIENTRY DebugCallback( GLenum source, GLenum type, unsigned int id,
 GraphicsDeviceGL::GraphicsDeviceGL( GLFWwindow* window ) : window_( window ) {
 	Log::GetCoreLogger()->trace( "Creating OpenGL 4.1 Core rendering context" );
 
-	// const Config& config = Config::Instance();
+	const Config& config = Config::Instance();
 
 	glfwMakeContextCurrent( window_ );
-	// glfwSwapInterval( config.GetSyncInterval() );
+	glfwSwapInterval( config.GetSyncInterval() );
 
 	// Initialize Open GL extension loader
 	if ( !gladLoadGLLoader(
@@ -29,16 +29,18 @@ GraphicsDeviceGL::GraphicsDeviceGL( GLFWwindow* window ) : window_( window ) {
 	}
 
 	// Get context information
-	int context_flags;
-	glGetIntegerv( GL_CONTEXT_FLAGS, &context_flags );
+	if ( GLAD_GL_ARB_debug_output ) {
+		int context_flags;
+		glGetIntegerv( GL_CONTEXT_FLAGS, &context_flags );
 
-	// Configure debug callback if we have a debug context
-	if ( context_flags & GL_CONTEXT_FLAG_DEBUG_BIT ) {
-		glEnable( GL_DEBUG_OUTPUT );
-		glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS );
-		glDebugMessageCallback( DebugCallback, nullptr );
-		glDebugMessageControl( GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0,
-							   nullptr, GL_TRUE );
+		// Configure debug callback if we have a debug context
+		if ( context_flags & GL_CONTEXT_FLAG_DEBUG_BIT ) {
+			glEnable( GL_DEBUG_OUTPUT );
+			glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS );
+			glDebugMessageCallback( DebugCallback, nullptr );
+			glDebugMessageControl( GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0,
+								   nullptr, GL_TRUE );
+		}
 	}
 }
 
@@ -95,6 +97,11 @@ Ref<Pipeline> GraphicsDeviceGL::CreatePipeline() noexcept {
 
 Ref<Shader> GraphicsDeviceGL::CreateShader( ShaderType type, const char* source ) noexcept {
 	return MakeRef<Shader>( type, source );
+}
+
+Ref<Texture> GraphicsDeviceGL::CreateTexture2D( const TextureDescription2D& desc,
+							  const void* data ) {
+	return MakeRef<Texture>( desc, data );
 }
 
 static void APIENTRY DebugCallback( GLenum source, GLenum type, unsigned int id,
