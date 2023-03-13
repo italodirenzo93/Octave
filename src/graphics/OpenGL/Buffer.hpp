@@ -15,6 +15,9 @@ public:
 
 	[[nodiscard]] uint32_t GetSize() const noexcept;
 	[[nodiscard]] uint32_t GetStride() const noexcept;
+	[[nodiscard]] uint32_t GetNumElements() const noexcept;
+
+	void SetData( uint32_t offset, uint32_t size, const void* data );
 
 private:
 	GLuint id_ = 0;

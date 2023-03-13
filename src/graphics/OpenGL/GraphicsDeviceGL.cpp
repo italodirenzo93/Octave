@@ -29,18 +29,16 @@ GraphicsDeviceGL::GraphicsDeviceGL( GLFWwindow* window ) : window_( window ) {
 	}
 
 	// Get context information
-	if ( GLAD_GL_ARB_debug_output ) {
-		int context_flags;
-		glGetIntegerv( GL_CONTEXT_FLAGS, &context_flags );
+	int context_flags;
+	glGetIntegerv( GL_CONTEXT_FLAGS, &context_flags );
 
-		// Configure debug callback if we have a debug context
-		if ( context_flags & GL_CONTEXT_FLAG_DEBUG_BIT ) {
-			glEnable( GL_DEBUG_OUTPUT );
-			glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS );
-			glDebugMessageCallback( DebugCallback, nullptr );
-			glDebugMessageControl( GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0,
-								   nullptr, GL_TRUE );
-		}
+	// Configure debug callback if we have a debug context
+	if ( context_flags & GL_CONTEXT_FLAG_DEBUG_BIT ) {
+		glEnable( GL_DEBUG_OUTPUT );
+		glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS );
+		glDebugMessageCallback( DebugCallback, nullptr );
+		glDebugMessageControl( GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0,
+							   nullptr, GL_TRUE );
 	}
 }
 

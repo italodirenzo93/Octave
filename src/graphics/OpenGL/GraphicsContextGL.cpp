@@ -127,32 +127,35 @@ void GraphicsContextGL::SetDepthTestEnabled( bool enabled ) noexcept {
 	}
 }
 
-void GraphicsContextGL::SetVertexBuffer( SharedRef<Buffer> vertex_buffer,
-										 SharedRef<VertexArray> layout ) {
+void GraphicsContextGL::SetVertexBuffer( SharedRef<Buffer> vbo,
+										 SharedRef<VertexArray> vao ) {
 	// Define vertex data layout
-	glBindVertexArray( layout->GetApiResource() );
-	glBindBuffer( GL_ARRAY_BUFFER, vertex_buffer->GetApiResource() );
+	glVertexArrayVertexBuffer( vao->GetApiResource(), 0,
+							   vbo->GetApiResource(), 0,
+							   vbo->GetStride() );
+	glVertexArrayElementBuffer( vao->GetApiResource(), 0 );
+
+	glVertexArrayAttribFormat( vao->GetApiResource(), 0, 3, GL_FLOAT, GL_FALSE, 0 );
 
 	uint32_t offset = 0;
 
-	for ( const auto& attr : *layout ) {
-		glVertexAttribPointer(
-			AttrNameToIndex( attr.name ), static_cast<GLint>( attr.size ),
-			AttrTypeToGLType( attr.type ),
-			static_cast<GLboolean>( attr.normalized ),
-			static_cast<GLsizei>( vertex_buffer->GetStride() ),
-			reinterpret_cast<const void*>( offset ) );
-		glEnableVertexAttribArray( AttrNameToIndex( attr.name ) );
+	for ( const auto& attr : *vao ) {
+		glVertexArrayAttribFormat(
+			vao->GetApiResource(), AttrNameToIndex( attr.name ),
+			static_cast<GLint>( attr.size ), AttrTypeToGLType( attr.type ),
+			static_cast<GLboolean>( attr.normalized ), offset );
 
+		glEnableVertexArrayAttrib( vao->GetApiResource(), AttrNameToIndex( attr.name ) );
+		
 		offset += attr.size * AttrTypeSize( attr.type );
 	}
 
 	// Save references for draw time
-	vao_ = std::move( layout );
+	vao_ = std::move( vao );
 }
 
-void GraphicsContextGL::SetIndexBuffer( SharedRef<Buffer> index_buffer ) {
-	ibo_ = std::move( index_buffer );
+void GraphicsContextGL::SetIndexBuffer( SharedRef<Buffer> ibo ) {
+	ibo_ = std::move( ibo );
 }
 
 void GraphicsContextGL::SetPipeline( SharedRef<Pipeline> pipeline ) {

@@ -6,7 +6,7 @@ namespace Octave {
 
 VertexArray::VertexArray( const VertexArrayDescription& desc )
 	: attrs_( desc.attributes, desc.attributes + desc.count ) {
-	glGenVertexArrays( 1, &id_ );
+	glCreateVertexArrays( 1, &id_ );
 }
 
 VertexArray::~VertexArray() noexcept {

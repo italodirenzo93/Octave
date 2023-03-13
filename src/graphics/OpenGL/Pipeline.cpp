@@ -6,7 +6,7 @@
 namespace Octave {
 
 Pipeline::Pipeline() {
-	glGenProgramPipelines( 1, &id_ );
+	glCreateProgramPipelines( 1, &id_ );
 }
 
 Pipeline::~Pipeline() noexcept {
@@ -44,7 +44,7 @@ void Pipeline::SetFragmentUniformBuffer( SharedRef<Buffer> ubo, uint32_t index, 
 	glUniformBlockBinding( fragment_shader_->GetApiResource(), index, binding );
 
 	glBindBufferBase( GL_UNIFORM_BUFFER, binding, ubo->GetApiResource() );
-
+	
 	fs_ubos_[binding] = std::move( ubo );
 }
 

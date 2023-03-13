@@ -31,14 +31,10 @@ static GLenum AccessToGLType( ResourceAccess access ) noexcept {
 
 Buffer::Buffer( const BufferDescription& desc, const void* initial_data )
 	: desc_( desc ) {
-	glGenBuffers( 1, &id_ );
+	glCreateBuffers( 1, &id_ );
 
-	const auto target = BindingToGLType( desc.bind_flags );
-
-	glBindBuffer( target, id_ );
-	glBufferData( target, static_cast<GLsizeiptr>( desc.size ), initial_data,
+	glNamedBufferData( id_, static_cast<GLsizeiptr>( desc.size ), initial_data,
 				  AccessToGLType( desc.access_flags ) );
-	glBindBuffer( target, 0 );
 }
 
 Buffer::~Buffer() noexcept {
@@ -51,6 +47,19 @@ uint32_t Buffer::GetSize() const noexcept {
 
 uint32_t Buffer::GetStride() const noexcept {
 	return desc_.stride;
+}
+
+uint32_t Buffer::GetNumElements() const noexcept {
+	if ( desc_.stride == 0 ) {
+		return desc_.size;
+	}
+
+	return desc_.size / desc_.stride;
+}
+
+void Buffer::SetData( uint32_t offset, uint32_t size, const void* data ) {
+	glNamedBufferSubData( id_, static_cast<GLintptr>( offset ),
+						  static_cast<GLsizeiptr>( size ), data );
 }
 
 }  // namespace Octave
