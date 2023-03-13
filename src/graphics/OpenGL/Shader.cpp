@@ -60,9 +60,34 @@ Shader::~Shader() noexcept {
 	glDeleteProgram( id_ );
 }
 
+int Shader::GetUniformLocation( const std::string& name ) const noexcept {
+	return glGetUniformLocation( id_, name.c_str() );
+}
+
+
 int Shader::GetUniformBlockIndex( const std::string& block_name ) const noexcept {
 	return glGetUniformBlockIndex( id_, block_name.c_str() );
 }
 
+Shader& Shader::SetInt( int location, int value ) {
+	glProgramUniform1i( id_, location, value );
+	return *this;
+}
+
+Shader& Shader::SetFloat( int location, float value ) {
+	glProgramUniform1f( id_, location, value );
+	return *this;
+}
+
+Shader& Shader::SetVec3( int location, const glm::vec3& value ) {
+	glProgramUniform3fv( id_, location, 1, glm::value_ptr( value ) );
+	return *this;
+}
+
+Shader& Shader::SetMat4( int location, const glm::mat4& value ) {
+	glProgramUniformMatrix4fv( id_, location, 1, GL_FALSE,
+							   glm::value_ptr( value ) );
+	return *this;
+}
 
 }  // namespace Octave

@@ -12,6 +12,14 @@ struct Matrices {
 	glm::mat4 view_matrix;
 	glm::mat4 model_matrix;
 	glm::mat3 normal_matrix;
+
+	Matrices() noexcept = default;
+	Matrices( glm::mat4 proj, glm::mat4 view, glm::mat4 model ) noexcept
+		: projection_matrix( std::move( proj ) ),
+		  view_matrix( std::move( view ) ),
+		  model_matrix( std::move( model ) ) {
+		normal_matrix = glm::transpose( glm::inverse( model_matrix ) );
+	}
 };
 
 inline void SetDefaultLighting( Shader& shader ) {
@@ -33,10 +41,6 @@ inline void SetDefaultLighting( Shader& shader ) {
 	//shader.SetFloat( "uPointLights[0].constant", 1.0f );
 	//shader.SetFloat( "uPointLights[0].linear", 0.09f );
 	//shader.SetFloat( "uPointLights[0].quadratic", 0.032f );
-}
-
-static glm::mat3 MakeNormalMatrix( const glm::mat4& model_matrix ) {
-	return { glm::transpose( glm::inverse( model_matrix ) ) };
 }
 
 class ApplicationLayer : public Layer {
@@ -85,7 +89,7 @@ public:
 			cube_vao_ = app.GetGraphicsDevice().CreateVertexArray( vao_desc );
 
 			cube_ibo_ =
-				CreateStaticBuffer( app.GetGraphicsDevice(), indices, 0,
+				CreateStaticBuffer( app.GetGraphicsDevice(), indices, sizeof( uint16_t ),
 									BufferBinding::IndexBuffer );
 
 			cube_texture_ = CreateTextureFromFile(
@@ -118,12 +122,11 @@ public:
 			desc.access_flags = ResourceAccess::Write;
 			desc.bind_flags = BufferBinding::UniformBuffer;
 
-			Matrices matrices{};
-			matrices.projection_matrix = camera_.GetProjectionMatrix();
-			matrices.view_matrix = camera_.GetViewMatrix();
-			matrices.model_matrix = glm::identity<glm::mat4>();
-			matrices.normal_matrix = glm::identity<glm::mat3>();
+			model_matrix_ = glm::identity<glm::mat4>();
 
+			const Matrices matrices(
+				camera_.GetProjectionMatrix(), camera_.GetViewMatrix(), model_matrix_ );
+			
 			uniform_buffer_ =
 				app.GetGraphicsDevice().CreateBuffer( desc, &matrices );
 		}
@@ -168,6 +171,10 @@ protected:
 			model_matrix_ =
 				glm::rotate( model_matrix_, glm::radians( delta * 25.0f ),
 							 glm::vec3( 0, 1, 0 ) );
+
+			const Matrices matrices( camera_.GetProjectionMatrix(),
+									 camera_.GetViewMatrix(), model_matrix_ );
+			uniform_buffer_->SetData( 0, sizeof( Matrices ), &matrices );
 		} );
 
 		context_->Clear( true, true, 0.1f, 0.1f, 0.1f );
@@ -175,7 +182,7 @@ protected:
 		context_->SetVertexBuffer( cube_vbo_, cube_vao_ );
 		context_->SetIndexBuffer( cube_ibo_ );
 		context_->SetPipeline( pipeline_ );
-		context_->DrawIndexed( cube_ibo_->GetSize(), 0, 0 );
+		context_->DrawIndexed( cube_ibo_->GetNumElements(), 0, 0 );
 
 		//SetDefaultLighting( *shader_ );
 
@@ -287,8 +294,6 @@ private:
 	SharedRef<Pipeline> pipeline_;
 
 	Ref<Gamepad> pad_;
-
-	//ShaderManager shaders_;
 
 	glm::mat4 model_matrix_;
 

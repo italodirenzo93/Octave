@@ -19,8 +19,8 @@ public:
 	[[nodiscard]] std::array<int, 4> GetViewport() const noexcept override;
 
 	void SetDepthTestEnabled( bool enabled ) noexcept override;
-	void SetVertexBuffer( SharedRef<Buffer> vertex_buffer, SharedRef<VertexArray> layout ) override;
-	void SetIndexBuffer( SharedRef<Buffer> index_buffer ) override;
+	void SetVertexBuffer( SharedRef<Buffer> vbo, SharedRef<VertexArray> vao ) override;
+	void SetIndexBuffer( SharedRef<Buffer> ibo ) override;
 	void SetPipeline( SharedRef<Pipeline> pipeline ) override;
 	void SetViewport( int x, int y, int width, int height ) noexcept override;
 

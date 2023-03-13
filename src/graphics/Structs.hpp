@@ -2,9 +2,12 @@
 #define OCTAVE_GRAPHICS_STRUCTS_HPP
 
 #include <cstdint>
-#include <vector>
 
 namespace Octave {
+
+//////////////////////////////
+// Buffers
+//////////////////////////////
 
 enum class BufferBinding {
 	VertexBuffer,
@@ -25,6 +28,10 @@ struct BufferDescription {
 	ResourceAccess access_flags;
 };
 
+//////////////////////////////
+// Vertex Array
+//////////////////////////////
+
 enum class VertexAttributeName { kPosition, kColor, kTexCoord, kNormal };
 enum class VertexAttributeType { kFloat, kUint, kUbyte };
 
@@ -40,10 +47,18 @@ struct VertexArrayDescription {
 	size_t count;
 };
 
+//////////////////////////////
+// Shaders
+//////////////////////////////
+
 enum class ShaderType {
 	VertexShader,
 	FragmentShader
 };
+
+//////////////////////////////
+// Textures
+//////////////////////////////
 
 enum class TextureFormat { Rgba, Rgb }; 
 
@@ -53,6 +68,18 @@ struct TextureDescription2D {
 	TextureFormat format;
 	uint32_t mip_levels;
 	ResourceAccess access_flags;
+};
+
+//////////////////////////////
+// Rasterizer State
+//////////////////////////////
+
+enum class VertexWindingOrder { CounterClockwise, Clockwise };
+enum class CullFace { None, Back, Front, FrontAndBack };
+
+struct RasterizerState {
+	VertexWindingOrder winding_order;
+	CullFace cull_face;
 };
 
 }
