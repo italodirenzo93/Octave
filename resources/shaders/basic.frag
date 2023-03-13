@@ -1,6 +1,32 @@
 #version 410
 
-#include "common.glsl"
+struct Material {
+	sampler2D diffuse;
+	sampler2D specular;
+	float shininess;
+};
+
+struct DirectionalLight {
+	vec3 direction;
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+};
+
+struct PointLight {
+	bool enabled;
+
+	vec3 position;
+
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+
+	float constant;
+	float linear;
+	float quadratic;
+};
+
 
 in FragmentData {
 	vec3 vertex_color;
@@ -86,11 +112,12 @@ vec3 CalculatePointLighting(PointLight light) {
 }
 
 void main() {
-	vec3 result = CalculateDirectionalLighting();
+	//vec3 result = CalculateDirectionalLighting();
 
-	for (int i = 0; i < MAX_POINT_LIGHTS; i++) {
-		result += CalculatePointLighting(uPointLights[i]);
-	}
+	//for (int i = 0; i < MAX_POINT_LIGHTS; i++) {
+	//	result += CalculatePointLighting(uPointLights[i]);
+	//}
 
-	FragColor = vec4(result, 1.0);
+	//FragColor = vec4(result, 1.0);
+	FragColor = vec4(0.0, 1.0, 0.0, 1.0);
 }

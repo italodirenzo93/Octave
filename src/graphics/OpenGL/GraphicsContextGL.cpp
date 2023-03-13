@@ -86,6 +86,7 @@ void GraphicsContextGL::Clear( bool color, bool depth, float r, float g,
 
 void GraphicsContextGL::Draw( size_t vertex_count,
 							  size_t offset ) const noexcept {
+	assert( pipeline_ != nullptr );
 	assert( vao_ != nullptr );
 
 	glBindProgramPipeline( pipeline_->GetApiResource() );
@@ -97,6 +98,7 @@ void GraphicsContextGL::Draw( size_t vertex_count,
 
 void GraphicsContextGL::DrawIndexed( size_t index_count, size_t offset,
 									 size_t base_vertex ) const noexcept {
+	assert( pipeline_ != nullptr );
 	assert( vao_ != nullptr );
 	assert( ibo_ != nullptr );
 
