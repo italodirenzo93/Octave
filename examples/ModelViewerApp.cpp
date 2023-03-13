@@ -2,31 +2,16 @@
 #include <EntryPoint.hpp>
 
 #include "helpers/GeometricPrimitive.hpp"
-#include "helpers/GeometricPrimitive.hpp"
 
 using namespace std;
 using namespace Octave;
 using namespace Octave::Samples;
 
-class Material {
-public:
-	SharedRef<Texture> diffuse;
-	SharedRef<Texture> specular;
-};
-
-class Mesh {
-public:
-	SharedRef<Buffer> vbo;
-	SharedRef<Buffer> ibo;
-	SharedRef<VertexArray> vao;
-	SharedRef<Material> material;
-
-	void Draw( GraphicsContext& context, SharedRef<Pipeline> pipeline ) {
-		context.SetVertexBuffer( vbo, vao );
-		context.SetIndexBuffer( ibo );
-		context.SetPipeline( pipeline );
-		context.DrawIndexed( ibo->GetSize(), 0, 0 );
-	}
+struct Matrices {
+	glm::mat4 projection_matrix;
+	glm::mat4 view_matrix;
+	glm::mat4 model_matrix;
+	glm::mat3 normal_matrix;
 };
 
 inline void SetDefaultLighting( Shader& shader ) {
@@ -35,19 +20,19 @@ inline void SetDefaultLighting( Shader& shader ) {
 	const glm::vec3 diffuse( 0.5f );
 	const glm::vec3 specular( 0.8f );
 
-	shader.SetVec3( "uDirectionalLight.direction", direction );
-	shader.SetVec3( "uDirectionalLight.ambient", ambient );
-	shader.SetVec3( "uDirectionalLight.diffuse", diffuse );
-	shader.SetVec3( "uDirectionalLight.specular", specular );
+	//shader.SetVec3( "uDirectionalLight.direction", direction );
+	//shader.SetVec3( "uDirectionalLight.ambient", ambient );
+	//shader.SetVec3( "uDirectionalLight.diffuse", diffuse );
+	//shader.SetVec3( "uDirectionalLight.specular", specular );
 
-	shader.SetBool( "uPointLights[0].enabled", true );
-	shader.SetVec3( "uPointLights[0].position", glm::vec3( 2, 3, -2 ) );
-	shader.SetVec3( "uPointLights[0].ambient", ambient );
-	shader.SetVec3( "uPointLights[0].diffuse", diffuse );
-	shader.SetVec3( "uPointLights[0].specular", specular );
-	shader.SetFloat( "uPointLights[0].constant", 1.0f );
-	shader.SetFloat( "uPointLights[0].linear", 0.09f );
-	shader.SetFloat( "uPointLights[0].quadratic", 0.032f );
+	//shader.SetBool( "uPointLights[0].enabled", true );
+	//shader.SetVec3( "uPointLights[0].position", glm::vec3( 2, 3, -2 ) );
+	//shader.SetVec3( "uPointLights[0].ambient", ambient );
+	//shader.SetVec3( "uPointLights[0].diffuse", diffuse );
+	//shader.SetVec3( "uPointLights[0].specular", specular );
+	//shader.SetFloat( "uPointLights[0].constant", 1.0f );
+	//shader.SetFloat( "uPointLights[0].linear", 0.09f );
+	//shader.SetFloat( "uPointLights[0].quadratic", 0.032f );
 }
 
 static glm::mat3 MakeNormalMatrix( const glm::mat4& model_matrix ) {
@@ -66,15 +51,6 @@ public:
 			cout << "Gamepad: " << pad_->GetName() << endl;
 		}
 
-		if ( Config::Instance().GetPreloadShaders() ) {
-			shaders_.PreloadShaders();
-		}
-
-		shader_ = shaders_.Get( "basic" );
-		if ( !shader_ ) {
-			throw Exception( "Shader program not found" );
-		}
-
 		const auto [width, height] = app.GetWindow().GetSize();
 		camera_.width_ = static_cast<float>( width );
 		camera_.height_ = static_cast<float>( height );
@@ -89,41 +65,86 @@ public:
 			GeometricPrimitive::CreateCube( vertices, indices );
 
 			// Create cube GPU resources
-			SharedRef<Buffer> vbo =
+			cube_vbo_ =
 				CreateStaticBuffer( app.GetGraphicsDevice(), vertices,
 									sizeof( GeometricPrimitive::VertexType ),
 									BufferBinding::VertexBuffer );
 
-			SharedRef<Buffer> ibo =
+			std::array<VertexAttribute, 3> attrs{
+				VertexAttribute{ VertexAttributeName::kPosition, 3,
+								 VertexAttributeType::kFloat, false },
+				VertexAttribute{ VertexAttributeName::kNormal, 3,
+								 VertexAttributeType::kFloat, false },
+				VertexAttribute{ VertexAttributeName::kTexCoord, 2,
+								 VertexAttributeType::kFloat, false } };
+
+			VertexArrayDescription vao_desc{};
+			vao_desc.attributes = attrs.data();
+			vao_desc.count = attrs.size();
+
+			cube_vao_ = app.GetGraphicsDevice().CreateVertexArray( vao_desc );
+
+			cube_ibo_ =
 				CreateStaticBuffer( app.GetGraphicsDevice(), indices, 0,
 									BufferBinding::IndexBuffer );
 
-			SharedRef<Texture> diffuse = CreateTextureFromFile(
+			cube_texture_ = CreateTextureFromFile(
 				app.GetGraphicsDevice(), "resources/textures/container.jpg" );
-
-			Mesh cube_mesh;
-			cube_mesh.SetVertexBuffer( vbo );
-			cube_mesh.SetIndexBuffer( ibo );
-			cube_mesh.SetTextures( { diffuse } );
-
-			model_.AddMesh( std::move( cube_mesh ) );
 		}
 
-		model_matrix_ = glm::identity<glm::mat4>();
-
 		// Load floor
-		GeometricPrimitive::VertexCollection floor_verts;
-		GeometricPrimitive::CreatePlane( floor_verts );
+		{
+			GeometricPrimitive::VertexCollection floor_verts;
+			GeometricPrimitive::CreatePlane( floor_verts );
 
-		floor_vbo_ =
-			CreateStaticBuffer( app.GetGraphicsDevice(), floor_verts, sizeof(GeometricPrimitive::VertexType),
-										 BufferBinding::VertexBuffer );
-		floor_texture_diffuse_ = CreateTextureFromFile(
-			app.GetGraphicsDevice(), "resources/textures/wood_diffuse.png" );
-		floor_texture_specular_ = CreateTextureFromFile(
-			app.GetGraphicsDevice(), "resources/textures/wood_specular.png" );
+			floor_vbo_ =
+				CreateStaticBuffer( app.GetGraphicsDevice(), floor_verts,
+									sizeof( GeometricPrimitive::VertexType ),
+									BufferBinding::VertexBuffer );
+			floor_texture_diffuse_ =
+				CreateTextureFromFile( app.GetGraphicsDevice(),
+									   "resources/textures/wood_diffuse.png" );
+			floor_texture_specular_ =
+				CreateTextureFromFile( app.GetGraphicsDevice(),
+									   "resources/textures/wood_specular.png" );
 
-		floor_position_ = glm::vec3( 0, -3, 0 );
+			floor_position_ = glm::vec3( 0, -3, 0 );
+		}
+
+		// Uniform buffer
+		{
+			BufferDescription desc{};
+			desc.size = sizeof( Matrices );
+			desc.access_flags = ResourceAccess::Write;
+			desc.bind_flags = BufferBinding::UniformBuffer;
+
+			Matrices matrices{};
+			matrices.projection_matrix = camera_.GetProjectionMatrix();
+			matrices.view_matrix = camera_.GetViewMatrix();
+			matrices.model_matrix = glm::identity<glm::mat4>();
+			matrices.normal_matrix = glm::identity<glm::mat3>();
+
+			uniform_buffer_ =
+				app.GetGraphicsDevice().CreateBuffer( desc, &matrices );
+		}
+
+		// Shaders
+		{
+			vertex_shader_ = LoadShaderFromFile(
+				app.GetGraphicsDevice(), ShaderType::VertexShader,
+				"resources/shaders/basic.vert" );
+
+			fragment_shader_ = LoadShaderFromFile(
+				app.GetGraphicsDevice(), ShaderType::FragmentShader,
+				"resources/shaders/basic.frag" );
+
+			pipeline_ = app.GetGraphicsDevice().CreatePipeline();
+
+			pipeline_->SetVertexShader( vertex_shader_ );
+			pipeline_->SetVertexUniformBuffer( uniform_buffer_, 0, 0 );
+
+			pipeline_->SetFragmentShader( fragment_shader_ );
+		}
 	}
 
 protected:
@@ -151,30 +172,25 @@ protected:
 
 		context_->Clear( true, true, 0.1f, 0.1f, 0.1f );
 
-		SetDefaultLighting( *shader_ );
+		context_->SetVertexBuffer( cube_vbo_, cube_vao_ );
+		context_->SetIndexBuffer( cube_ibo_ );
+		context_->SetPipeline( pipeline_ );
+		context_->DrawIndexed( cube_ibo_->GetSize(), 0, 0 );
 
-		{
-			shader_->SetMat4( "uMatProjection", camera_.GetProjectionMatrix() );
-			shader_->SetMat4( "uMatView", camera_.GetViewMatrix() );
-			shader_->SetMat4( "uMatModel", model_matrix_ );
-			shader_->SetMat3( "uMatNormal", MakeNormalMatrix( model_matrix_ ) );
-
-			shader_->SetVec3( "uViewPos", camera_.position_ );
-			model_.Draw( *shader_, *renderer_ );
-		}
+		//SetDefaultLighting( *shader_ );
 
 		// Floor
-		{
-			shader_->SetTexture( "uTextures", 0, *floor_texture_diffuse_ );
-			shader_->SetTexture( "uTextures", 1, *floor_texture_specular_ );
+		//{
+		//	shader_->SetTexture( "uTextures", 0, *floor_texture_diffuse_ );
+		//	shader_->SetTexture( "uTextures", 1, *floor_texture_specular_ );
 
-			auto model = glm::identity<glm::mat4>();
-			model = glm::translate( model, floor_position_ );
-			shader_->SetMat4( "uMatModel", model );
-			shader_->SetMat3( "uMatNormal", MakeNormalMatrix( model ) );
+		//	auto model = glm::identity<glm::mat4>();
+		//	model = glm::translate( model, floor_position_ );
+		//	shader_->SetMat4( "uMatModel", model );
+		//	shader_->SetMat3( "uMatNormal", MakeNormalMatrix( model ) );
 
-			renderer_->Draw( *shader_, *floor_vbo_ );
-		}
+		//	renderer_->Draw( *shader_, *floor_vbo_ );
+		//}
 	}
 
 	void DebugCameraControls( DebugCamera& camera, float camera_speed,
@@ -265,21 +281,30 @@ private:
 
 	Ref<GraphicsContext> context_;
 
-	SharedRef<Shader> shader_;
+	SharedRef<Buffer> uniform_buffer_;
+	SharedRef<Shader> vertex_shader_;
+	SharedRef<Shader> fragment_shader_;
+	SharedRef<Pipeline> pipeline_;
+
 	Ref<Gamepad> pad_;
 
-	ShaderManager shaders_;
+	//ShaderManager shaders_;
 
-	Model model_;
 	glm::mat4 model_matrix_;
 
 	StepTimer step_timer_;
 	DebugCamera camera_;
 
-	Ref<Buffer> floor_vbo_;
-	Ref<Texture> floor_texture_diffuse_,
+	SharedRef<Buffer> cube_vbo_;
+	SharedRef<VertexArray> cube_vao_;
+	SharedRef<Buffer> cube_ibo_;
+	SharedRef<Texture> cube_texture_;
+
+	SharedRef<Buffer> floor_vbo_;
+	SharedRef<Texture> floor_texture_diffuse_,
 		floor_texture_specular_;
 	glm::vec3 floor_position_;
+
 };
 
 class ModelViewerSample : public Sample {

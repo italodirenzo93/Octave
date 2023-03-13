@@ -2,6 +2,7 @@
 
 #include <Octave.hpp>
 #include <stb_image.h>
+#include <fstream>
 
 #include "Camera.hpp"
 
@@ -38,16 +39,16 @@ Ref<Buffer> CreateStaticBuffer( GraphicsDevice& device,
 	return device.CreateBuffer( desc, data.data() );
 }
 
-inline Ref<Texture> CreateTextureFromFile( GraphicsDevice& device, const std::filesystem::path& filename ) {
+inline Ref<Texture> CreateTextureFromFile( GraphicsDevice& device, const std::string& filename ) {
 	stbi_set_flip_vertically_on_load( true );
 
 	int n_channels, width, height;
-	const stbi_uc* image = stbi_load( filename.string().c_str(), &width, &height, &n_channels,
+	const stbi_uc* image = stbi_load( filename.c_str(), &width, &height, &n_channels,
 			   STBI_default );
 
 	if ( !image ) {
 		throw Octave::Exception( "Could not load texture from file " +
-								 filename.string() );
+								 filename );
 	}
 
 	TextureDescription2D desc{};
@@ -63,6 +64,18 @@ inline Ref<Texture> CreateTextureFromFile( GraphicsDevice& device, const std::fi
 	}
 
 	return device.CreateTexture2D( desc, image );
+}
+
+inline Ref<Shader> LoadShaderFromFile( GraphicsDevice& device, ShaderType type, const std::string& path ) {
+	std::ifstream ifs( path );
+	if ( !ifs.is_open() ) {
+		throw Octave::Exception( "Unable to open file " + path );
+	}
+
+	std::string code( (std::istreambuf_iterator<char>( ifs )),
+					  (std::istreambuf_iterator<char>() ));
+
+	return device.CreateShader( type, code.c_str() );
 }
 
 }  // namespace Octave::Samples

@@ -5,6 +5,10 @@ layout( location=1 ) in vec3 aColor;
 layout( location=3 ) in vec3 aNormal;
 layout( location=2 ) in vec2 aTexCoord;
 
+out gl_PerVertex {
+	vec4 gl_Position;
+};
+
 out FragmentData {
 	vec3 vertex_color;
 	vec3 vertex_normal;
@@ -12,10 +16,12 @@ out FragmentData {
 	vec3 fragment_position;
 } vs_out;
 
-uniform mat4 uMatProjection;
-uniform mat4 uMatView;
-uniform mat4 uMatModel;
-uniform mat3 uMatNormal;
+layout(std140) uniform Matrices {
+	mat4 uMatProjection;
+	mat4 uMatView;
+	mat4 uMatModel;
+	mat3 uMatNormal;
+};
 
 void main() {
 	gl_Position = uMatProjection * uMatView * uMatModel * vec4( aPos, 1.0 );
