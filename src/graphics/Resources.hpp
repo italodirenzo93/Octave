@@ -7,7 +7,7 @@
 #include "OpenGL/Pipeline.hpp"
 #include "OpenGL/Shader.hpp"
 #include "OpenGL/VertexArray.hpp"
-#include "OpenGL/Texture.hpp"
+#include "OpenGL/Texture2D.hpp"
 
 #else
 

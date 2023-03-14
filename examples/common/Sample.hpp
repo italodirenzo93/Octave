@@ -39,7 +39,7 @@ Ref<Buffer> CreateStaticBuffer( GraphicsDevice& device,
 	return device.CreateBuffer( desc, data.data() );
 }
 
-inline Ref<Texture> CreateTextureFromFile( GraphicsDevice& device, const std::string& filename ) {
+inline Ref<Texture2D> CreateTextureFromFile( GraphicsDevice& device, const std::string& filename ) {
 	stbi_set_flip_vertically_on_load( true );
 
 	int n_channels, width, height;
@@ -55,7 +55,7 @@ inline Ref<Texture> CreateTextureFromFile( GraphicsDevice& device, const std::st
 	desc.width = width;
 	desc.height = height;
 	desc.access_flags = ResourceAccess::Write;
-	desc.mip_levels = 0;
+	desc.mip_levels = 1;
 
 	if (n_channels == 4) {
 		desc.format = TextureFormat::Rgba;
@@ -63,7 +63,9 @@ inline Ref<Texture> CreateTextureFromFile( GraphicsDevice& device, const std::st
 		desc.format = TextureFormat::Rgb;
 	}
 
-	return device.CreateTexture2D( desc, image );
+	auto texture = device.CreateTexture2D( desc );
+	texture->SetData( desc.format, 0, 0, 0, width, height, image );
+	return texture;
 }
 
 inline Ref<Shader> LoadShaderFromFile( GraphicsDevice& device, ShaderType type, const std::string& path ) {

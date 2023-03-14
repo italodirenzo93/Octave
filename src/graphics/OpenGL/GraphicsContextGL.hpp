@@ -22,6 +22,7 @@ public:
 	void SetVertexBuffer( SharedRef<Buffer> vbo, SharedRef<VertexArray> vao ) override;
 	void SetIndexBuffer( SharedRef<Buffer> ibo ) override;
 	void SetPipeline( SharedRef<Pipeline> pipeline ) override;
+	void SetTextureUnit( uint32_t unit, SharedRef<Texture2D> texture );
 	void SetViewport( int x, int y, int width, int height ) noexcept override;
 
 private:

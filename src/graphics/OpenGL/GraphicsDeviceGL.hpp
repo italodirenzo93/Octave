@@ -32,8 +32,8 @@ public:
 	[[nodiscard]] Ref<VertexArray> CreateVertexArray( const VertexArrayDescription& desc ) noexcept override;
 	[[nodiscard]] Ref<Pipeline> CreatePipeline() noexcept override;
 	[[nodiscard]] Ref<Shader> CreateShader( ShaderType type, const char* source ) noexcept override;
-	[[nodiscard]] Ref<Texture> CreateTexture2D(
-		const TextureDescription2D& desc, const void* data ) override;
+	[[nodiscard]] Ref<Texture2D> CreateTexture2D(
+		const TextureDescription2D& desc ) override;
 
 private:
     GLFWwindow* window_;
