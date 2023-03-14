@@ -39,13 +39,7 @@ out vec4 FragColor;
 
 uniform vec3 uViewPos;
 
-// texture 0 = diffuse map
-// texture 1 = specular map
-// texture 2 = normal map
-#define MAX_TEXTURE_COUNT 3
-uniform sampler2D uTextures[MAX_TEXTURE_COUNT];
-
-uniform float uShininess = 32.0;
+uniform Material uMaterial;
 
 uniform bool uDirectionalLightEnabled = true;
 uniform DirectionalLight uDirectionalLight;
@@ -68,12 +62,12 @@ vec3 CalculateDirectionalLighting() {
 
 	// specular shading
 	vec3 reflection_dir = reflect(-light_direction, normal);
-	float specular_value = pow(max(dot(view_direction, reflection_dir), 0.0), uShininess);
+	float specular_value = pow(max(dot(view_direction, reflection_dir), 0.0), uMaterial.shininess);
 
 	// combine results
-	vec3 ambient = uDirectionalLight.ambient * vec3(texture(uTextures[0], fs_in.tex_coord));
-	vec3 diffuse = uDirectionalLight.diffuse * diffuse_value * vec3(texture(uTextures[0], fs_in.tex_coord));
-	vec3 specular = uDirectionalLight.specular * specular_value * vec3(texture(uTextures[1], fs_in.tex_coord));
+	vec3 ambient = uDirectionalLight.ambient * vec3(texture(uMaterial.diffuse, fs_in.tex_coord));
+	vec3 diffuse = uDirectionalLight.diffuse * diffuse_value * vec3(texture(uMaterial.diffuse, fs_in.tex_coord));
+	vec3 specular = uDirectionalLight.specular * specular_value * vec3(texture(uMaterial.specular, fs_in.tex_coord));
 
 	return ambient + diffuse + specular;
 }
@@ -92,16 +86,16 @@ vec3 CalculatePointLighting(PointLight light) {
 
 	// specular shading
 	vec3 reflect_direction = reflect(-light_direction, normal);
-	float specular_value = pow(max(dot(viewing_direction, reflect_direction), 0.0), uShininess);
+	float specular_value = pow(max(dot(viewing_direction, reflect_direction), 0.0), uMaterial.shininess);
 
 	// attenuation
 	float distance = length(light.position - fs_in.fragment_position);
 	float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 
 	// combine results
-	vec3 ambient = light.ambient * vec3(texture(uTextures[0], fs_in.tex_coord));
-	vec3 diffuse = light.diffuse * diffuse_value * vec3(texture(uTextures[0], fs_in.tex_coord));
-	vec3 specular = light.specular * specular_value * vec3(texture(uTextures[1], fs_in.tex_coord));
+	vec3 ambient = light.ambient * vec3(texture(uMaterial.diffuse, fs_in.tex_coord));
+	vec3 diffuse = light.diffuse * diffuse_value * vec3(texture(uMaterial.diffuse, fs_in.tex_coord));
+	vec3 specular = light.specular * specular_value * vec3(texture(uMaterial.specular, fs_in.tex_coord));
 
 	// adjust by attenuation
 	ambient *= attenuation;
@@ -119,5 +113,6 @@ void main() {
 	//}
 
 	//FragColor = vec4(result, 1.0);
-	FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+	//FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+	FragColor = texture(uMaterial.diffuse, fs_in.tex_coord);
 }

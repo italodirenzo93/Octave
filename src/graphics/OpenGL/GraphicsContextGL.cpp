@@ -52,7 +52,13 @@ static GLuint AttrTypeSize( VertexAttributeType type ) noexcept {
 	}
 }
 
+static GLint max_indices = 0;
+
 GraphicsContextGL::GraphicsContextGL() {
+	if ( max_indices == 0 ) {
+		glGetIntegerv( GL_MAX_ELEMENTS_INDICES, &max_indices );
+	}
+
 	const Config& config = Config::Instance();
 
 	// Always enabled
@@ -86,31 +92,16 @@ void GraphicsContextGL::Clear( bool color, bool depth, float r, float g,
 
 void GraphicsContextGL::Draw( size_t vertex_count,
 							  size_t offset ) const noexcept {
-	assert( pipeline_ != nullptr );
-	assert( vao_ != nullptr );
-
-	glBindProgramPipeline( pipeline_->GetApiResource() );
-	glBindVertexArray( vao_->GetApiResource() );
-
 	glDrawArrays( GL_TRIANGLES, static_cast<GLint>( offset ),
 				  static_cast<GLsizei>( vertex_count ) );
 }
 
 void GraphicsContextGL::DrawIndexed( size_t index_count, size_t offset,
 									 size_t base_vertex ) const noexcept {
-	assert( pipeline_ != nullptr );
-	assert( vao_ != nullptr );
-	assert( ibo_ != nullptr );
-
-	glBindProgramPipeline( pipeline_->GetApiResource() );
-	glBindVertexArray( vao_->GetApiResource() );
-	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo_->GetApiResource() );
-
-	glDrawRangeElementsBaseVertex( GL_TRIANGLES, static_cast<GLuint>( offset ),
-								   static_cast<GLuint>( ibo_->GetSize() ),
-								   static_cast<GLsizei>( index_count ),
-								   GL_UNSIGNED_SHORT, nullptr,
-								   static_cast<GLint>( base_vertex ) );
+	glDrawRangeElementsBaseVertex(
+		GL_TRIANGLES, static_cast<GLuint>( offset ), max_indices,
+		static_cast<GLsizei>( index_count ), GL_UNSIGNED_SHORT, nullptr,
+		static_cast<GLint>( base_vertex ) );
 }
 
 std::array<int, 4> GraphicsContextGL::GetViewport() const noexcept {
@@ -133,11 +124,11 @@ void GraphicsContextGL::SetVertexBuffer( SharedRef<Buffer> vbo,
 	glVertexArrayVertexBuffer( vao->GetApiResource(), 0,
 							   vbo->GetApiResource(), 0,
 							   vbo->GetStride() );
-	glVertexArrayElementBuffer( vao->GetApiResource(), 0 );
 
 	glVertexArrayAttribFormat( vao->GetApiResource(), 0, 3, GL_FLOAT, GL_FALSE, 0 );
 
 	uint32_t offset = 0;
+	uint32_t index = 0;
 
 	for ( const auto& attr : *vao ) {
 		glVertexArrayAttribFormat(
@@ -146,20 +137,25 @@ void GraphicsContextGL::SetVertexBuffer( SharedRef<Buffer> vbo,
 			static_cast<GLboolean>( attr.normalized ), offset );
 
 		glEnableVertexArrayAttrib( vao->GetApiResource(), AttrNameToIndex( attr.name ) );
-		
+		glVertexArrayAttribBinding( vao->GetApiResource(), index++, 0 );
+
 		offset += attr.size * AttrTypeSize( attr.type );
 	}
 
-	// Save references for draw time
-	vao_ = std::move( vao );
+	// Bind for draw
+	glBindVertexArray( vao->GetApiResource() );
 }
 
 void GraphicsContextGL::SetIndexBuffer( SharedRef<Buffer> ibo ) {
-	ibo_ = std::move( ibo );
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo->GetApiResource() );
 }
 
 void GraphicsContextGL::SetPipeline( SharedRef<Pipeline> pipeline ) {
-	pipeline_ = std::move( pipeline );
+	glBindProgramPipeline( pipeline->GetApiResource() );
+}
+
+void GraphicsContextGL::SetTextureUnit( uint32_t unit, SharedRef<Texture2D> texture ) {
+	glBindTextureUnit( unit, texture->GetApiResource() );
 }
 
 void GraphicsContextGL::SetViewport( int x, int y, int width,

@@ -182,6 +182,7 @@ protected:
 		context_->SetVertexBuffer( cube_vbo_, cube_vao_ );
 		context_->SetIndexBuffer( cube_ibo_ );
 		context_->SetPipeline( pipeline_ );
+		context_->SetTextureUnit( 0, cube_texture_ );
 		context_->DrawIndexed( cube_ibo_->GetNumElements(), 0, 0 );
 
 		//SetDefaultLighting( *shader_ );
@@ -303,10 +304,10 @@ private:
 	SharedRef<Buffer> cube_vbo_;
 	SharedRef<VertexArray> cube_vao_;
 	SharedRef<Buffer> cube_ibo_;
-	SharedRef<Texture> cube_texture_;
+	SharedRef<Texture2D> cube_texture_;
 
 	SharedRef<Buffer> floor_vbo_;
-	SharedRef<Texture> floor_texture_diffuse_,
+	SharedRef<Texture2D> floor_texture_diffuse_,
 		floor_texture_specular_;
 	glm::vec3 floor_position_;
 

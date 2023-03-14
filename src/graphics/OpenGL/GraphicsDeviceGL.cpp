@@ -97,9 +97,8 @@ Ref<Shader> GraphicsDeviceGL::CreateShader( ShaderType type, const char* source 
 	return MakeRef<Shader>( type, source );
 }
 
-Ref<Texture> GraphicsDeviceGL::CreateTexture2D( const TextureDescription2D& desc,
-							  const void* data ) {
-	return MakeRef<Texture>( desc, data );
+Ref<Texture2D> GraphicsDeviceGL::CreateTexture2D( const TextureDescription2D& desc ) {
+	return MakeRef<Texture2D>( desc );
 }
 
 static void APIENTRY DebugCallback( GLenum source, GLenum type, unsigned int id,
