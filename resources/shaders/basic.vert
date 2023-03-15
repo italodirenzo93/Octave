@@ -1,4 +1,4 @@
-#version 410
+#version 450
 
 layout( location=0 ) in vec3 aPos;
 layout( location=1 ) in vec3 aColor;
@@ -14,23 +14,23 @@ out FragmentData {
 	vec3 vertex_normal;
 	vec2 tex_coord;
 	vec3 fragment_position;
+	vec3 view_position;
 } vs_out;
 
-layout(std140) uniform Matrices {
+layout( std140, binding=0 ) uniform Matrices {
 	mat4 uMatProjection;
 	mat4 uMatView;
 	mat4 uMatModel;
-	mat3 uMatNormal;
+	mat4 uMatNormal;
+	vec3 uViewPos;
 };
 
 void main() {
 	gl_Position = uMatProjection * uMatView * uMatModel * vec4( aPos, 1.0 );
 
 	vs_out.vertex_color = aColor;
-
-	vs_out.vertex_normal = uMatNormal * aNormal;
-
+	vs_out.vertex_normal = mat3(uMatNormal) * aNormal;
 	vs_out.tex_coord = aTexCoord;
-
 	vs_out.fragment_position = vec3( uMatModel * vec4( aPos, 1.0) );
+	vs_out.view_position = uViewPos;
 }
