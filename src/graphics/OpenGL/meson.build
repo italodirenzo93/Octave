@@ -9,13 +9,15 @@ rhi_opengl_dep = declare_dependency(
 		'GraphicsDeviceGL.hpp',
 		'Pipeline.cpp',
 		'Pipeline.hpp',
+		'Sampler.cpp',
+		'Sampler.hpp',
 		'Shader.cpp',
 		'Shader.hpp',
-		'Texture.cpp',
-		'Texture.hpp',
+		'Texture2D.cpp',
+		'Texture2D.hpp',
 		'VertexArray.cpp',
 		'VertexArray.hpp',
 	]
 )
 
-add_project_arguments('-DOGT_RHI_OPENGL4', language: 'cpp')
+add_project_arguments('-DOGT_RHI_OPENGL45', language: 'cpp')

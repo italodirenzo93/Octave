@@ -36,7 +36,7 @@ void Application::Run() {
 			layer->OnUpdate();
 		}
 
-		graphics_->SwapBuffers();
+		window_->SwapBuffers();
 	}
 	OnExit();
 }

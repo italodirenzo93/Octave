@@ -24,6 +24,7 @@ public:
 	virtual void SetPipeline( SharedRef<Pipeline> pipeline ) = 0;
 	virtual void SetVertexBuffer( SharedRef<Buffer> vertex_buffer, SharedRef<VertexArray> layout ) = 0;
 	virtual void SetIndexBuffer( SharedRef<Buffer> index_buffer ) = 0;
+	virtual void SetSampler( uint32_t unit, SharedRef<Sampler> sampler ) = 0;
 	virtual void SetTextureUnit( uint32_t unit,
 								 SharedRef<Texture2D> texture ) = 0;
 	virtual void SetViewport( int x, int y, int width, int height ) noexcept = 0;

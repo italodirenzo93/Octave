@@ -70,6 +70,27 @@ struct TextureDescription2D {
 	ResourceAccess access_flags;
 };
 
+enum class TextureWrap { Repeat, Mirror, ClampEdge, ClampBorder };
+
+enum class TextureFilter {
+	Nearest,
+	Linear,
+	NearestMipmapNearest,
+	NearestMipmapLinear,
+	LinearMipmapNearest,
+	LinearMipmapLinear
+};
+
+struct SamplerDescription {
+	TextureWrap wrap_s;
+	TextureWrap wrap_t;
+	TextureFilter filter;
+	uint32_t max_ansiotropy;
+	float max_lod;
+	float min_lod;
+	float mip_lod_bias;
+};
+
 //////////////////////////////
 // Rasterizer State
 //////////////////////////////

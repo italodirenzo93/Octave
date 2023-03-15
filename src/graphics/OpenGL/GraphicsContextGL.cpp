@@ -154,6 +154,11 @@ void GraphicsContextGL::SetPipeline( SharedRef<Pipeline> pipeline ) {
 	glBindProgramPipeline( pipeline->GetApiResource() );
 }
 
+void GraphicsContextGL::SetSampler( uint32_t unit, SharedRef<Sampler> sampler ) {
+	glBindSampler( unit, sampler->GetApiResource() );
+}
+
+
 void GraphicsContextGL::SetTextureUnit( uint32_t unit, SharedRef<Texture2D> texture ) {
 	glBindTextureUnit( unit, texture->GetApiResource() );
 }

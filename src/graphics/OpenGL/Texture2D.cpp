@@ -44,5 +44,8 @@ void Texture2D::SetData( TextureFormat format, int mip_level, int xoffset, int y
 		GL_UNSIGNED_BYTE, data );
 }
 
+void Texture2D::GenerateMipmap() {
+	glGenerateTextureMipmap( id_ );
+}
 
 }

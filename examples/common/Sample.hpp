@@ -64,7 +64,10 @@ inline Ref<Texture2D> CreateTextureFromFile( GraphicsDevice& device, const std::
 	}
 
 	auto texture = device.CreateTexture2D( desc );
+
 	texture->SetData( desc.format, 0, 0, 0, width, height, image );
+	texture->GenerateMipmap();
+
 	return texture;
 }
 
