@@ -125,10 +125,7 @@ void GraphicsContextGL::SetVertexBuffer( SharedRef<Buffer> vbo,
 							   vbo->GetApiResource(), 0,
 							   vbo->GetStride() );
 
-	glVertexArrayAttribFormat( vao->GetApiResource(), 0, 3, GL_FLOAT, GL_FALSE, 0 );
-
 	uint32_t offset = 0;
-	uint32_t index = 0;
 
 	for ( const auto& attr : *vao ) {
 		glVertexArrayAttribFormat(
@@ -136,9 +133,9 @@ void GraphicsContextGL::SetVertexBuffer( SharedRef<Buffer> vbo,
 			static_cast<GLint>( attr.size ), AttrTypeToGLType( attr.type ),
 			static_cast<GLboolean>( attr.normalized ), offset );
 
+		glVertexArrayAttribBinding( vao->GetApiResource(), AttrNameToIndex( attr.name ), 0 );
 		glEnableVertexArrayAttrib( vao->GetApiResource(), AttrNameToIndex( attr.name ) );
-		glVertexArrayAttribBinding( vao->GetApiResource(), index++, 0 );
-
+		
 		offset += attr.size * AttrTypeSize( attr.type );
 	}
 

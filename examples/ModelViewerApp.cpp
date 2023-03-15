@@ -11,37 +11,47 @@ struct Matrices {
 	glm::mat4 projection_matrix;
 	glm::mat4 view_matrix;
 	glm::mat4 model_matrix;
-	glm::mat3 normal_matrix;
+	glm::mat4 normal_matrix;
+	glm::vec3 view_position;
+	glm::float32 pad;
 
 	Matrices() noexcept = default;
-	Matrices( glm::mat4 proj, glm::mat4 view, glm::mat4 model ) noexcept
+	Matrices( glm::mat4 proj, glm::mat4 view, glm::mat4 model, glm::vec3 view_pos ) noexcept
 		: projection_matrix( std::move( proj ) ),
 		  view_matrix( std::move( view ) ),
-		  model_matrix( std::move( model ) ) {
+		  model_matrix( std::move( model ) ),
+		  view_position( std::move(view_pos) ) {
 		normal_matrix = glm::transpose( glm::inverse( model_matrix ) );
 	}
 };
 
-inline void SetDefaultLighting( Shader& shader ) {
-	const glm::vec3 direction( 0.5f, 0.0f, -0.5f );
-	const glm::vec3 ambient( 0.2f );
-	const glm::vec3 diffuse( 0.5f );
-	const glm::vec3 specular( 0.8f );
+struct DirectionalLight {
+	glm::vec3 direction;
+	glm::float32 pad_direction;
+	glm::vec3 ambient;
+	glm::float32 pad_ambient;
+	glm::vec3 diffuse;
+	glm::float32 pad_diffuse;
+	glm::vec3 specular;
+	glm::float32 pad_specular;
+};
 
-	//shader.SetVec3( "uDirectionalLight.direction", direction );
-	//shader.SetVec3( "uDirectionalLight.ambient", ambient );
-	//shader.SetVec3( "uDirectionalLight.diffuse", diffuse );
-	//shader.SetVec3( "uDirectionalLight.specular", specular );
+template <class T>
+class UniformBuffer {
+public:
+	explicit UniformBuffer( GraphicsDevice& device ) {
+		BufferDescription desc{};
+		desc.size = sizeof( T );
+		desc.stride = 0;
+		desc.access_flags = ResourceAccess::Write;
+		desc.bind_flags = BufferBinding::UniformBuffer;
 
-	//shader.SetBool( "uPointLights[0].enabled", true );
-	//shader.SetVec3( "uPointLights[0].position", glm::vec3( 2, 3, -2 ) );
-	//shader.SetVec3( "uPointLights[0].ambient", ambient );
-	//shader.SetVec3( "uPointLights[0].diffuse", diffuse );
-	//shader.SetVec3( "uPointLights[0].specular", specular );
-	//shader.SetFloat( "uPointLights[0].constant", 1.0f );
-	//shader.SetFloat( "uPointLights[0].linear", 0.09f );
-	//shader.SetFloat( "uPointLights[0].quadratic", 0.032f );
-}
+		buffer_ = device.CreateBuffer( desc );
+	}
+
+private:
+	Ref<Buffer> buffer_;
+};
 
 class ApplicationLayer : public Layer {
 public:
@@ -115,7 +125,7 @@ public:
 			floor_position_ = glm::vec3( 0, -3, 0 );
 		}
 
-		// Uniform buffer
+		// Matrix Uniform buffer
 		{
 			BufferDescription desc{};
 			desc.size = sizeof( Matrices );
@@ -125,10 +135,28 @@ public:
 			model_matrix_ = glm::identity<glm::mat4>();
 
 			const Matrices matrices(
-				camera_.GetProjectionMatrix(), camera_.GetViewMatrix(), model_matrix_ );
+				camera_.GetProjectionMatrix(), camera_.GetViewMatrix(), model_matrix_, camera_.position_ );
 			
-			uniform_buffer_ =
+			ub_matrices_ =
 				app.GetGraphicsDevice().CreateBuffer( desc, &matrices );
+		}
+
+		// Directional light uniform buffer
+		{
+			BufferDescription desc{};
+			desc.size = sizeof( DirectionalLight );
+			desc.stride = 0;
+			desc.access_flags = ResourceAccess::Write;
+			desc.bind_flags = BufferBinding::UniformBuffer;
+
+			DirectionalLight light{};
+			light.direction = glm::vec3( 0.5f, 0.0f, -0.5f );
+			light.ambient = glm::vec3( 0.2f );
+			light.diffuse = glm::vec3( 0.5f );
+			light.specular = glm::vec3( 0.8f );
+
+			ub_directional_light_ =
+				app.GetGraphicsDevice().CreateBuffer( desc, &light );
 		}
 
 		// Shaders
@@ -137,15 +165,16 @@ public:
 				app.GetGraphicsDevice(), ShaderType::VertexShader,
 				"resources/shaders/basic.vert" );
 
+			vertex_shader_->SetUniformBuffer( 0, ub_matrices_ );
+
 			fragment_shader_ = LoadShaderFromFile(
 				app.GetGraphicsDevice(), ShaderType::FragmentShader,
 				"resources/shaders/basic.frag" );
 
+			fragment_shader_->SetUniformBuffer( 2, ub_directional_light_ );
+
 			pipeline_ = app.GetGraphicsDevice().CreatePipeline();
-
 			pipeline_->SetVertexShader( vertex_shader_ );
-			pipeline_->SetVertexUniformBuffer( uniform_buffer_, 0, 0 );
-
 			pipeline_->SetFragmentShader( fragment_shader_ );
 		}
 
@@ -184,8 +213,8 @@ protected:
 							 glm::vec3( 0, 1, 0 ) );
 
 			const Matrices matrices( camera_.GetProjectionMatrix(),
-									 camera_.GetViewMatrix(), model_matrix_ );
-			uniform_buffer_->SetData( 0, sizeof( Matrices ), &matrices );
+									 camera_.GetViewMatrix(), model_matrix_, camera_.position_ );
+			ub_matrices_->SetData( 0, sizeof( Matrices ), &matrices );
 		} );
 
 		context_->Clear( true, true, 0.1f, 0.1f, 0.1f );
@@ -301,11 +330,13 @@ private:
 
 	Ref<GraphicsContext> context_;
 
-	SharedRef<Buffer> uniform_buffer_;
 	SharedRef<Shader> vertex_shader_;
 	SharedRef<Shader> fragment_shader_;
 	SharedRef<Pipeline> pipeline_;
 	SharedRef<Sampler> sampler_;
+
+	SharedRef<Buffer> ub_matrices_;
+	SharedRef<Buffer> ub_directional_light_;
 
 	Ref<Gamepad> pad_;
 
