@@ -4,6 +4,7 @@
 #include "core/Log.hpp"
 #include "Config.hpp"
 #include "GraphicsContextGL.hpp"
+#include "core/glfw/GLFWError.hpp"
 
 using namespace std;
 
@@ -14,19 +15,21 @@ static void APIENTRY DebugCallback( GLenum source, GLenum type, unsigned int id,
 									const char* message,
 									const void* userParam );
 
-GraphicsDeviceGL::GraphicsDeviceGL( GLFWwindow* window ) : window_( window ) {
-	Log::GetCoreLogger()->trace( "Creating OpenGL 4.1 Core rendering context" );
-
-	const Config& config = Config::Instance();
-
-	glfwMakeContextCurrent( window_ );
-	glfwSwapInterval( config.GetSyncInterval() );
+GraphicsDeviceGL::GraphicsDeviceGL( GLFWwindow* window ) {
+	{
+		const auto client = glfwGetWindowAttrib( window, GLFW_CLIENT_API );
+		if ( client == GLFW_PLATFORM_ERROR || client == GLFW_NOT_INITIALIZED ) {
+			throw GLFWError();
+		}
+	}
 
 	// Initialize Open GL extension loader
 	if ( !gladLoadGLLoader(
 			 reinterpret_cast<GLADloadproc>( glfwGetProcAddress ) ) ) {
 		throw Exception( "Unable to initialize GLAD OpenGL extension loader" );
 	}
+
+	Log::GetCoreLogger()->trace( "Creating OpenGL rendering context" );
 
 	// Get context information
 	int context_flags;
@@ -44,10 +47,6 @@ GraphicsDeviceGL::GraphicsDeviceGL( GLFWwindow* window ) : window_( window ) {
 
 GraphicsDeviceGL::~GraphicsDeviceGL() noexcept {
 	Log::GetCoreLogger()->trace( "Deleting OpenGL rendering context" );
-}
-
-void GraphicsDeviceGL::SwapBuffers() {
-	glfwSwapBuffers( window_ );
 }
 
 std::string GraphicsDeviceGL::TryDequeueError() noexcept {
@@ -80,20 +79,24 @@ Ref<GraphicsContext> GraphicsDeviceGL::CreateContext() noexcept {
 }
 
 Ref<Buffer> GraphicsDeviceGL::CreateBuffer(
-	const BufferDescription& desc, const void* initial_data ) noexcept {
+	const BufferDescription& desc, const void* initial_data ) {
 	return MakeRef<Buffer>( desc, initial_data );
 }
 
 Ref<VertexArray> GraphicsDeviceGL::CreateVertexArray(
-	const VertexArrayDescription& desc ) noexcept {
+	const VertexArrayDescription& desc ) {
 	return MakeRef<VertexArray>( desc );
 }
 
-Ref<Pipeline> GraphicsDeviceGL::CreatePipeline() noexcept {
+Ref<Pipeline> GraphicsDeviceGL::CreatePipeline() {
 	return MakeRef<Pipeline>();
 }
 
-Ref<Shader> GraphicsDeviceGL::CreateShader( ShaderType type, const char* source ) noexcept {
+Ref<Sampler> GraphicsDeviceGL::CreateSampler( const SamplerDescription& desc ) {
+	return MakeRef<Sampler>( desc );
+}
+
+Ref<Shader> GraphicsDeviceGL::CreateShader( ShaderType type, const char* source ) {
 	return MakeRef<Shader>( type, source );
 }
 

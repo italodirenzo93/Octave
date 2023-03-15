@@ -21,6 +21,7 @@ public:
 
 	void Close() const noexcept override;
 	void PollEvents() noexcept override;
+	void SwapBuffers() noexcept override;
 
 private:
 	GLFWwindow* window_ = nullptr;

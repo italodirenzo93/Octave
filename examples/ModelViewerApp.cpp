@@ -148,6 +148,17 @@ public:
 
 			pipeline_->SetFragmentShader( fragment_shader_ );
 		}
+
+		// Samplers
+		{
+			SamplerDescription desc{};
+			desc.max_lod = 0.0f;
+			desc.min_lod = 0.0f;
+			desc.mip_lod_bias = 0.0f;
+			desc.max_ansiotropy = 0;
+
+			sampler_ = app.GetGraphicsDevice().CreateSampler( desc );
+		}
 	}
 
 protected:
@@ -183,6 +194,7 @@ protected:
 		context_->SetIndexBuffer( cube_ibo_ );
 		context_->SetPipeline( pipeline_ );
 		context_->SetTextureUnit( 0, cube_texture_ );
+		context_->SetSampler( 0, sampler_ );
 		context_->DrawIndexed( cube_ibo_->GetNumElements(), 0, 0 );
 
 		//SetDefaultLighting( *shader_ );
@@ -293,6 +305,7 @@ private:
 	SharedRef<Shader> vertex_shader_;
 	SharedRef<Shader> fragment_shader_;
 	SharedRef<Pipeline> pipeline_;
+	SharedRef<Sampler> sampler_;
 
 	Ref<Gamepad> pad_;
 

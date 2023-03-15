@@ -16,6 +16,7 @@ public:
 
 	void SetData( TextureFormat format, int mip_level, int xoffset, int yoffset,
 				  uint32_t width, uint32_t height, const void* data );
+	void GenerateMipmap();
 
 private:
 	GLuint id_;
