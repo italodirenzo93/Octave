@@ -98,9 +98,21 @@ struct SamplerDescription {
 enum class VertexWindingOrder { CounterClockwise, Clockwise };
 enum class CullFace { None, Back, Front, FrontAndBack };
 
-struct RasterizerState {
+struct RasterizerStateDescription{
 	VertexWindingOrder winding_order;
 	CullFace cull_face;
+};
+
+//////////////////////////////
+// Depth / Stencil
+//////////////////////////////
+
+struct DepthStencilStateDescription {
+	bool depth_enabled;
+	float depth_value;
+
+	bool stencil_enabled;
+	int stencil_value;
 };
 
 }
