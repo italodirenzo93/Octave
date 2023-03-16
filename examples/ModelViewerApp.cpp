@@ -104,6 +104,8 @@ public:
 
 			cube_texture_ = CreateTextureFromFile(
 				app.GetGraphicsDevice(), "resources/textures/container.jpg" );
+
+			cube_model_matrix_ = glm::identity<glm::mat4>();
 		}
 
 		// Load floor
@@ -115,6 +117,21 @@ public:
 				CreateStaticBuffer( app.GetGraphicsDevice(), floor_verts,
 									sizeof( GeometricPrimitive::VertexType ),
 									BufferBinding::VertexBuffer );
+
+			std::array<VertexAttribute, 3> attrs{
+				VertexAttribute{ VertexAttributeName::kPosition, 3,
+								 VertexAttributeType::kFloat, false },
+				VertexAttribute{ VertexAttributeName::kNormal, 3,
+								 VertexAttributeType::kFloat, false },
+				VertexAttribute{ VertexAttributeName::kTexCoord, 2,
+								 VertexAttributeType::kFloat, false } };
+
+			VertexArrayDescription vao_desc{};
+			vao_desc.attributes = attrs.data();
+			vao_desc.count = attrs.size();
+
+			floor_vao_ = app.GetGraphicsDevice().CreateVertexArray( vao_desc );
+
 			floor_texture_diffuse_ =
 				CreateTextureFromFile( app.GetGraphicsDevice(),
 									   "resources/textures/wood_diffuse.png" );
@@ -122,7 +139,8 @@ public:
 				CreateTextureFromFile( app.GetGraphicsDevice(),
 									   "resources/textures/wood_specular.png" );
 
-			floor_position_ = glm::vec3( 0, -3, 0 );
+			floor_model_matrix_ = glm::translate( glm::identity<glm::mat4>(),
+												  glm::vec3( 0, -3, 0 ) );
 		}
 
 		// Matrix Uniform buffer
@@ -132,10 +150,8 @@ public:
 			desc.access_flags = ResourceAccess::Write;
 			desc.bind_flags = BufferBinding::UniformBuffer;
 
-			model_matrix_ = glm::identity<glm::mat4>();
-
 			const Matrices matrices(
-				camera_.GetProjectionMatrix(), camera_.GetViewMatrix(), model_matrix_, camera_.position_ );
+				camera_.GetProjectionMatrix(), camera_.GetViewMatrix(), glm::identity<glm::mat4>(), camera_.position_ );
 			
 			ub_matrices_ =
 				app.GetGraphicsDevice().CreateBuffer( desc, &matrices );
@@ -208,38 +224,43 @@ protected:
 				DebugCameraControls( *pad_, camera_, 25.0f, delta );
 			}
 
-			model_matrix_ =
-				glm::rotate( model_matrix_, glm::radians( delta * 25.0f ),
+			cube_model_matrix_ =
+				glm::rotate( cube_model_matrix_, glm::radians( delta * 25.0f ),
 							 glm::vec3( 0, 1, 0 ) );
-
-			const Matrices matrices( camera_.GetProjectionMatrix(),
-									 camera_.GetViewMatrix(), model_matrix_, camera_.position_ );
-			ub_matrices_->SetData( 0, sizeof( Matrices ), &matrices );
 		} );
 
 		context_->Clear( true, true, 0.1f, 0.1f, 0.1f );
 
-		context_->SetVertexBuffer( cube_vbo_, cube_vao_ );
-		context_->SetIndexBuffer( cube_ibo_ );
 		context_->SetPipeline( pipeline_ );
-		context_->SetTextureUnit( 0, cube_texture_ );
 		context_->SetSampler( 0, sampler_ );
-		context_->DrawIndexed( cube_ibo_->GetNumElements(), 0, 0 );
 
-		//SetDefaultLighting( *shader_ );
+		// Draw floating box
+		{
+			const Matrices matrices( camera_.GetProjectionMatrix(),
+									 camera_.GetViewMatrix(),
+									 cube_model_matrix_, camera_.position_ );
+			ub_matrices_->SetData( 0, sizeof( Matrices ), &matrices );
+			vertex_shader_->SetUniformBuffer( 0, ub_matrices_ );
 
-		// Floor
-		//{
-		//	shader_->SetTexture( "uTextures", 0, *floor_texture_diffuse_ );
-		//	shader_->SetTexture( "uTextures", 1, *floor_texture_specular_ );
+			context_->SetVertexBuffer( cube_vbo_, cube_vao_ );
+			context_->SetIndexBuffer( cube_ibo_ );
+			context_->SetTextureUnit( 0, cube_texture_ );
+			context_->DrawIndexed( cube_ibo_->GetNumElements(), 0, 0 );
+		}
 
-		//	auto model = glm::identity<glm::mat4>();
-		//	model = glm::translate( model, floor_position_ );
-		//	shader_->SetMat4( "uMatModel", model );
-		//	shader_->SetMat3( "uMatNormal", MakeNormalMatrix( model ) );
+		// Draw floor
+		{
+			const Matrices matrices( camera_.GetProjectionMatrix(),
+									 camera_.GetViewMatrix(),
+									 floor_model_matrix_, camera_.position_ );
+			ub_matrices_->SetData( 0, sizeof( Matrices ), &matrices );
+			vertex_shader_->SetUniformBuffer( 0, ub_matrices_ );
 
-		//	renderer_->Draw( *shader_, *floor_vbo_ );
-		//}
+			context_->SetVertexBuffer( floor_vbo_, floor_vao_ );
+			context_->SetTextureUnit( 0, floor_texture_diffuse_ );
+			context_->SetTextureUnit( 1, floor_texture_specular_ );
+			context_->Draw( floor_vbo_->GetNumElements(), 0 );
+		}
 	}
 
 	void DebugCameraControls( DebugCamera& camera, float camera_speed,
@@ -340,7 +361,8 @@ private:
 
 	Ref<Gamepad> pad_;
 
-	glm::mat4 model_matrix_;
+	glm::mat4 cube_model_matrix_;
+	glm::mat4 floor_model_matrix_;
 
 	StepTimer step_timer_;
 	DebugCamera camera_;
@@ -351,10 +373,9 @@ private:
 	SharedRef<Texture2D> cube_texture_;
 
 	SharedRef<Buffer> floor_vbo_;
+	SharedRef<VertexArray> floor_vao_;
 	SharedRef<Texture2D> floor_texture_diffuse_,
 		floor_texture_specular_;
-	glm::vec3 floor_position_;
-
 };
 
 class ModelViewerSample : public Sample {
