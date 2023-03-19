@@ -3,5 +3,8 @@ samples_common_dep = declare_dependency(
 	sources: [
 		'Camera.cpp',
 		'Camera.hpp'
+	],
+	dependencies: [
+		dependency('glm')
 	]
 )

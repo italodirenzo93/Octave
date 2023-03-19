@@ -1,7 +1,7 @@
-#ifndef OCTAVE_WINDOW_HPP
-#define OCTAVE_WINDOW_HPP
+#ifndef OCTAVE_CORE_WINDOW_HPP
+#define OCTAVE_CORE_WINDOW_HPP
 
-#include "pch/pch.hpp"
+#include "core/Callback.hpp"
 
 namespace Octave {
 
@@ -21,47 +21,33 @@ struct WindowOptions {
 
 class Window {
 public:
-	virtual ~Window() noexcept = default;
+	explicit Window( const WindowOptions& options );
+	~Window() noexcept;
 
-	[[nodiscard]] virtual void* GetNativeWindowHandle() const noexcept = 0;
-	[[nodiscard]] virtual std::pair<int, int> GetSize() const noexcept = 0;
-	[[nodiscard]] virtual bool IsOpen() const noexcept = 0;
+	[[nodiscard]] void* GetNativeWindowHandle() const noexcept {
+		return handle_;
+	}
+	[[nodiscard]] std::pair<int, int> GetSize() const noexcept;
+	[[nodiscard]] bool IsOpen() const noexcept;
 
-	virtual Window& SetTitle( const std::string& title ) noexcept = 0;
-	virtual Window& SetSyncInterval( int interval ) noexcept = 0;
+	Window& SetTitle( const std::string& title ) noexcept;
+	Window& SetSyncInterval( int interval ) noexcept;
 
 	// Actions
-	virtual void Close() const noexcept = 0;
-	virtual void PollEvents() noexcept = 0;
-	virtual void SwapBuffers() noexcept = 0;
+	void Close() const noexcept;
+	void PollEvents() noexcept;
+	void SwapBuffers() noexcept;
 
 	// Callbacks
-	using OnSizeChangedCallback = std::function<void( int, int )>;
-	Window& AddSizeChangedCallback( OnSizeChangedCallback callback ) noexcept {
-		cb_window_size_.emplace_back( std::move( callback ) );
-		return *this;
-	}
+	Callback<void, int, int> OnSizeChanged;
+	Callback<void> OnClose;
 
-	using OnCloseCallback = std::function<void( void )>;
-	Window& AddCloseCallback( OnCloseCallback callback ) noexcept {
-		cb_close_.emplace_back( std::move( callback ) );
-		return *this;
-	}
-
-	static Ref<Window> Create( const WindowOptions& options );
-
-protected:
-	Window() = default;
-
-	std::vector<OnSizeChangedCallback> cb_window_size_;
-	std::vector<OnCloseCallback> cb_close_;
+private:
+	void* handle_ = nullptr;
 
 public:
 	Window( const Window& ) = delete;
-	Window( Window&& ) = delete;
-
 	Window& operator=( const Window& ) = delete;
-	Window& operator=( Window&& ) = delete;
 };
 
 }  // namespace Octave

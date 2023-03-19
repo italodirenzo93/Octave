@@ -8,5 +8,7 @@ graphics_dep = declare_dependency(
 		'Resources.hpp',
 		'Structs.hpp',
 	],
-	dependencies: [rhi_opengl_dep]
+	dependencies: [
+		rhi_opengl_dep
+	]
 )

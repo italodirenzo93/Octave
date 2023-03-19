@@ -27,7 +27,7 @@ GraphicsDevice::GraphicsDevice( const Window& window ) {
 	{
 		const auto client = glfwGetWindowAttrib( p_window, GLFW_CLIENT_API );
 		if ( client == GLFW_PLATFORM_ERROR || client == GLFW_NOT_INITIALIZED ) {
-			throw Impl::GLFWError();
+			throw GLFWError();
 		}
 	}
 
