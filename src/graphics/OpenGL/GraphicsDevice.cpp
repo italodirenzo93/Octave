@@ -1,25 +1,33 @@
 #include "pch/pch.hpp"
-#include "GraphicsDeviceGL.hpp"
+#include "graphics/GraphicsDevice.hpp"
 
 #include "core/Log.hpp"
 #include "Config.hpp"
-#include "GraphicsContextGL.hpp"
+#include "graphics/GraphicsContext.hpp"
 #include "core/glfw/GLFWError.hpp"
+#include <GLFW/glfw3.h>
 
 using namespace std;
 
-namespace Octave::Impl {
+namespace Octave {
 
 static void APIENTRY DebugCallback( GLenum source, GLenum type, unsigned int id,
 									GLenum severity, GLsizei length,
 									const char* message,
 									const void* userParam );
 
-GraphicsDeviceGL::GraphicsDeviceGL( GLFWwindow* window ) {
+GraphicsDevice::GraphicsDevice( const Window& window ) {
+	const auto p_window = static_cast<GLFWwindow*>( window.GetNativeWindowHandle() );
+
+	if ( !p_window ) {
+		throw Exception( "Cannot accept a null window pointer" );
+	}
+
+	// Validate GLFW handle
 	{
-		const auto client = glfwGetWindowAttrib( window, GLFW_CLIENT_API );
+		const auto client = glfwGetWindowAttrib( p_window, GLFW_CLIENT_API );
 		if ( client == GLFW_PLATFORM_ERROR || client == GLFW_NOT_INITIALIZED ) {
-			throw GLFWError();
+			throw Impl::GLFWError();
 		}
 	}
 
@@ -45,11 +53,11 @@ GraphicsDeviceGL::GraphicsDeviceGL( GLFWwindow* window ) {
 	}
 }
 
-GraphicsDeviceGL::~GraphicsDeviceGL() noexcept {
+GraphicsDevice::~GraphicsDevice() noexcept {
 	Log::GetCoreLogger()->trace( "Deleting OpenGL rendering context" );
 }
 
-std::string GraphicsDeviceGL::TryDequeueError() noexcept {
+std::string GraphicsDevice::TryDequeueError() noexcept {
 	const GLenum error = glGetError();
 
 	switch ( error ) {
@@ -74,33 +82,33 @@ std::string GraphicsDeviceGL::TryDequeueError() noexcept {
 	}
 }
 
-Ref<GraphicsContext> GraphicsDeviceGL::CreateContext() noexcept {
-	return MakeRef<GraphicsContextGL>();
+Ref<GraphicsContext> GraphicsDevice::CreateContext() noexcept {
+	return unique_ptr<GraphicsContext>( new GraphicsContext() );
 }
 
-Ref<Buffer> GraphicsDeviceGL::CreateBuffer(
+Ref<Buffer> GraphicsDevice::CreateBuffer(
 	const BufferDescription& desc, const void* initial_data ) {
 	return MakeRef<Buffer>( desc, initial_data );
 }
 
-Ref<VertexArray> GraphicsDeviceGL::CreateVertexArray(
+Ref<VertexArray> GraphicsDevice::CreateVertexArray(
 	const VertexArrayDescription& desc ) {
 	return MakeRef<VertexArray>( desc );
 }
 
-Ref<Pipeline> GraphicsDeviceGL::CreatePipeline() {
+Ref<Pipeline> GraphicsDevice::CreatePipeline() {
 	return MakeRef<Pipeline>();
 }
 
-Ref<Sampler> GraphicsDeviceGL::CreateSampler( const SamplerDescription& desc ) {
+Ref<Sampler> GraphicsDevice::CreateSampler( const SamplerDescription& desc ) {
 	return MakeRef<Sampler>( desc );
 }
 
-Ref<Shader> GraphicsDeviceGL::CreateShader( ShaderType type, const char* source ) {
+Ref<Shader> GraphicsDevice::CreateShader( ShaderType type, const char* source ) {
 	return MakeRef<Shader>( type, source );
 }
 
-Ref<Texture2D> GraphicsDeviceGL::CreateTexture2D( const TextureDescription2D& desc ) {
+Ref<Texture2D> GraphicsDevice::CreateTexture2D( const TextureDescription2D& desc ) {
 	return MakeRef<Texture2D>( desc );
 }
 

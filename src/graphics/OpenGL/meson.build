@@ -3,10 +3,8 @@ rhi_opengl_dep = declare_dependency(
 	sources: [
 		'Buffer.cpp',
 		'Buffer.hpp',
-		'GraphicsContextGL.cpp',
-		'GraphicsContextGL.hpp',
-		'GraphicsDeviceGL.cpp',
-		'GraphicsDeviceGL.hpp',
+		'GraphicsContext.cpp',
+		'GraphicsDevice.cpp',
 		'Pipeline.cpp',
 		'Pipeline.hpp',
 		'Sampler.cpp',

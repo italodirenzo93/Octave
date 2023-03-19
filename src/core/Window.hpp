@@ -23,6 +23,7 @@ class Window {
 public:
 	virtual ~Window() noexcept = default;
 
+	[[nodiscard]] virtual void* GetNativeWindowHandle() const noexcept = 0;
 	[[nodiscard]] virtual std::pair<int, int> GetSize() const noexcept = 0;
 	[[nodiscard]] virtual bool IsOpen() const noexcept = 0;
 

@@ -12,6 +12,9 @@ public:
 	explicit WindowGLFW( const WindowOptions& options );
 	~WindowGLFW() noexcept override;
 
+	[[nodiscard]] void* GetNativeWindowHandle() const noexcept override {
+		return window_;
+	};
 	[[nodiscard]] std::pair<int, int> GetSize() const noexcept override;
 	[[nodiscard]] GLFWwindow* GetPointer() const noexcept { return window_; }
 	[[nodiscard]] bool IsOpen() const noexcept override;
