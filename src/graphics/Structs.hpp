@@ -1,7 +1,7 @@
 #ifndef OCTAVE_GRAPHICS_STRUCTS_HPP
 #define OCTAVE_GRAPHICS_STRUCTS_HPP
 
-#include <cstdint>
+#include <vector>
 
 namespace Octave {
 
@@ -42,10 +42,7 @@ struct VertexAttribute {
 	bool normalized;
 };
 
-struct VertexArrayDescription {
-	VertexAttribute* attributes;
-	size_t count;
-};
+using VertexLayout = std::vector<VertexAttribute>;
 
 //////////////////////////////
 // Shaders

@@ -4,8 +4,8 @@
 
 namespace Octave {
 
-VertexArray::VertexArray( const VertexArrayDescription& desc )
-	: attrs_( desc.attributes, desc.attributes + desc.count ) {
+VertexArray::VertexArray( const VertexLayout& layout )
+	: attrs_( layout ) {
 	glCreateVertexArrays( 1, &id_ );
 }
 
