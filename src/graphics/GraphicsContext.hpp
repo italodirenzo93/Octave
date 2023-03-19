@@ -8,32 +8,33 @@
 namespace Octave {
 
 class GraphicsContext {
-public:
-	GraphicsContext() = default;
-	virtual ~GraphicsContext() noexcept = default;
-
-	virtual void Clear( bool color = true, bool depth = true, float r = 0.0f,
-				float g = 0.0f, float b = 0.0f, float a = 1.0f ) const noexcept = 0;
-
-	virtual void Draw( size_t vertex_count, size_t offset ) const noexcept = 0;
-	virtual void DrawIndexed( size_t index_count, size_t offset, size_t base_vertex ) const noexcept = 0;
-
-	[[nodiscard]] virtual std::array<int, 4> GetViewport() const noexcept = 0;
-
-	virtual void SetDepthTestEnabled( bool enabled ) noexcept = 0;
-	virtual void SetPipeline( SharedRef<Pipeline> pipeline ) = 0;
-	virtual void SetVertexBuffer( SharedRef<Buffer> vertex_buffer, SharedRef<VertexArray> layout ) = 0;
-	virtual void SetIndexBuffer( SharedRef<Buffer> index_buffer ) = 0;
-	virtual void SetSampler( uint32_t unit, SharedRef<Sampler> sampler ) = 0;
-	virtual void SetTextureUnit( uint32_t unit,
-								 SharedRef<Texture2D> texture ) = 0;
-	virtual void SetViewport( int x, int y, int width, int height ) noexcept = 0;
+	friend class GraphicsDevice;
 
 public:
+	~GraphicsContext() noexcept;
+
 	GraphicsContext( const GraphicsContext& ) = delete;
-	GraphicsContext( GraphicsContext&& ) = delete;
-	GraphicsContext& operator=( const GraphicsContext& ) = delete;
 	GraphicsContext& operator=( GraphicsContext&& ) = delete;
+
+	void Clear( bool color = true, bool depth = true, float r = 0.0f,
+				float g = 0.0f, float b = 0.0f, float a = 1.0f ) const noexcept;
+
+	void Draw( size_t vertex_count, size_t offset ) const noexcept;
+	void DrawIndexed( size_t index_count, size_t offset, size_t base_vertex ) const noexcept;
+
+	[[nodiscard]] std::array<int, 4> GetViewport() const noexcept;
+
+	void SetDepthTestEnabled( bool enabled ) noexcept;
+	void SetPipeline( SharedRef<Pipeline> pipeline );
+	void SetVertexBuffer( SharedRef<Buffer> vertex_buffer, SharedRef<VertexArray> layout );
+	void SetIndexBuffer( SharedRef<Buffer> index_buffer );
+	void SetSampler( uint32_t unit, SharedRef<Sampler> sampler );
+	void SetTextureUnit( uint32_t unit,
+								 SharedRef<Texture2D> texture );
+	void SetViewport( int x, int y, int width, int height ) noexcept;
+
+private:
+	GraphicsContext();
 };
 
 }  // namespace Octave

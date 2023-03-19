@@ -1,5 +1,5 @@
-#ifndef OCTAVE_GRAPHICSDEVICE_HPP
-#define OCTAVE_GRAPHICSDEVICE_HPP
+#ifndef OCTAVE_GRAPHICS_GRAPHICSDEVICE_HPP
+#define OCTAVE_GRAPHICS_GRAPHICSDEVICE_HPP
 
 #include <string>
 
@@ -13,21 +13,24 @@ namespace Octave {
 
 class GraphicsDevice {
 public:
-	virtual ~GraphicsDevice() noexcept = default;
+	explicit GraphicsDevice( const Window& window );
+	~GraphicsDevice() noexcept;
 
-	[[nodiscard]] virtual std::string TryDequeueError() noexcept = 0;
+	GraphicsDevice() = delete;
+	GraphicsDevice( const GraphicsDevice& ) = delete;
+	GraphicsDevice& operator=( const GraphicsDevice& ) = delete;
 
-	[[nodiscard]] virtual Ref<GraphicsContext> CreateContext() noexcept = 0;
-	[[nodiscard]] virtual Ref<Buffer> CreateBuffer( const BufferDescription& desc, const void* initial_data = nullptr ) = 0;
-	[[nodiscard]] virtual Ref<VertexArray> CreateVertexArray( const VertexArrayDescription& desc ) = 0;
-	[[nodiscard]] virtual Ref<Pipeline> CreatePipeline() = 0;
-	[[nodiscard]] virtual Ref<Sampler> CreateSampler(
-		const SamplerDescription& desc ) = 0;
-	[[nodiscard]] virtual Ref<Shader> CreateShader( ShaderType type, const char* source ) = 0;
-	[[nodiscard]] virtual Ref<Texture2D> CreateTexture2D(
-		const TextureDescription2D& desc ) = 0;
+	[[nodiscard]] std::string TryDequeueError() noexcept;
 
-    static Ref<GraphicsDevice> Create( const Window& window );
+	[[nodiscard]] Ref<GraphicsContext> CreateContext() noexcept;
+	[[nodiscard]] Ref<Buffer> CreateBuffer( const BufferDescription& desc, const void* initial_data = nullptr );
+	[[nodiscard]] Ref<VertexArray> CreateVertexArray( const VertexArrayDescription& desc );
+	[[nodiscard]] Ref<Pipeline> CreatePipeline();
+	[[nodiscard]] Ref<Sampler> CreateSampler(
+		const SamplerDescription& desc );
+	[[nodiscard]] Ref<Shader> CreateShader( ShaderType type, const char* source );
+	[[nodiscard]] Ref<Texture2D> CreateTexture2D(
+		const TextureDescription2D& desc );
 };
 
 }

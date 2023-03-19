@@ -13,10 +13,10 @@ Application::Application( int argc, char* argv[] ) : is_running_( true ) {
 
 	input_ = MakeRef<Impl::InputSystemGLFW>();
 	window_ = Window::Create( WindowOptions() );
-    graphics_ = GraphicsDevice::Create( *window_ );
+    graphics_ = MakeRef<GraphicsDevice>( *window_ );
 
 	// Set window close callback
-	window_->AddCloseCallback( [this]() { Exit(); } );
+	window_->AddCloseCallback( [this] { Exit(); } );
 }
 
 Application::~Application() noexcept {
