@@ -1,5 +1,7 @@
+// clang-format off
 #include <Octave.hpp>
 #include <EntryPoint.hpp>
+// clang-format on
 
 #include "common/Camera.hpp"
 #include "helpers/GeometricPrimitive.hpp"
@@ -148,7 +150,7 @@ public:
 									sizeof( GeometricPrimitive::VertexType ),
 									BufferBinding::VertexBuffer );
 
-			std::array<VertexAttribute, 3> attrs{
+			const VertexLayout layout{
 				VertexAttribute{ VertexAttributeName::kPosition, 3,
 								 VertexAttributeType::kFloat, false },
 				VertexAttribute{ VertexAttributeName::kNormal, 3,
@@ -156,11 +158,7 @@ public:
 				VertexAttribute{ VertexAttributeName::kTexCoord, 2,
 								 VertexAttributeType::kFloat, false } };
 
-			VertexArrayDescription vao_desc{};
-			vao_desc.attributes = attrs.data();
-			vao_desc.count = attrs.size();
-
-			cube_vao_ = app.GetGraphicsDevice().CreateVertexArray( vao_desc );
+			cube_vao_ = app.GetGraphicsDevice().CreateVertexArray( layout );
 
 			cube_ibo_ =
 				CreateStaticBuffer( app.GetGraphicsDevice(), indices, sizeof( uint16_t ),
@@ -182,7 +180,7 @@ public:
 									sizeof( GeometricPrimitive::VertexType ),
 									BufferBinding::VertexBuffer );
 
-			std::array<VertexAttribute, 3> attrs{
+			const VertexLayout layout{
 				VertexAttribute{ VertexAttributeName::kPosition, 3,
 								 VertexAttributeType::kFloat, false },
 				VertexAttribute{ VertexAttributeName::kNormal, 3,
@@ -190,11 +188,7 @@ public:
 				VertexAttribute{ VertexAttributeName::kTexCoord, 2,
 								 VertexAttributeType::kFloat, false } };
 
-			VertexArrayDescription vao_desc{};
-			vao_desc.attributes = attrs.data();
-			vao_desc.count = attrs.size();
-
-			floor_vao_ = app.GetGraphicsDevice().CreateVertexArray( vao_desc );
+			floor_vao_ = app.GetGraphicsDevice().CreateVertexArray( layout );
 
 			floor_texture_diffuse_ =
 				CreateTextureFromFile( app.GetGraphicsDevice(),

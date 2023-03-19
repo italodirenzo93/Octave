@@ -92,7 +92,7 @@ Ref<Buffer> GraphicsDevice::CreateBuffer(
 }
 
 Ref<VertexArray> GraphicsDevice::CreateVertexArray(
-	const VertexArrayDescription& desc ) {
+	const VertexLayout& desc ) {
 	return MakeRef<VertexArray>( desc );
 }
 

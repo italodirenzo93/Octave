@@ -10,18 +10,18 @@ namespace Octave {
 
 class VertexArray {
 public:
-	explicit VertexArray( const VertexArrayDescription& desc );
+	explicit VertexArray( const VertexLayout& layout );
 	~VertexArray() noexcept;
 
 	[[nodiscard]] GLuint GetApiResource() const noexcept { return id_; }
 
-	using Iterator = std::vector<VertexAttribute>::iterator;
+	using Iterator = VertexLayout::iterator;
 	Iterator begin() noexcept { return attrs_.begin(); }
 	Iterator end() noexcept { return attrs_.end(); }
 
 private:
 	GLuint id_ = 0;
-	std::vector<VertexAttribute> attrs_;
+	VertexLayout attrs_;
 };
 
 }

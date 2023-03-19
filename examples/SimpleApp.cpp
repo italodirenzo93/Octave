@@ -2,7 +2,6 @@
 #include <Octave.hpp>
 #include <EntryPoint.hpp>
 // clang-format on
-#include <iostream>
 #include <memory>
 
 using namespace std;
@@ -53,7 +52,7 @@ public:
 
 		// Vertex Buffer
 		{
-			vector<VertexType> vertices{ { {0.0f, 1.0f}, {1.0f, 0.0f, 0.0f} },
+			const vector<VertexType> vertices{ { {0.0f, 1.0f}, {1.0f, 0.0f, 0.0f} },
 										 { {1.0f, -1.0f}, {0.0f, 1.0f, 0.0f} },
 										 { {-1.0f, -1.0f}, {0.0f, 0.0f, 1.0f} } };
 
@@ -63,23 +62,19 @@ public:
 			desc.access_flags = ResourceAccess::Write;
 			desc.bind_flags = BufferBinding::VertexBuffer;
 
-			vbo_ = app.GetGraphicsDevice().CreateBuffer(
-				desc, reinterpret_cast<const void*>( vertices.data() ) );
+			vbo_ =
+				app.GetGraphicsDevice().CreateBuffer( desc, vertices.data() );
 		}
 
 		// Vertex Array
 		{
-			VertexAttribute attrs[] = {
+			const VertexLayout layout{
 				{ VertexAttributeName::kPosition, 2,
 				  VertexAttributeType::kFloat, false },
 				{ VertexAttributeName::kColor, 3, VertexAttributeType::kFloat,
 				  false } };
 
-			VertexArrayDescription desc{};
-			desc.attributes = attrs;
-			desc.count = 2;
-
-			vao_ = app.GetGraphicsDevice().CreateVertexArray( desc );
+			vao_ = app.GetGraphicsDevice().CreateVertexArray( layout );
 		}
 
 		pipeline_ = app.GetGraphicsDevice().CreatePipeline();
@@ -127,7 +122,7 @@ public:
 	void OnInitialize() override {
 		Log::Info( "Hello World!" );
 
-		PushLayer( make_unique<SimpleAppLayer>( *this ) );
+		PushLayer( MakeRef<SimpleAppLayer>( *this ) );
 	}
 };
 
