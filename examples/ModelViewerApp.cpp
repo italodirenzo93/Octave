@@ -439,6 +439,8 @@ private:
 class ModelViewerSample : public Application {
 public:
 	void OnInitialize() override {
+		GetWindow().OnClose.Add( [this] { Exit(); } );
+
 		PushLayer( MakeRef<ApplicationLayer>( *this ) );
 	}
 };

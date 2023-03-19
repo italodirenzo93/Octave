@@ -1,21 +1,19 @@
-glad_dep = subproject('glad').get_variable('glad_dep')
-simpleini_dep = subproject('simpleini').get_variable('simpleini_dep')
-stb_image_dep = subproject('stb_image').get_variable('stb_image_dep')
+subdir('core')
+subdir('graphics')
 
 glfw3_dep = dependency('glfw3')
 glm_dep = dependency('glm')
+glad_dep = dependency('glad', fallback: ['glad', 'glad_dep'])
+simpleini_dep = dependency('simpleini', fallback: ['simpleini', 'simpleini_dep'])
 spdlog_dep = dependency('spdlog')
+stb_image_dep = dependency('stb_image', fallback: ['stb_image', 'stb_image_dep'])
 
-subdir('graphics')
-
-octave = static_library(
+octave_lib = static_library(
 	'Octave',
 	[
 		# Top-level
 		'Application.cpp',
 		'Application.hpp',
-		# 'Camera.cpp',
-		# 'Camera.hpp',
 		'Config.cpp',
 		'Config.hpp',
 		'EntryPoint.hpp',
@@ -26,38 +24,6 @@ octave = static_library(
 		'LayerStack.cpp',
 		'LayerStack.hpp',
 		'Octave.hpp',
-
-		# Core
-		'core/Log.cpp',
-		'core/Log.hpp',
-		'core/Platform.hpp',
-		'core/Window.cpp',
-		'core/Window.hpp',
-		'core/Types.hpp',
-		'core/glfw/GLFWError.cpp',
-		'core/glfw/GLFWError.hpp',
-		'core/glfw/PlatformGLFW.cpp',
-		'core/glfw/WindowGLFW.cpp',
-		'core/glfw/WindowGLFW.hpp',
-
-		# Graphics
-        # 'graphics/GraphicsDevice.cpp',
-		# 'graphics/GraphicsDevice.hpp',
-		# 'graphics/Mesh.cpp',
-		# 'graphics/Mesh.hpp',
-		# 'graphics/Model.cpp',
-		# 'graphics/Model.hpp',
-		# 'graphics/GraphicsContext.hpp',
-		# 'graphics/Resources.hpp',
-		# 'graphics/Structs.hpp',
-		# 'graphics/OpenGL/Buffer.cpp',
-		# 'graphics/OpenGL/Buffer.hpp',
-		# 'graphics/OpenGL/GraphicsDeviceGL.cpp',
-		# 'graphics/OpenGL/GraphicsDeviceGL.hpp',
-		# 'graphics/OpenGL/GraphicsContextGL.cpp',
-		# 'graphics/OpenGL/GraphicsContextGL.hpp',
-		# 'graphics/OpenGL/VertexArray.cpp',
-		# 'graphics/OpenGL/VertexArray.hpp',
 
 		# Helpers
 		'helpers/GeometricPrimitive.cpp',
@@ -82,11 +48,13 @@ octave = static_library(
 	],
 	include_directories: include_directories(''),
 	dependencies: [
+		core_dep,
 		graphics_dep,
 
-		glad_dep,
+		# Third-party
 		glfw3_dep,
 		glm_dep,
+		glad_dep,
 		simpleini_dep,
 		spdlog_dep,
 		stb_image_dep
@@ -95,12 +63,13 @@ octave = static_library(
 )
 
 octave_dep = declare_dependency(
-	link_with: octave,
+	link_with: octave_lib,
 	include_directories: include_directories(''),
 	dependencies: [
-		glad_dep,
+		# Third-party
 		glfw3_dep,
 		glm_dep,
+		glad_dep,
 		simpleini_dep,
 		spdlog_dep,
 		stb_image_dep

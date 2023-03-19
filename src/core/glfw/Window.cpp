@@ -1,5 +1,5 @@
 #include "pch/pch.hpp"
-#include "WindowGLFW.hpp"
+#include "Window.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -7,15 +7,15 @@
 #include "GLFWError.hpp"
 #include "core/Log.hpp"
 
-namespace Octave::Impl {
+namespace Octave {
 
 static uint32_t g_window_count = 0;
 
-static void ErrorCallback( int error_code, const char* description ) {
-	Log::GetCoreLogger()->error( "GLFW Error {} - {}", error_code, description );
-}
+static void ErrorCallback( int error_code, const char* description );
+static void SizeChangedCallback( GLFWwindow* window, int width, int height );
+static void CloseCallback( GLFWwindow* window );
 
-WindowGLFW::WindowGLFW( const WindowOptions& options ) {
+Window::Window( const WindowOptions& options ) {
 	// Init GLFW
 	if ( g_window_count == 0 ) {
 		Log::GetCoreLogger()->trace( "Initializing GLFW" );
@@ -77,30 +77,33 @@ WindowGLFW::WindowGLFW( const WindowOptions& options ) {
 	}
 
 	// Create window
-	window_ = glfwCreateWindow( width, height, options.title.c_str(), monitor,
+	const auto window = glfwCreateWindow( width, height, options.title.c_str(), monitor,
 								nullptr );
-	if ( !window_ ) {
+	if ( !window ) {
 		throw GLFWError();
 	}
+
+	// Save window handle reference
+	handle_ = window;
 
 	// Increment window count
 	g_window_count += 1;
 
-	glfwMakeContextCurrent( window_ );
+	glfwMakeContextCurrent( window );
 	glfwSwapInterval( Config::Instance().GetSyncInterval() );
 
 	// Pass a pointer to this class instance to the window
 	// so we can access in from our callback functions
-	glfwSetWindowUserPointer( window_, this );
+	glfwSetWindowUserPointer( window, this );
 
-	// Set callback wrapper functions
-	glfwSetFramebufferSizeCallback( window_, WindowSizeCallback );
-	glfwSetWindowCloseCallback( window_, CloseCallback );
+	// Set callbacks
+	glfwSetWindowSizeCallback( window, SizeChangedCallback );
+	glfwSetWindowCloseCallback( window, CloseCallback );
 }
 
-WindowGLFW::~WindowGLFW() noexcept {
+Window::~Window() noexcept {
 	Log::GetCoreLogger()->trace( "Destroying GLFW window" );
-	glfwDestroyWindow( window_ );
+	glfwDestroyWindow( static_cast<GLFWwindow*>( handle_ ) );
 	g_window_count -= 1;
 
 	// Quit GLFW if no windows left
@@ -110,57 +113,58 @@ WindowGLFW::~WindowGLFW() noexcept {
 	}
 }
 
-std::pair<int, int> WindowGLFW::GetSize() const noexcept {
+std::pair<int, int> Window::GetSize() const noexcept {
 	int width, height;
-	glfwGetFramebufferSize( window_, &width, &height );
+	glfwGetFramebufferSize( static_cast<GLFWwindow*>( handle_ ), &width,
+							&height );
 	return { width, height };
 }
 
-bool WindowGLFW::IsOpen() const noexcept {
-	return !glfwWindowShouldClose( window_ );
+bool Window::IsOpen() const noexcept {
+	return !glfwWindowShouldClose( static_cast<GLFWwindow*>( handle_ ) );
 }
 
-Window& WindowGLFW::SetTitle( const std::string& title ) noexcept {
-	glfwSetWindowTitle( window_, title.c_str() );
+Window& Window::SetTitle( const std::string& title ) noexcept {
+	glfwSetWindowTitle( static_cast<GLFWwindow*>( handle_ ), title.c_str() );
 	return *this;
 }
 
-Window& WindowGLFW::SetSyncInterval( int interval ) noexcept {
+Window& Window::SetSyncInterval( int interval ) noexcept {
 	glfwSwapInterval( interval );
 	return *this;
 }
 
-void WindowGLFW::Close() const noexcept {
-	glfwSetWindowShouldClose( window_, GLFW_TRUE );
+void Window::Close() const noexcept {
+	glfwSetWindowShouldClose( static_cast<GLFWwindow*>( handle_ ), GLFW_TRUE );
 }
 
-void WindowGLFW::PollEvents() noexcept {
+void Window::PollEvents() noexcept {
 	glfwPollEvents();
 }
 
-void WindowGLFW::SwapBuffers() noexcept {
-	glfwSwapBuffers( window_ );
+void Window::SwapBuffers() noexcept {
+	glfwSwapBuffers( static_cast<GLFWwindow*>( handle_ ) );
 }
 
-void WindowGLFW::WindowSizeCallback( GLFWwindow* window, int width,
-									 int height ) noexcept {
-	const auto c_window =
-		static_cast<WindowGLFW*>( glfwGetWindowUserPointer( window ) );
-	if ( c_window ) {
-		for ( const auto& callback : c_window->cb_window_size_ ) {
-			callback( width, height );
-		}
+void ErrorCallback( int error_code, const char* description ) {
+	Log::GetCoreLogger()->error( "GLFW Error {} - {}", error_code,
+								 description );
+}
+
+// Callback definitions
+
+void SizeChangedCallback( GLFWwindow* window, int width, int height ) {
+	auto cb_window = static_cast<Window*>( glfwGetWindowUserPointer( window ) );
+	if ( cb_window != nullptr ) {
+		cb_window->OnSizeChanged.InvokeAll( width, height );
 	}
 }
 
-void WindowGLFW::CloseCallback( GLFWwindow* window ) noexcept {
-	const auto c_window =
-		static_cast<WindowGLFW*>( glfwGetWindowUserPointer( window ) );
-	if ( c_window ) {
-		for ( const auto& callback : c_window->cb_close_ ) {
-			callback();
-		}
+void CloseCallback( GLFWwindow* window ) {
+	auto cb_window = static_cast<Window*>( glfwGetWindowUserPointer( window ) );
+	if ( cb_window != nullptr ) {
+		cb_window->OnClose.InvokeAll();
 	}
 }
 
-}  // namespace Octave::Impl
+}  // namespace Octave

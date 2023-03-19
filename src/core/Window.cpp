@@ -1,8 +1,7 @@
-#include "Window.hpp"
-
+#include "pch/pch.hpp"
 #include "Config.hpp"
 
-#include "glfw/WindowGLFW.hpp"
+#include "core/Window.hpp"
 
 namespace Octave {
 
@@ -24,11 +23,6 @@ WindowOptions::WindowOptions( int width, int height, std::string title,
 	  is_fullscreen( is_fullscreen ),
 	  is_borderless( is_borderless ),
 	  title( std::move( title ) ) {
-}
-
-Ref<Window> Window::Create( const WindowOptions& options ) {
-	// TODO: Conditionally choose implementation per platform
-	return MakeRef<Impl::WindowGLFW>( options );
 }
 
 }  // namespace Octave

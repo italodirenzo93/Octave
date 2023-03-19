@@ -40,12 +40,14 @@ struct VertexType {
 
 class SimpleAppLayer final : public Layer {
 public:
-	explicit SimpleAppLayer( const Application& app )
+	explicit SimpleAppLayer( Application& app )
 		: Layer( "Default Layer" ) {
 		context_ = app.GetGraphicsDevice().CreateContext();
 		context_->SetDepthTestEnabled( false );
 
-		app.GetWindow().AddSizeChangedCallback(
+		app.GetWindow().OnClose.Add( [&] { app.Exit(); } );
+
+		app.GetWindow().OnSizeChanged.Add(
 			[this]( int width, int height ) {
 				context_->SetViewport( 0, 0, width, height );
 			} );
