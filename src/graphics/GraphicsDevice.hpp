@@ -24,6 +24,7 @@ public:
 
 	[[nodiscard]] Ref<GraphicsContext> CreateContext() noexcept;
 	[[nodiscard]] Ref<Buffer> CreateBuffer( const BufferDescription& desc, const void* initial_data = nullptr );
+	[[nodiscard]] Ref<Fence> CreateFence() noexcept;
 	[[nodiscard]] Ref<VertexArray> CreateVertexArray( const VertexLayout& desc );
 	[[nodiscard]] Ref<Pipeline> CreatePipeline();
 	[[nodiscard]] Ref<Sampler> CreateSampler(

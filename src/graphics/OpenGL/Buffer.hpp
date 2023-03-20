@@ -17,10 +17,11 @@ public:
 	[[nodiscard]] uint32_t GetStride() const noexcept;
 	[[nodiscard]] uint32_t GetNumElements() const noexcept;
 
-	void SetData( uint32_t offset, uint32_t size, const void* data );
+	void SetMappedData( const void* data, uint32_t size );
 
 private:
-	GLuint id_ = 0;
+	GLuint id_;
+	void* mapped_data_;
 	BufferDescription desc_;
 };
 

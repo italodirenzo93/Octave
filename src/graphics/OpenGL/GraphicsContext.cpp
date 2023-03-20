@@ -174,4 +174,24 @@ void GraphicsContext::SetViewport( int x, int y, int width,
 	glViewport( x, y, width, height );
 }
 
-}  // namespace Octave::Impl
+void GraphicsContext::Signal( SharedRef<Fence> fence ) {
+	if ( fence->sync_ ) {
+		glDeleteSync( fence->sync_ );
+	}
+
+	fence->sync_ = glFenceSync( GL_SYNC_GPU_COMMANDS_COMPLETE, 0 );
+}
+
+void GraphicsContext::Wait( SharedRef<Fence> fence, uint64_t timeout ) {
+	if ( fence->sync_ ) {
+		GLenum wait_return = 0;
+		while ( wait_return != GL_ALREADY_SIGNALED &&
+				wait_return != GL_CONDITION_SATISFIED ) {
+			wait_return =
+				glClientWaitSync( fence->sync_, GL_SYNC_FLUSH_COMMANDS_BIT,
+								  timeout == 0 ? GL_TIMEOUT_IGNORED : timeout );
+		}
+	}
+}
+
+}  // namespace Octave

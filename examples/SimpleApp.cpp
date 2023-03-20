@@ -4,10 +4,12 @@
 // clang-format on
 #include <memory>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 using namespace std;
 using namespace Octave;
 
-static constexpr const char* kVertexShaderSource = R"(#version 410
+static constexpr const char* kVertexShaderSource = R"(#version 450
 layout( location = 0 ) in vec2 position;
 layout( location=1 ) in vec3 color;
 
@@ -17,13 +19,19 @@ out gl_PerVertex {
 
 out vec3 vertex_color;
 
+layout(std140, binding=0) uniform VertexConstants {
+	mat4 projection;
+	mat4 view;
+	mat4 model;
+};
+
 void main() {
-	gl_Position = vec4(position, 0.0, 1.0);
+	gl_Position = projection * view * model * vec4(position, 0.0, 1.0);
 	vertex_color = color;
 }
 )";
 
-static constexpr const char* kFragmentShaderSource = R"(#version 410
+static constexpr const char* kFragmentShaderSource = R"(#version 450
 in vec3 vertex_color;
 
 out vec4 frag_color;
@@ -38,12 +46,17 @@ struct VertexType {
 	float color[3];
 };
 
+struct VertexConstants {
+	glm::mat4 projection;
+	glm::mat4 view;
+	glm::mat4 model;
+};
+
 class SimpleAppLayer final : public Layer {
 public:
 	explicit SimpleAppLayer( Application& app )
 		: Layer( "Default Layer" ) {
 		context_ = app.GetGraphicsDevice().CreateContext();
-		context_->SetDepthTestEnabled( false );
 
 		app.GetWindow().OnClose.Add( [&] { app.Exit(); } );
 
@@ -61,8 +74,7 @@ public:
 			BufferDescription desc{};
 			desc.size = sizeof( VertexType ) * vertices.size();
 			desc.stride = sizeof( VertexType );
-			desc.access_flags = ResourceAccess::Write;
-			desc.bind_flags = BufferBinding::VertexBuffer;
+			desc.access_flags = ResourceAccess::Read;
 
 			vbo_ =
 				app.GetGraphicsDevice().CreateBuffer( desc, vertices.data() );
@@ -81,10 +93,37 @@ public:
 
 		pipeline_ = app.GetGraphicsDevice().CreatePipeline();
 
+		// Uniform buffer
+		{
+			BufferDescription desc{};
+			desc.size = sizeof( VertexConstants );
+			desc.access_flags = ResourceAccess::Write;
+
+			ubo_ = app.GetGraphicsDevice().CreateBuffer( desc );
+
+			const auto [width, height] = app.GetWindow().GetSize();
+
+			VertexConstants constants = {};
+
+			constants.projection = glm::perspectiveFov(
+				glm::radians( 45.0f ), static_cast<float>( width ),
+				static_cast<float>( height ), 0.1f, 100.0f );
+
+			constants.view = glm::lookAt( glm::vec3( 0, 0, 3 ), glm::vec3( 0 ),
+										  glm::vec3( 0, 1, 0 ) );
+
+			constants.model = glm::identity<glm::mat4>();
+
+			ubo_->SetMappedData( &constants, sizeof( constants ) );
+		}
+
 		// Vertex Shader
 		{
 			vertex_shader_ = app.GetGraphicsDevice().CreateShader(
 				ShaderType::VertexShader, kVertexShaderSource );
+
+			vertex_shader_->SetUniformBuffer( 0, ubo_ );
+
 			pipeline_->SetVertexShader( vertex_shader_ );
 		}
 
