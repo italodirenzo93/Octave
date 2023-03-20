@@ -3,41 +3,33 @@
 
 namespace Octave {
 
-static GLenum BindingToGLType( BufferBinding binding ) noexcept {
-	switch ( binding ) {
-		case BufferBinding::VertexBuffer:
-			return GL_ARRAY_BUFFER;
-		case BufferBinding::IndexBuffer:
-			return GL_ELEMENT_ARRAY_BUFFER;
-		case BufferBinding::UniformBuffer:
-			return GL_UNIFORM_BUFFER;
-		default:
-			assert( false );
-	}
-}
-
-static GLenum AccessToGLType( ResourceAccess access ) noexcept {
+static GLint AccessToGLBufferBit( ResourceAccess access ) noexcept {
 	switch ( access ) {
-		case ResourceAccess::Copy:
-			return GL_STATIC_COPY;
 		case ResourceAccess::Read:
-			return GL_STATIC_READ;
+			return GL_MAP_READ_BIT;
 		case ResourceAccess::Write:
-			return GL_STATIC_DRAW;
+			return GL_MAP_WRITE_BIT;
 		default:
-			assert( false );
+		case ResourceAccess::Copy:
+			return GL_MAP_READ_BIT | GL_MAP_WRITE_BIT;
 	}
 }
 
 Buffer::Buffer( const BufferDescription& desc, const void* initial_data )
-	: desc_( desc ) {
+	: id_( 0 ), desc_( desc ), mapped_data_( nullptr ) {
 	glCreateBuffers( 1, &id_ );
 
-	glNamedBufferData( id_, static_cast<GLsizeiptr>( desc.size ), initial_data,
-				  AccessToGLType( desc.access_flags ) );
+	const auto access_flags = AccessToGLBufferBit( desc.access_flags ) |
+							  GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
+
+	glNamedBufferStorage( id_, static_cast<GLsizeiptr>( desc.size ),
+						  initial_data, access_flags );
+
+	mapped_data_ = glMapNamedBufferRange( id_, 0, desc.size, access_flags );
 }
 
 Buffer::~Buffer() noexcept {
+	glUnmapNamedBuffer( id_ );
 	glDeleteBuffers( 1, &id_ );
 }
 
@@ -57,9 +49,9 @@ uint32_t Buffer::GetNumElements() const noexcept {
 	return desc_.size / desc_.stride;
 }
 
-void Buffer::SetData( uint32_t offset, uint32_t size, const void* data ) {
-	glNamedBufferSubData( id_, static_cast<GLintptr>( offset ),
-						  static_cast<GLsizeiptr>( size ), data );
+void Buffer::SetMappedData( const void* data, uint32_t size ) {
+	assert( mapped_data_ != nullptr && data != nullptr && size <= desc_.size );
+	memcpy_s( mapped_data_, desc_.size, data, size );
 }
 
 }  // namespace Octave

@@ -206,22 +206,19 @@ public:
 			BufferDescription desc{};
 			desc.size = sizeof( Matrices );
 			desc.access_flags = ResourceAccess::Write;
-			desc.bind_flags = BufferBinding::UniformBuffer;
 
 			const Matrices matrices(
 				camera_.GetProjectionMatrix(), camera_.GetViewMatrix(), glm::identity<glm::mat4>(), camera_.position_ );
 			
 			ub_matrices_ =
-				app.GetGraphicsDevice().CreateBuffer( desc, &matrices );
+				app.GetGraphicsDevice().CreateBuffer( desc );
 		}
 
 		// Directional light uniform buffer
 		{
 			BufferDescription desc{};
 			desc.size = sizeof( DirectionalLight );
-			desc.stride = 0;
 			desc.access_flags = ResourceAccess::Write;
-			desc.bind_flags = BufferBinding::UniformBuffer;
 
 			DirectionalLight light{};
 			light.direction = glm::vec3( 0.5f, 0.0f, -0.5f );
@@ -262,6 +259,8 @@ public:
 
 			sampler_ = app.GetGraphicsDevice().CreateSampler( desc );
 		}
+
+		fence_ = app.GetGraphicsDevice().CreateFence();
 	}
 
 protected:
@@ -294,16 +293,19 @@ protected:
 
 		// Draw floating box
 		{
+
 			const Matrices matrices( camera_.GetProjectionMatrix(),
 									 camera_.GetViewMatrix(),
 									 cube_model_matrix_, camera_.position_ );
-			ub_matrices_->SetData( 0, sizeof( Matrices ), &matrices );
-			vertex_shader_->SetUniformBuffer( 0, ub_matrices_ );
+			context_->Wait( fence_, 1 );
+			ub_matrices_->SetMappedData( &matrices, sizeof( matrices ) );
 
 			context_->SetVertexBuffer( cube_vbo_, cube_vao_ );
 			context_->SetIndexBuffer( cube_ibo_ );
 			context_->SetTextureUnit( 0, cube_texture_ );
 			context_->DrawIndexed( cube_ibo_->GetNumElements(), 0, 0 );
+
+			context_->Signal( fence_ );
 		}
 
 		// Draw floor
@@ -311,13 +313,16 @@ protected:
 			const Matrices matrices( camera_.GetProjectionMatrix(),
 									 camera_.GetViewMatrix(),
 									 floor_model_matrix_, camera_.position_ );
-			ub_matrices_->SetData( 0, sizeof( Matrices ), &matrices );
-			vertex_shader_->SetUniformBuffer( 0, ub_matrices_ );
+
+			context_->Wait( fence_, 1 );
+			ub_matrices_->SetMappedData( &matrices, sizeof( matrices ) );
 
 			context_->SetVertexBuffer( floor_vbo_, floor_vao_ );
 			context_->SetTextureUnit( 0, floor_texture_diffuse_ );
 			context_->SetTextureUnit( 1, floor_texture_specular_ );
 			context_->Draw( floor_vbo_->GetNumElements(), 0 );
+
+			context_->Signal( fence_ );
 		}
 	}
 
@@ -416,6 +421,7 @@ private:
 
 	SharedRef<Buffer> ub_matrices_;
 	SharedRef<Buffer> ub_directional_light_;
+	SharedRef<Fence> fence_;
 
 	Ref<Gamepad> pad_;
 

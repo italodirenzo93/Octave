@@ -91,6 +91,10 @@ Ref<Buffer> GraphicsDevice::CreateBuffer(
 	return MakeRef<Buffer>( desc, initial_data );
 }
 
+Ref<Fence> GraphicsDevice::CreateFence() noexcept {
+	return MakeRef<Fence>();
+}
+
 Ref<VertexArray> GraphicsDevice::CreateVertexArray(
 	const VertexLayout& desc ) {
 	return MakeRef<VertexArray>( desc );

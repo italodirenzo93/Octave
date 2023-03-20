@@ -33,6 +33,9 @@ public:
 								 SharedRef<Texture2D> texture );
 	void SetViewport( int x, int y, int width, int height ) noexcept;
 
+	void Signal( SharedRef<Fence> fence );
+	void Wait( SharedRef<Fence> fence, uint64_t timeout );
+
 private:
 	GraphicsContext();
 };

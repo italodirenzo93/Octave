@@ -4,6 +4,7 @@
 #ifdef OGT_RHI_OPENGL45
 
 #include "OpenGL/Buffer.hpp"
+#include "OpenGL/Fence.hpp"
 #include "OpenGL/Pipeline.hpp"
 #include "OpenGL/Sampler.hpp"
 #include "OpenGL/Shader.hpp"
