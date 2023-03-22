@@ -97,7 +97,7 @@ public:
 		{
 			BufferDescription desc{};
 			desc.size = sizeof( VertexConstants );
-			desc.access_flags = ResourceAccess::Write;
+			desc.access_flags = ResourceAccess::ReadWrite;
 
 			ubo_ = app.GetGraphicsDevice().CreateBuffer( desc );
 
@@ -114,7 +114,7 @@ public:
 
 			constants.model = glm::identity<glm::mat4>();
 
-			ubo_->SetMappedData( &constants, sizeof( constants ) );
+			ubo_->SetData( &constants, sizeof( constants ) );
 		}
 
 		// Vertex Shader

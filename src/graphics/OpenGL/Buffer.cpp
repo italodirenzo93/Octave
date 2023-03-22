@@ -5,31 +5,24 @@ namespace Octave {
 
 static GLint AccessToGLBufferBit( ResourceAccess access ) noexcept {
 	switch ( access ) {
-		case ResourceAccess::Read:
-			return GL_MAP_READ_BIT;
-		case ResourceAccess::Write:
-			return GL_MAP_WRITE_BIT;
 		default:
-		case ResourceAccess::Copy:
-			return GL_MAP_READ_BIT | GL_MAP_WRITE_BIT;
+		case ResourceAccess::Read:
+			return 0;
+		case ResourceAccess::ReadWrite:
+			return GL_DYNAMIC_STORAGE_BIT;
 	}
 }
 
 Buffer::Buffer( const BufferDescription& desc, const void* initial_data )
-	: id_( 0 ), desc_( desc ), mapped_data_( nullptr ) {
+	: id_( 0 ), desc_( desc ) {
 	glCreateBuffers( 1, &id_ );
 
-	const auto access_flags = AccessToGLBufferBit( desc.access_flags ) |
-							  GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
-
 	glNamedBufferStorage( id_, static_cast<GLsizeiptr>( desc.size ),
-						  initial_data, access_flags );
-
-	mapped_data_ = glMapNamedBufferRange( id_, 0, desc.size, access_flags );
+						  initial_data,
+						  AccessToGLBufferBit( desc.access_flags ) );
 }
 
 Buffer::~Buffer() noexcept {
-	glUnmapNamedBuffer( id_ );
 	glDeleteBuffers( 1, &id_ );
 }
 
@@ -49,9 +42,9 @@ uint32_t Buffer::GetNumElements() const noexcept {
 	return desc_.size / desc_.stride;
 }
 
-void Buffer::SetMappedData( const void* data, uint32_t size ) {
-	assert( mapped_data_ != nullptr && data != nullptr && size <= desc_.size );
-	memcpy_s( mapped_data_, desc_.size, data, size );
+void Buffer::SetData( const void* data, uint32_t size ) {
+	assert( data != nullptr && size <= desc_.size );
+	glNamedBufferSubData( id_, 0, static_cast<GLsizeiptr>( size ), data );
 }
 
 }  // namespace Octave
