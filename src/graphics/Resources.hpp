@@ -1,7 +1,7 @@
 #ifndef OCTAVE_GRAPHICS_RESOURCES_HPP
 #define OCTAVE_GRAPHICS_RESOURCES_HPP
 
-#ifdef OGT_RHI_OPENGL45
+#ifdef OGT_RHI_OPENGL46
 
 #include "OpenGL/Buffer.hpp"
 #include "OpenGL/Fence.hpp"
