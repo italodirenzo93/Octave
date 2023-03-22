@@ -20,7 +20,7 @@ Ref<Buffer> CreateStaticBuffer( GraphicsDevice& device,
 	BufferDescription desc{};
 	desc.size = static_cast<uint32_t>( sizeof( T ) * data.size() );
 	desc.stride = static_cast<uint32_t>( stride );
-	desc.access_flags = ResourceAccess::Write;
+	desc.access_flags = ResourceAccess::ReadWrite;
 	desc.bind_flags = binding;
 
 	return device.CreateBuffer( desc, data.data() );
@@ -42,7 +42,7 @@ inline Ref<Texture2D> CreateTextureFromFile( GraphicsDevice& device,
 	TextureDescription2D desc{};
 	desc.width = width;
 	desc.height = height;
-	desc.access_flags = ResourceAccess::Write;
+	desc.access_flags = ResourceAccess::ReadWrite;
 	desc.mip_levels = 1;
 
 	if ( n_channels == 4 ) {
@@ -105,19 +105,68 @@ struct DirectionalLight {
 template <class T>
 class UniformBuffer {
 public:
+	UniformBuffer() = default;
+
 	explicit UniformBuffer( GraphicsDevice& device ) {
+		Create( device );
+	}
+
+	void Create( GraphicsDevice& device ) {
+		if ( buffer_ != nullptr ) {
+			return;
+		}
+
 		BufferDescription desc{};
 		desc.size = sizeof( T );
 		desc.stride = 0;
-		desc.access_flags = ResourceAccess::Write;
+		desc.access_flags = ResourceAccess::ReadWrite;
 		desc.bind_flags = BufferBinding::UniformBuffer;
 
 		buffer_ = device.CreateBuffer( desc );
 	}
 
+	[[nodiscard]] SharedRef<Buffer> GetBuffer() const noexcept {
+		return buffer_;
+	}
+
+	void SetData( const T& data ) noexcept {
+		assert( buffer_ != nullptr );
+		buffer_->SetData( &data, sizeof( data ) );
+	}
+
 private:
-	Ref<Buffer> buffer_;
+	SharedRef<Buffer> buffer_;
 };
+
+class Material {
+public:
+	SharedRef<Texture2D> diffuse_;
+	SharedRef<Texture2D> specular_;
+	SharedRef<Sampler> sampler_;
+	float shininess_;
+};
+
+class Mesh {
+public:
+	// WHAT to draw
+	SharedRef<Buffer> vbo_;
+	SharedRef<Buffer> ibo_;
+	SharedRef<VertexArray> vao_;
+
+	// HOW to draw
+	SharedRef<Material> material_;
+
+	Mesh* parent_;
+	std::list<Mesh> sub_meshes_;
+};
+
+void RenderMesh( GraphicsContext* context, Mesh* mesh ) {
+	context->SetVertexBuffer( mesh->vbo_, mesh->vao_ );
+	context->SetIndexBuffer( mesh->ibo_ );
+	context->SetSampler( 0, mesh->material_->sampler_ );
+	context->SetTextureUnit( 0, mesh->material_->diffuse_ );
+	context->SetTextureUnit( 1, mesh->material_->specular_ );
+}
 
 class ApplicationLayer : public Layer {
 public:
@@ -205,7 +254,7 @@ public:
 		{
 			BufferDescription desc{};
 			desc.size = sizeof( Matrices );
-			desc.access_flags = ResourceAccess::Write;
+			desc.access_flags = ResourceAccess::ReadWrite;
 
 			const Matrices matrices(
 				camera_.GetProjectionMatrix(), camera_.GetViewMatrix(), glm::identity<glm::mat4>(), camera_.position_ );
@@ -218,7 +267,7 @@ public:
 		{
 			BufferDescription desc{};
 			desc.size = sizeof( DirectionalLight );
-			desc.access_flags = ResourceAccess::Write;
+			desc.access_flags = ResourceAccess::ReadWrite;
 
 			DirectionalLight light{};
 			light.direction = glm::vec3( 0.5f, 0.0f, -0.5f );
@@ -259,8 +308,6 @@ public:
 
 			sampler_ = app.GetGraphicsDevice().CreateSampler( desc );
 		}
-
-		fence_ = app.GetGraphicsDevice().CreateFence();
 	}
 
 protected:
@@ -293,19 +340,15 @@ protected:
 
 		// Draw floating box
 		{
-
 			const Matrices matrices( camera_.GetProjectionMatrix(),
 									 camera_.GetViewMatrix(),
 									 cube_model_matrix_, camera_.position_ );
-			context_->Wait( fence_, 1 );
-			ub_matrices_->SetMappedData( &matrices, sizeof( matrices ) );
+			ub_matrices_->SetData( &matrices, sizeof( matrices ) );
 
 			context_->SetVertexBuffer( cube_vbo_, cube_vao_ );
 			context_->SetIndexBuffer( cube_ibo_ );
 			context_->SetTextureUnit( 0, cube_texture_ );
 			context_->DrawIndexed( cube_ibo_->GetNumElements(), 0, 0 );
-
-			context_->Signal( fence_ );
 		}
 
 		// Draw floor
@@ -313,16 +356,12 @@ protected:
 			const Matrices matrices( camera_.GetProjectionMatrix(),
 									 camera_.GetViewMatrix(),
 									 floor_model_matrix_, camera_.position_ );
-
-			context_->Wait( fence_, 1 );
-			ub_matrices_->SetMappedData( &matrices, sizeof( matrices ) );
+			ub_matrices_->SetData( &matrices, sizeof( matrices ) );
 
 			context_->SetVertexBuffer( floor_vbo_, floor_vao_ );
 			context_->SetTextureUnit( 0, floor_texture_diffuse_ );
 			context_->SetTextureUnit( 1, floor_texture_specular_ );
 			context_->Draw( floor_vbo_->GetNumElements(), 0 );
-
-			context_->Signal( fence_ );
 		}
 	}
 
@@ -421,7 +460,6 @@ private:
 
 	SharedRef<Buffer> ub_matrices_;
 	SharedRef<Buffer> ub_directional_light_;
-	SharedRef<Fence> fence_;
 
 	Ref<Gamepad> pad_;
 

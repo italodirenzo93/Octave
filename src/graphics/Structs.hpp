@@ -16,9 +16,8 @@ enum class BufferBinding {
 };
 
 enum class ResourceAccess {
-	Write,
 	Read,
-	Copy
+	ReadWrite
 };
 
 struct BufferDescription {
