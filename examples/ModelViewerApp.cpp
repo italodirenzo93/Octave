@@ -3,11 +3,12 @@
 #include <EntryPoint.hpp>
 // clang-format on
 
+#include <stb_image.h>
+
+#include <fstream>
+
 #include "common/Camera.hpp"
 #include "helpers/GeometricPrimitive.hpp"
-
-#include <stb_image.h>
-#include <fstream>
 
 using namespace std;
 using namespace Octave;
@@ -82,11 +83,12 @@ struct Matrices {
 	glm::float32 pad;
 
 	Matrices() noexcept = default;
-	Matrices( glm::mat4 proj, glm::mat4 view, glm::mat4 model, glm::vec3 view_pos ) noexcept
+	Matrices( glm::mat4 proj, glm::mat4 view, glm::mat4 model,
+			  glm::vec3 view_pos ) noexcept
 		: projection_matrix( std::move( proj ) ),
 		  view_matrix( std::move( view ) ),
 		  model_matrix( std::move( model ) ),
-		  view_position( std::move(view_pos) ) {
+		  view_position( std::move( view_pos ) ) {
 		normal_matrix = glm::transpose( glm::inverse( model_matrix ) );
 	}
 };
@@ -107,9 +109,7 @@ class UniformBuffer {
 public:
 	UniformBuffer() = default;
 
-	explicit UniformBuffer( GraphicsDevice& device ) {
-		Create( device );
-	}
+	explicit UniformBuffer( GraphicsDevice& device ) { Create( device ); }
 
 	void Create( GraphicsDevice& device ) {
 		if ( buffer_ != nullptr ) {
@@ -168,19 +168,17 @@ void RenderMesh( GraphicsContext* context, Mesh* mesh ) {
 	context->SetTextureUnit( 1, mesh->material_->specular_ );
 }
 
-class ApplicationLayer : public Layer {
+class ModelViewerSample final : public Application {
 public:
-	explicit ApplicationLayer( Application& app )
-		: app_( app ) {
+	void OnInitialize() override {
+		context_ = GetGraphicsDevice().CreateContext();
 
-		context_ = app.GetGraphicsDevice().CreateContext();
-
-		pad_ = app.GetInputSystem().GetGamepad( 0 );
+		pad_ = GetInputSystem().GetGamepad( 0 );
 		if ( pad_ != nullptr ) {
 			cout << "Gamepad: " << pad_->GetName() << endl;
 		}
 
-		const auto [width, height] = app.GetWindow().GetSize();
+		const auto [width, height] = GetWindow().GetSize();
 		camera_.width_ = static_cast<float>( width );
 		camera_.height_ = static_cast<float>( height );
 		camera_.field_of_view_ = Config::Instance().GetFieldOfView();
@@ -195,7 +193,7 @@ public:
 
 			// Create cube GPU resources
 			cube_vbo_ =
-				CreateStaticBuffer( app.GetGraphicsDevice(), vertices,
+				CreateStaticBuffer( GetGraphicsDevice(), vertices,
 									sizeof( GeometricPrimitive::VertexType ),
 									BufferBinding::VertexBuffer );
 
@@ -207,14 +205,14 @@ public:
 				VertexAttribute{ VertexAttributeName::kTexCoord, 2,
 								 VertexAttributeType::kFloat, false } };
 
-			cube_vao_ = app.GetGraphicsDevice().CreateVertexArray( layout );
+			cube_vao_ = GetGraphicsDevice().CreateVertexArray( layout );
 
-			cube_ibo_ =
-				CreateStaticBuffer( app.GetGraphicsDevice(), indices, sizeof( uint16_t ),
-									BufferBinding::IndexBuffer );
+			cube_ibo_ = CreateStaticBuffer( GetGraphicsDevice(), indices,
+											sizeof( uint16_t ),
+											BufferBinding::IndexBuffer );
 
 			cube_texture_ = CreateTextureFromFile(
-				app.GetGraphicsDevice(), "resources/textures/container.jpg" );
+				GetGraphicsDevice(), "resources/textures/container.jpg" );
 
 			cube_model_matrix_ = glm::identity<glm::mat4>();
 		}
@@ -225,7 +223,7 @@ public:
 			GeometricPrimitive::CreatePlane( floor_verts );
 
 			floor_vbo_ =
-				CreateStaticBuffer( app.GetGraphicsDevice(), floor_verts,
+				CreateStaticBuffer( GetGraphicsDevice(), floor_verts,
 									sizeof( GeometricPrimitive::VertexType ),
 									BufferBinding::VertexBuffer );
 
@@ -237,14 +235,12 @@ public:
 				VertexAttribute{ VertexAttributeName::kTexCoord, 2,
 								 VertexAttributeType::kFloat, false } };
 
-			floor_vao_ = app.GetGraphicsDevice().CreateVertexArray( layout );
+			floor_vao_ = GetGraphicsDevice().CreateVertexArray( layout );
 
-			floor_texture_diffuse_ =
-				CreateTextureFromFile( app.GetGraphicsDevice(),
-									   "resources/textures/wood_diffuse.png" );
-			floor_texture_specular_ =
-				CreateTextureFromFile( app.GetGraphicsDevice(),
-									   "resources/textures/wood_specular.png" );
+			floor_texture_diffuse_ = CreateTextureFromFile(
+				GetGraphicsDevice(), "resources/textures/wood_diffuse.png" );
+			floor_texture_specular_ = CreateTextureFromFile(
+				GetGraphicsDevice(), "resources/textures/wood_specular.png" );
 
 			floor_model_matrix_ = glm::translate( glm::identity<glm::mat4>(),
 												  glm::vec3( 0, -3, 0 ) );
@@ -257,10 +253,10 @@ public:
 			desc.access_flags = ResourceAccess::ReadWrite;
 
 			const Matrices matrices(
-				camera_.GetProjectionMatrix(), camera_.GetViewMatrix(), glm::identity<glm::mat4>(), camera_.position_ );
-			
-			ub_matrices_ =
-				app.GetGraphicsDevice().CreateBuffer( desc );
+				camera_.GetProjectionMatrix(), camera_.GetViewMatrix(),
+				glm::identity<glm::mat4>(), camera_.position_ );
+
+			ub_matrices_ = GetGraphicsDevice().CreateBuffer( desc );
 		}
 
 		// Directional light uniform buffer
@@ -276,24 +272,24 @@ public:
 			light.specular = glm::vec3( 0.8f );
 
 			ub_directional_light_ =
-				app.GetGraphicsDevice().CreateBuffer( desc, &light );
+				GetGraphicsDevice().CreateBuffer( desc, &light );
 		}
 
 		// Shaders
 		{
 			vertex_shader_ = LoadShaderFromFile(
-				app.GetGraphicsDevice(), ShaderType::VertexShader,
+				GetGraphicsDevice(), ShaderType::VertexShader,
 				"resources/shaders/basic.vert" );
 
 			vertex_shader_->SetUniformBuffer( 0, ub_matrices_ );
 
 			fragment_shader_ = LoadShaderFromFile(
-				app.GetGraphicsDevice(), ShaderType::FragmentShader,
+				GetGraphicsDevice(), ShaderType::FragmentShader,
 				"resources/shaders/basic.frag" );
 
 			fragment_shader_->SetUniformBuffer( 2, ub_directional_light_ );
 
-			pipeline_ = app.GetGraphicsDevice().CreatePipeline();
+			pipeline_ = GetGraphicsDevice().CreatePipeline();
 			pipeline_->SetVertexShader( vertex_shader_ );
 			pipeline_->SetFragmentShader( fragment_shader_ );
 		}
@@ -306,7 +302,7 @@ public:
 			desc.mip_lod_bias = 0.0f;
 			desc.max_ansiotropy = 0;
 
-			sampler_ = app.GetGraphicsDevice().CreateSampler( desc );
+			sampler_ = GetGraphicsDevice().CreateSampler( desc );
 		}
 	}
 
@@ -316,10 +312,9 @@ protected:
 			const auto delta =
 				static_cast<float>( step_timer_.GetElapsedSeconds() );
 
-			if ( app_.GetInputSystem().IsKeyDown( app_.GetWindow(),
-												  Key::Escape ) ||
+			if ( GetInputSystem().IsKeyDown( GetWindow(), Key::Escape ) ||
 				 ( pad_ && pad_->IsButtonDown( GamepadButton::Select ) ) ) {
-				app_.Exit();
+				Exit();
 			}
 
 			DebugCameraControls( camera_, 25.0f, delta );
@@ -367,8 +362,8 @@ protected:
 
 	void DebugCameraControls( DebugCamera& camera, float camera_speed,
 							  float delta ) noexcept {
-		const auto& window = app_.GetWindow();
-		const auto& keyboard = app_.GetInputSystem();
+		const auto& window = GetWindow();
+		const auto& keyboard = GetInputSystem();
 
 		// Strafe Left
 		if ( keyboard.IsKeyDown( window, Key::A ) ) {
@@ -449,8 +444,6 @@ protected:
 	}
 
 private:
-	Application& app_;
-
 	Ref<GraphicsContext> context_;
 
 	SharedRef<Shader> vertex_shader_;
@@ -476,17 +469,7 @@ private:
 
 	SharedRef<Buffer> floor_vbo_;
 	SharedRef<VertexArray> floor_vao_;
-	SharedRef<Texture2D> floor_texture_diffuse_,
-		floor_texture_specular_;
-};
-
-class ModelViewerSample : public Application {
-public:
-	void OnInitialize() override {
-		GetWindow().OnClose.Add( [this] { Exit(); } );
-
-		PushLayer( MakeRef<ApplicationLayer>( *this ) );
-	}
+	SharedRef<Texture2D> floor_texture_diffuse_, floor_texture_specular_;
 };
 
 Ref<Application> Octave::CreateApplication( int argc, char* argv[] ) {

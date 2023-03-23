@@ -2,9 +2,8 @@
 #include <Octave.hpp>
 #include <EntryPoint.hpp>
 // clang-format on
-#include <memory>
-
 #include <glm/gtc/matrix_transform.hpp>
+#include <memory>
 
 using namespace std;
 using namespace Octave;
@@ -52,46 +51,45 @@ struct VertexConstants {
 	glm::mat4 model;
 };
 
-class SimpleAppLayer final : public Layer {
+class SimpleApp final : public Application {
 public:
-	explicit SimpleAppLayer( Application& app )
-		: Layer( "Default Layer" ) {
-		context_ = app.GetGraphicsDevice().CreateContext();
+	void OnInitialize() override {
+		Log::Info( "Hello World!" );
 
-		app.GetWindow().OnClose.Add( [&] { app.Exit(); } );
+		context_ = GetGraphicsDevice().CreateContext();
 
-		app.GetWindow().OnSizeChanged.Add(
-			[this]( int width, int height ) {
-				context_->SetViewport( 0, 0, width, height );
-			} );
+		GetWindow().OnClose.Add( [&] { Exit(); } );
+
+		GetWindow().OnSizeChanged.Add( [this]( int width, int height ) {
+			context_->SetViewport( 0, 0, width, height );
+		} );
 
 		// Vertex Buffer
 		{
-			const vector<VertexType> vertices{ { {0.0f, 1.0f}, {1.0f, 0.0f, 0.0f} },
-										 { {1.0f, -1.0f}, {0.0f, 1.0f, 0.0f} },
-										 { {-1.0f, -1.0f}, {0.0f, 0.0f, 1.0f} } };
+			const vector<VertexType> vertices{
+				{ { 0.0f, 1.0f }, { 1.0f, 0.0f, 0.0f } },
+				{ { 1.0f, -1.0f }, { 0.0f, 1.0f, 0.0f } },
+				{ { -1.0f, -1.0f }, { 0.0f, 0.0f, 1.0f } } };
 
 			BufferDescription desc{};
 			desc.size = sizeof( VertexType ) * vertices.size();
 			desc.stride = sizeof( VertexType );
 			desc.access_flags = ResourceAccess::Read;
 
-			vbo_ =
-				app.GetGraphicsDevice().CreateBuffer( desc, vertices.data() );
+			vbo_ = GetGraphicsDevice().CreateBuffer( desc, vertices.data() );
 		}
 
 		// Vertex Array
 		{
-			const VertexLayout layout{
-				{ VertexAttributeName::kPosition, 2,
-				  VertexAttributeType::kFloat, false },
-				{ VertexAttributeName::kColor, 3, VertexAttributeType::kFloat,
-				  false } };
+			const VertexLayout layout{ { VertexAttributeName::kPosition, 2,
+										 VertexAttributeType::kFloat, false },
+									   { VertexAttributeName::kColor, 3,
+										 VertexAttributeType::kFloat, false } };
 
-			vao_ = app.GetGraphicsDevice().CreateVertexArray( layout );
+			vao_ = GetGraphicsDevice().CreateVertexArray( layout );
 		}
 
-		pipeline_ = app.GetGraphicsDevice().CreatePipeline();
+		pipeline_ = GetGraphicsDevice().CreatePipeline();
 
 		// Uniform buffer
 		{
@@ -99,9 +97,9 @@ public:
 			desc.size = sizeof( VertexConstants );
 			desc.access_flags = ResourceAccess::ReadWrite;
 
-			ubo_ = app.GetGraphicsDevice().CreateBuffer( desc );
+			ubo_ = GetGraphicsDevice().CreateBuffer( desc );
 
-			const auto [width, height] = app.GetWindow().GetSize();
+			const auto [width, height] = GetWindow().GetSize();
 
 			VertexConstants constants = {};
 
@@ -119,7 +117,7 @@ public:
 
 		// Vertex Shader
 		{
-			vertex_shader_ = app.GetGraphicsDevice().CreateShader(
+			vertex_shader_ = GetGraphicsDevice().CreateShader(
 				ShaderType::VertexShader, kVertexShaderSource );
 
 			vertex_shader_->SetUniformBuffer( 0, ubo_ );
@@ -129,22 +127,18 @@ public:
 
 		// Fragment Shader
 		{
-			fragment_shader_ = app.GetGraphicsDevice().CreateShader(
+			fragment_shader_ = GetGraphicsDevice().CreateShader(
 				ShaderType::FragmentShader, kFragmentShaderSource );
 			pipeline_->SetFragmentShader( fragment_shader_ );
 		}
 	}
 
-	void OnAttach() override { Log::Info( "Attaching SimpleApp layer" ); }
-
-	void OnDetach() override { Log::Info( "Detaching SimpleApp layer" ); }
-
+protected:
 	void OnUpdate() override {
-		context_->Clear();
+		context_->Clear( true, true, 0, 0, 0 );
 
 		context_->SetVertexBuffer( vbo_, vao_ );
 		context_->SetPipeline( pipeline_ );
-
 		context_->Draw( 3, 0 );
 	}
 
@@ -156,15 +150,6 @@ private:
 	SharedRef<Buffer> vbo_;
 	SharedRef<VertexArray> vao_;
 	SharedRef<Buffer> ubo_;
-};
-
-class SimpleApp final : public Application {
-public:
-	void OnInitialize() override {
-		Log::Info( "Hello World!" );
-
-		PushLayer( MakeRef<SimpleAppLayer>( *this ) );
-	}
 };
 
 Ref<Application> Octave::CreateApplication( int argc, char* argv[] ) {
