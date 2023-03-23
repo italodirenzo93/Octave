@@ -28,8 +28,9 @@ public:
 
 protected:
 	// Methods
-	virtual void OnInitialize() {};
-	virtual void OnExit() noexcept {};
+	virtual void OnInitialize() {}
+	virtual void OnUpdate() {}
+	virtual void OnExit() noexcept {}
 
 	Application& PushLayer( LayerStack::LayerPtr layer ) noexcept;
 	LayerStack::LayerPtr PopLayer() noexcept;

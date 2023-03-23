@@ -29,6 +29,8 @@ void Application::Run() {
 	while ( is_running_ ) {
 		window_->PollEvents();
 
+		OnUpdate();
+
 		for ( const auto& layer : layers_ ) {
 			layer->OnUpdate();
 		}

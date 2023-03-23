@@ -11,47 +11,6 @@ using namespace std;
 
 namespace Octave {
 
-static int AttrNameToIndex( VertexAttributeName name ) noexcept {
-	switch ( name ) {
-		case VertexAttributeName::kPosition:
-			return 0;
-		case VertexAttributeName::kColor:
-			return 1;
-		case VertexAttributeName::kTexCoord:
-			return 2;
-		case VertexAttributeName::kNormal:
-			return 3;
-		default:
-			assert( false );
-	}
-}
-
-static GLenum AttrTypeToGLType( VertexAttributeType type ) noexcept {
-	switch ( type ) {
-		case VertexAttributeType::kFloat:
-			return GL_FLOAT;
-		case VertexAttributeType::kUbyte:
-			return GL_UNSIGNED_BYTE;
-		case VertexAttributeType::kUint:
-			return GL_UNSIGNED_INT;
-		default:
-			assert( false );
-	}
-}
-
-static GLuint AttrTypeSize( VertexAttributeType type ) noexcept {
-	switch ( type ) {
-		case VertexAttributeType::kFloat:
-			return sizeof( GLfloat );
-		case VertexAttributeType::kUbyte:
-			return sizeof( GLubyte );
-		case VertexAttributeType::kUint:
-			return sizeof( GLuint );
-		default:
-			assert( false );
-	}
-}
-
 static GLint max_indices = 0;
 
 GraphicsContext::GraphicsContext() {
@@ -114,41 +73,8 @@ std::array<int, 4> GraphicsContext::GetViewport() const noexcept {
 	return vp;
 }
 
-void GraphicsContext::SetDepthTestEnabled( bool enabled ) noexcept {
-	if ( enabled ) {
-		glEnable( GL_DEPTH_TEST );
-	} else {
-		glDisable( GL_DEPTH_TEST );
-	}
-}
-
-void GraphicsContext::SetVertexBuffer( SharedRef<Buffer> vbo,
-										 SharedRef<VertexArray> vao ) {
-	// Define vertex data layout
-	glVertexArrayVertexBuffer( vao->GetApiResource(), 0,
-							   vbo->GetApiResource(), 0,
-							   vbo->GetStride() );
-
-	uint32_t offset = 0;
-
-	for ( const auto& attr : *vao ) {
-		glVertexArrayAttribFormat(
-			vao->GetApiResource(), AttrNameToIndex( attr.name ),
-			static_cast<GLint>( attr.size ), AttrTypeToGLType( attr.type ),
-			static_cast<GLboolean>( attr.normalized ), offset );
-
-		glVertexArrayAttribBinding( vao->GetApiResource(), AttrNameToIndex( attr.name ), 0 );
-		glEnableVertexArrayAttrib( vao->GetApiResource(), AttrNameToIndex( attr.name ) );
-
-		offset += attr.size * AttrTypeSize( attr.type );
-	}
-
-	// Bind for draw
+void GraphicsContext::SetVertexArray( SharedRef<VertexArray> vao ) {
 	glBindVertexArray( vao->GetApiResource() );
-}
-
-void GraphicsContext::SetIndexBuffer( SharedRef<Buffer> ibo ) {
-	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo->GetApiResource() );
 }
 
 void GraphicsContext::SetPipeline( SharedRef<Pipeline> pipeline ) {
@@ -159,8 +85,7 @@ void GraphicsContext::SetSampler( uint32_t unit, SharedRef<Sampler> sampler ) {
 	glBindSampler( unit, sampler->GetApiResource() );
 }
 
-
-void GraphicsContext::SetTextureUnit( uint32_t unit, SharedRef<Texture2D> texture ) {
+void GraphicsContext::SetTexture( uint32_t unit, SharedRef<Texture2D> texture ) {
 	glBindTextureUnit( unit, texture->GetApiResource() );
 }
 

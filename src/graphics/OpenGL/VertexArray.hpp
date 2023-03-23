@@ -5,6 +5,7 @@
 #include <glad/glad.h>
 
 #include "graphics/Structs.hpp"
+#include "Buffer.hpp"
 
 namespace Octave {
 
@@ -14,6 +15,9 @@ public:
 	~VertexArray() noexcept;
 
 	[[nodiscard]] GLuint GetApiResource() const noexcept { return id_; }
+
+	void SetVertexBuffer( uint32_t index, SharedRef<Buffer> vbo );
+	void SetIndexBuffer( SharedRef<Buffer> ibo );
 
 	using Iterator = VertexLayout::iterator;
 	Iterator begin() noexcept { return attrs_.begin(); }
