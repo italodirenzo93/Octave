@@ -141,6 +141,12 @@ private:
 class ModelViewerSample final : public Application {
 public:
 	void OnInitialize() override {
+		GetWindow().OnClose.Add( [this] { Exit(); } );
+
+		GetWindow().OnSizeChanged.Add( [this]( int width, int height ) {
+			context_->SetViewport( 0, 0, width, height );
+		} );
+
 		context_ = GetGraphicsDevice().CreateContext();
 
 		pad_ = GetInputSystem().GetGamepad( 0 );
@@ -285,8 +291,7 @@ protected:
 			const auto delta =
 				static_cast<float>( step_timer_.GetElapsedSeconds() );
 
-			if ( GetInputSystem().IsKeyDown( GetWindow(), Key::Escape ) ||
-				 ( pad_ && pad_->IsButtonDown( GamepadButton::Select ) ) ) {
+			if ( GetInputSystem().IsKeyDown( GetWindow(), Key::Escape ) ) {
 				Exit();
 			}
 

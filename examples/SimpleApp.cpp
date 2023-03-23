@@ -58,7 +58,7 @@ public:
 
 		context_ = GetGraphicsDevice().CreateContext();
 
-		GetWindow().OnClose.Add( [&] { Exit(); } );
+		GetWindow().OnClose.Add( [this] { Exit(); } );
 
 		GetWindow().OnSizeChanged.Add( [this]( int width, int height ) {
 			context_->SetViewport( 0, 0, width, height );

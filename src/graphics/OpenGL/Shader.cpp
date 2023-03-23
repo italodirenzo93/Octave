@@ -91,8 +91,6 @@ Shader& Shader::SetMat4( int location, const glm::mat4& value ) {
 }
 
 Shader& Shader::SetUniformBuffer( uint32_t binding, SharedRef<Buffer> ubo ) {
-	assert( binding < GL_MAX_UNIFORM_BUFFER_BINDINGS );
-
 	glBindBufferBase( GL_UNIFORM_BUFFER, binding, ubo->GetApiResource() );
 
 	ubos_[binding] = std::move( ubo );
