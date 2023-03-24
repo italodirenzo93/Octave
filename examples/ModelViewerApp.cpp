@@ -1,5 +1,5 @@
 // clang-format off
-#include <Octave.hpp>
+#include "common/SampleApplication.hpp"
 #include <EntryPoint.hpp>
 // clang-format on
 
@@ -138,21 +138,10 @@ private:
 	SharedRef<Buffer> buffer_;
 };
 
-class ModelViewerSample final : public Application {
+class ModelViewerSample final : public SampleApplication {
 public:
 	void OnInitialize() override {
-		GetWindow().OnClose.Add( [this] { Exit(); } );
-
-		GetWindow().OnSizeChanged.Add( [this]( int width, int height ) {
-			context_->SetViewport( 0, 0, width, height );
-		} );
-
-		context_ = GetGraphicsDevice().CreateContext();
-
-		pad_ = GetInputSystem().GetGamepad( 0 );
-		if ( pad_ != nullptr ) {
-			cout << "Gamepad: " << pad_->GetName() << endl;
-		}
+		SampleApplication::OnInitialize();
 
 		const auto [width, height] = GetWindow().GetSize();
 		camera_.width_ = static_cast<float>( width );
@@ -286,26 +275,22 @@ public:
 	}
 
 protected:
-	void OnUpdate() override {
-		step_timer_.Tick( [this]() {
-			const auto delta =
-				static_cast<float>( step_timer_.GetElapsedSeconds() );
+	void Update() override {
+		const auto delta =
+			static_cast<float>( step_timer_.GetElapsedSeconds() );
 
-			if ( GetInputSystem().IsKeyDown( GetWindow(), Key::Escape ) ) {
-				Exit();
-			}
+		if ( GetInputSystem().IsKeyDown( GetWindow(), Key::Escape ) ) {
+			Exit();
+		}
 
-			DebugCameraControls( camera_, 25.0f, delta );
+		DebugCameraControls( camera_, 25.0f, delta );
 
-			if ( pad_ ) {
-				DebugCameraControls( *pad_, camera_, 25.0f, delta );
-			}
+		cube_model_matrix_ =
+			glm::rotate( cube_model_matrix_, glm::radians( delta * 25.0f ),
+						 glm::vec3( 0, 1, 0 ) );
+	}
 
-			cube_model_matrix_ =
-				glm::rotate( cube_model_matrix_, glm::radians( delta * 25.0f ),
-							 glm::vec3( 0, 1, 0 ) );
-		} );
-
+	void Draw() override {
 		context_->Clear( true, true, 0.1f, 0.1f, 0.1f );
 
 		context_->SetPipeline( pipeline_ );
@@ -390,39 +375,7 @@ protected:
 		}
 	}
 
-	void DebugCameraControls( const Octave::Gamepad& gamepad,
-							  DebugCamera& camera, float camera_speed,
-							  float delta ) noexcept {
-		const auto [left_x, left_y] = gamepad.GetLeftStick();
-
-		// Move
-		if ( left_x > 0.0f ) {
-			camera.position_ +=
-				left_x *
-				glm::normalize( glm::cross( camera.front_, camera.up_ ) ) *
-				camera_speed * delta;
-		}
-
-		if ( left_y > 0.0f ) {
-			camera.position_ += left_y * camera_speed * delta * camera.front_;
-		}
-
-		// Look
-		const auto [right_x, right_y] = gamepad.GetRightStick();
-		const float turn_speed = camera_speed * 3.0f;
-
-		if ( right_x > 0.0f ) {
-			camera.yaw_ += right_x * turn_speed * delta;
-		}
-
-		if ( right_y > 0.0f ) {
-			camera.pitch_ += right_y * turn_speed * delta;
-		}
-	}
-
 private:
-	Ref<GraphicsContext> context_;
-
 	SharedRef<Shader> vertex_shader_;
 	SharedRef<Shader> fragment_shader_;
 	SharedRef<Pipeline> pipeline_;
@@ -431,12 +384,9 @@ private:
 	SharedRef<Buffer> ub_matrices_;
 	SharedRef<Buffer> ub_directional_light_;
 
-	Ref<Gamepad> pad_;
-
 	glm::mat4 cube_model_matrix_;
 	glm::mat4 floor_model_matrix_;
 
-	StepTimer step_timer_;
 	DebugCamera camera_;
 
 	SharedRef<Buffer> cube_vbo_;
@@ -449,6 +399,4 @@ private:
 	SharedRef<Texture2D> floor_texture_diffuse_, floor_texture_specular_;
 };
 
-Ref<Application> Octave::CreateApplication( int argc, char* argv[] ) {
-	return MakeRef<ModelViewerSample>();
-}
+SAMPLE_MAIN( ModelViewerSample )
