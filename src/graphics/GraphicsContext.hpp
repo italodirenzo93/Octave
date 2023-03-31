@@ -15,6 +15,7 @@ public:
 	GraphicsContext( const GraphicsContext& ) = delete;
 	GraphicsContext& operator=( GraphicsContext&& ) = delete;
 
+	void Reset() noexcept;
 	void Clear( bool color = true, bool depth = true, float r = 0.0f,
 				float g = 0.0f, float b = 0.0f, float a = 1.0f ) const noexcept;
 

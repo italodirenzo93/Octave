@@ -18,7 +18,21 @@ GraphicsContext::GraphicsContext() {
 		glGetIntegerv( GL_MAX_ELEMENTS_INDICES, &max_indices );
 	}
 
-	const Config& config = Config::Instance();
+	Reset();
+}
+
+GraphicsContext::~GraphicsContext() noexcept {
+}
+
+void GraphicsContext::Reset() noexcept {
+	glBindVertexArray( 0 );
+	glBindProgramPipeline( 0 );
+
+	GLint n_texture_units;
+	glGetIntegerv( GL_MAX_TEXTURE_IMAGE_UNITS, &n_texture_units );
+
+	glBindTextures( 0, n_texture_units, nullptr );
+	glBindSamplers( 0, n_texture_units, nullptr );
 
 	// Enable depth by default
 	glEnable( GL_DEPTH_TEST );
@@ -28,12 +42,11 @@ GraphicsContext::GraphicsContext() {
 	// Default culling options
 	glCullFace( GL_BACK );
 	glFrontFace( GL_CW );
+
+	const Config& config = Config::Instance();
 	if ( config.IsCullFaceEnabled() ) {
 		glEnable( GL_CULL_FACE );
 	}
-}
-
-GraphicsContext::~GraphicsContext() noexcept {
 }
 
 void GraphicsContext::Clear( bool color, bool depth, float r, float g,
@@ -74,19 +87,35 @@ std::array<int, 4> GraphicsContext::GetViewport() const noexcept {
 }
 
 void GraphicsContext::SetVertexArray( SharedRef<VertexArray> vao ) {
-	glBindVertexArray( vao->GetApiResource() );
+	if ( vao == nullptr ) {
+		glBindVertexArray( 0 );
+	} else {
+		glBindVertexArray( vao->GetApiResource() );
+	}
 }
 
 void GraphicsContext::SetPipeline( SharedRef<Pipeline> pipeline ) {
-	glBindProgramPipeline( pipeline->GetApiResource() );
+	if ( pipeline == nullptr ) {
+		glBindProgramPipeline( 0 );
+	} else {
+		glBindProgramPipeline( pipeline->GetApiResource() );
+	}
 }
 
 void GraphicsContext::SetSampler( uint32_t unit, SharedRef<Sampler> sampler ) {
-	glBindSampler( unit, sampler->GetApiResource() );
+	if ( sampler == nullptr ) {
+		glBindSampler( unit, 0 );
+	} else {
+		glBindSampler( unit, sampler->GetApiResource() );
+	}
 }
 
 void GraphicsContext::SetTexture( uint32_t unit, SharedRef<Texture2D> texture ) {
-	glBindTextureUnit( unit, texture->GetApiResource() );
+	if ( texture == nullptr ) {
+		glBindTextureUnit( unit, 0 );
+	} else {
+		glBindTextureUnit( unit, texture->GetApiResource() );
+	}
 }
 
 void GraphicsContext::SetViewport( int x, int y, int width,
@@ -100,6 +129,8 @@ void GraphicsContext::SetViewport( int x, int y, int width,
 }
 
 void GraphicsContext::Signal( SharedRef<Fence> fence ) {
+	assert( fence != nullptr );
+
 	if ( fence->sync_ ) {
 		glDeleteSync( fence->sync_ );
 	}
@@ -108,6 +139,8 @@ void GraphicsContext::Signal( SharedRef<Fence> fence ) {
 }
 
 void GraphicsContext::Wait( SharedRef<Fence> fence, uint64_t timeout ) {
+	assert( fence != nullptr );
+
 	if ( fence->sync_ ) {
 		GLenum wait_return = 0;
 		while ( wait_return != GL_ALREADY_SIGNALED &&

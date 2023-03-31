@@ -16,6 +16,7 @@ static int AttrNameToIndex( VertexAttributeName name ) noexcept {
 			return 3;
 		default:
 			assert( false );
+			return -1;
 	}
 }
 
@@ -29,6 +30,7 @@ static GLenum AttrTypeToGLType( VertexAttributeType type ) noexcept {
 			return GL_UNSIGNED_INT;
 		default:
 			assert( false );
+			return 0;
 	}
 }
 
@@ -42,6 +44,7 @@ static GLuint AttrTypeSize( VertexAttributeType type ) noexcept {
 			return sizeof( GLuint );
 		default:
 			assert( false );
+			return 0;
 	}
 }
 
@@ -55,7 +58,7 @@ VertexArray::VertexArray( const VertexLayout& layout ) : attrs_( layout ) {
 			id_, AttrNameToIndex( attr.name ), static_cast<GLint>( attr.size ),
 			AttrTypeToGLType( attr.type ),
 			static_cast<GLboolean>( attr.normalized ), offset );
-		
+
 		glVertexArrayAttribBinding( id_, AttrNameToIndex( attr.name ), 0 );
 		glEnableVertexArrayAttrib( id_, AttrNameToIndex( attr.name ) );
 
@@ -68,12 +71,20 @@ VertexArray::~VertexArray() noexcept {
 }
 
 void VertexArray::SetVertexBuffer( uint32_t index, SharedRef<Buffer> vbo ) {
-	glVertexArrayVertexBuffer( id_, index, vbo->GetApiResource(), 0,
-							   vbo->GetStride() );
+	if ( vbo == nullptr ) {
+		glVertexArrayVertexBuffer( id_, index, 0, 0, 0 );
+	} else {
+		glVertexArrayVertexBuffer( id_, index, vbo->GetApiResource(), 0,
+								vbo->GetStride() );
+	}
 }
 
 void VertexArray::SetIndexBuffer( SharedRef<Buffer> ibo ) {
-	glVertexArrayElementBuffer( id_, ibo->GetApiResource() );
+	if ( ibo == nullptr ) {
+		glVertexArrayElementBuffer( id_, 0 );
+	} else {
+		glVertexArrayElementBuffer( id_, ibo->GetApiResource() );
+	}
 }
 
 }  // namespace Octave
