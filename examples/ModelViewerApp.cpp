@@ -301,6 +301,7 @@ protected:
 			ub_matrices_->SetData( &matrices, sizeof( matrices ) );
 
 			context_->SetVertexBuffer( cube_vbo_, cube_vao_ );
+			context_->SetIndexBuffer( cube_ibo_ );
 			context_->SetTexture( 0, cube_texture_ );
 			context_->DrawIndexed( cube_ibo_->GetNumElements(), 0, 0 );
 		}
