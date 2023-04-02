@@ -8,7 +8,7 @@
 using namespace std;
 using namespace Octave;
 
-static constexpr const char* kVertexShaderSource = R"(#version 450
+static constexpr const char* kVertexShaderSource = R"(#version 410
 layout( location = 0 ) in vec2 position;
 layout( location=1 ) in vec3 color;
 
@@ -18,7 +18,7 @@ out gl_PerVertex {
 
 out vec3 vertex_color;
 
-layout(std140, binding=0) uniform VertexConstants {
+layout(std140) uniform VertexConstants {
 	mat4 projection;
 	mat4 view;
 	mat4 model;
@@ -30,7 +30,7 @@ void main() {
 }
 )";
 
-static constexpr const char* kFragmentShaderSource = R"(#version 450
+static constexpr const char* kFragmentShaderSource = R"(#version 410
 in vec3 vertex_color;
 
 out vec4 frag_color;
@@ -87,7 +87,6 @@ public:
 										 VertexAttributeType::kFloat, false } };
 
 			vao_ = GetGraphicsDevice().CreateVertexArray( layout );
-			vao_->SetVertexBuffer( 0, vbo_ );
 		}
 
 		pipeline_ = GetGraphicsDevice().CreatePipeline();
@@ -138,7 +137,7 @@ protected:
 	void OnUpdate() override {
 		context_->Clear( true, true, 0, 0, 0 );
 
-		context_->SetVertexArray( vao_ );
+		context_->SetVertexBuffer( vbo_, vao_ );
 		context_->SetPipeline( pipeline_ );
 
 		context_->Draw( 3, 0 );

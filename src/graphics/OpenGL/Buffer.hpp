@@ -17,10 +17,13 @@ public:
 	[[nodiscard]] uint32_t GetStride() const noexcept;
 	[[nodiscard]] uint32_t GetNumElements() const noexcept;
 
+	[[nodiscard]] GLenum GetBindTarget() const noexcept { return target_; }
+
 	void SetData( const void* data, uint32_t size );
 
 private:
 	GLuint id_;
+	GLenum target_;
 	BufferDescription desc_;
 };
 

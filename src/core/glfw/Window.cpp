@@ -30,12 +30,12 @@ Window::Window( const WindowOptions& options ) {
 	// Set defaults as a baseline
 	glfwDefaultWindowHints();
 
-#ifdef OGT_RHI_OPENGL45
+#ifdef OGT_RHI_OPENGL
 
 	// Open GL context hints
 	glfwWindowHint( GLFW_CLIENT_API, GLFW_OPENGL_API );
 	glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
-	glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 5 );
+	glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
 	glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
 	glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE );
 #ifdef OGT_DEBUG

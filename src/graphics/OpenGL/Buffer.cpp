@@ -3,7 +3,24 @@
 
 namespace Octave {
 
-static GLint AccessToGLBufferBit( ResourceAccess access ) noexcept {
+static GLint BindingToGLTarget( BufferBinding binding ) noexcept {
+	switch ( binding ) {
+		default:
+		case BufferBinding::VertexBuffer: return GL_ARRAY_BUFFER;
+		case BufferBinding::IndexBuffer: return GL_ELEMENT_ARRAY_BUFFER;
+		case BufferBinding::UniformBuffer: return GL_UNIFORM_BUFFER;
+	}
+}
+
+static GLenum AccessToGLBufferUsage( ResourceAccess access ) noexcept {
+	switch ( access ) {
+		default:
+		case ResourceAccess::Read: return GL_STATIC_DRAW;
+		case ResourceAccess::ReadWrite: return GL_DYNAMIC_DRAW;
+	}
+}
+
+static GLint AccessToGLBufferStorageBit( ResourceAccess access ) noexcept {
 	switch ( access ) {
 		default:
 		case ResourceAccess::Read:
@@ -14,12 +31,20 @@ static GLint AccessToGLBufferBit( ResourceAccess access ) noexcept {
 }
 
 Buffer::Buffer( const BufferDescription& desc, const void* initial_data )
-	: id_( 0 ), desc_( desc ) {
-	glCreateBuffers( 1, &id_ );
+	: id_( 0 ), target_( BindingToGLTarget( desc.bind_flags ) ), desc_( desc ) {
+	glGenBuffers( 1, &id_ );
 
-	glNamedBufferStorage( id_, static_cast<GLsizeiptr>( desc.size ),
+	glBindBuffer( target_, id_ );
+
+	if ( GLAD_GL_ARB_buffer_storage ) {
+		glBufferStorage( target_, static_cast<GLsizeiptr>( desc.size ),
 						  initial_data,
-						  AccessToGLBufferBit( desc.access_flags ) );
+						  AccessToGLBufferStorageBit( desc.access_flags ) );
+	} else {
+		glBufferData( target_, static_cast<GLsizeiptr>( desc.size ), initial_data, AccessToGLBufferUsage( desc.access_flags ) );
+	}
+
+	glBindBuffer( target_, 0 );
 }
 
 Buffer::~Buffer() noexcept {
@@ -44,7 +69,12 @@ uint32_t Buffer::GetNumElements() const noexcept {
 
 void Buffer::SetData( const void* data, uint32_t size ) {
 	assert( data != nullptr && size <= desc_.size );
-	glNamedBufferSubData( id_, 0, static_cast<GLsizeiptr>( size ), data );
+
+	glBindBuffer( target_, id_ );
+
+	glBufferSubData( target_, 0, static_cast<GLsizeiptr>( size ), data );
+
+	glBindBuffer( target_, 0 );
 }
 
 }  // namespace Octave

@@ -1,4 +1,4 @@
-#version 450
+#version 410
 
 layout( location=0 ) in vec3 aPos;
 layout( location=1 ) in vec3 aColor;
@@ -17,7 +17,7 @@ out FragmentData {
 	vec3 view_position;
 } vs_out;
 
-layout( std140, binding=0 ) uniform Matrices {
+layout( std140 ) uniform Matrices {
 	mat4 uMatProjection;
 	mat4 uMatView;
 	mat4 uMatModel;
