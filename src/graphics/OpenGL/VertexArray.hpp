@@ -16,9 +16,6 @@ public:
 
 	[[nodiscard]] GLuint GetApiResource() const noexcept { return id_; }
 
-	void SetVertexBuffer( uint32_t index, SharedRef<Buffer> vbo );
-	void SetIndexBuffer( SharedRef<Buffer> ibo );
-
 	using Iterator = VertexLayout::iterator;
 	Iterator begin() noexcept { return attrs_.begin(); }
 	Iterator end() noexcept { return attrs_.end(); }

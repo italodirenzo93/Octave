@@ -6,7 +6,7 @@
 namespace Octave {
 
 Pipeline::Pipeline() {
-	glCreateProgramPipelines( 1, &id_ );
+	glGenProgramPipelines( 1, &id_ );
 }
 
 Pipeline::~Pipeline() noexcept {

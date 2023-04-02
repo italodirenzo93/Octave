@@ -44,7 +44,7 @@ GraphicsDevice::GraphicsDevice( const Window& window ) {
 	glGetIntegerv( GL_CONTEXT_FLAGS, &context_flags );
 
 	// Configure debug callback if we have a debug context
-	if ( context_flags & GL_CONTEXT_FLAG_DEBUG_BIT ) {
+	if ( GLAD_GL_KHR_debug && ( context_flags & GL_CONTEXT_FLAG_DEBUG_BIT ) ) {
 		glEnable( GL_DEBUG_OUTPUT );
 		glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS );
 		glDebugMessageCallback( DebugCallback, nullptr );

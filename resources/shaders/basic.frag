@@ -1,4 +1,4 @@
-#version 450
+#version 410
 
 struct PointLight {
 	bool enabled;
@@ -24,11 +24,11 @@ in FragmentData {
 
 out vec4 FragColor;
 
-layout( binding=0 ) uniform sampler2D uMatDiffuse;
-layout( binding=1 ) uniform sampler2D uMatSpecular;
+uniform sampler2D uMatDiffuse;
+uniform sampler2D uMatSpecular;
 uniform float uMatShininess = 32.0;
 
-layout( std140, binding=2 ) uniform DirectionalLight {
+layout( std140 ) uniform DirectionalLight {
 	vec3 direction;
 	vec3 ambient;
 	vec3 diffuse;

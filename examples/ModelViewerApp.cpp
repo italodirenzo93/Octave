@@ -175,8 +175,6 @@ public:
 								 VertexAttributeType::kFloat, false } };
 
 			cube_vao_ = GetGraphicsDevice().CreateVertexArray( layout );
-			cube_vao_->SetVertexBuffer( 0, cube_vbo_ );
-			cube_vao_->SetIndexBuffer( cube_ibo_ );
 
 			cube_texture_ = CreateTextureFromFile(
 				GetGraphicsDevice(), "resources/textures/container.jpg" );
@@ -203,7 +201,6 @@ public:
 								 VertexAttributeType::kFloat, false } };
 
 			floor_vao_ = GetGraphicsDevice().CreateVertexArray( layout );
-			floor_vao_->SetVertexBuffer( 0, floor_vbo_ );
 
 			floor_texture_diffuse_ = CreateTextureFromFile(
 				GetGraphicsDevice(), "resources/textures/wood_diffuse.png" );
@@ -303,7 +300,7 @@ protected:
 									 cube_model_matrix_, camera_.position_ );
 			ub_matrices_->SetData( &matrices, sizeof( matrices ) );
 
-			context_->SetVertexArray( cube_vao_ );
+			context_->SetVertexBuffer( cube_vbo_, cube_vao_ );
 			context_->SetTexture( 0, cube_texture_ );
 			context_->DrawIndexed( cube_ibo_->GetNumElements(), 0, 0 );
 		}
@@ -315,7 +312,7 @@ protected:
 									 floor_model_matrix_, camera_.position_ );
 			ub_matrices_->SetData( &matrices, sizeof( matrices ) );
 
-			context_->SetVertexArray( floor_vao_ );
+			context_->SetVertexBuffer( floor_vbo_, floor_vao_ );
 			context_->SetTexture( 0, floor_texture_diffuse_ );
 			context_->SetTexture( 1, floor_texture_specular_ );
 			context_->Draw( floor_vbo_->GetNumElements(), 0 );

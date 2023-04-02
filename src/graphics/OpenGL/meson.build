@@ -19,4 +19,4 @@ rhi_opengl_dep = declare_dependency(
 	]
 )
 
-add_project_arguments('-DOGT_RHI_OPENGL45', language: 'cpp')
+add_project_arguments('-DOGT_RHI_OPENGL', language: 'cpp')

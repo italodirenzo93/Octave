@@ -36,7 +36,7 @@ static GLuint FilterToGLType( TextureFilter filter ) noexcept {
 }
 
 Sampler::Sampler( const SamplerDescription& desc ) : id_( 0 ), desc_( desc ) {
-	glCreateSamplers( 1, &id_ );
+	glGenSamplers( 1, &id_ );
 
 	// Set sampler params
 	glSamplerParameterf( id_, GL_TEXTURE_LOD_BIAS, desc.mip_lod_bias );
