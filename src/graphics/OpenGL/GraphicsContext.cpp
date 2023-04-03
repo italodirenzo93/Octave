@@ -70,7 +70,11 @@ GraphicsContext::~GraphicsContext() noexcept {
 
 void GraphicsContext::Reset() noexcept {
 	glBindVertexArray( 0 );
-	glBindProgramPipeline( 0 );
+
+	glBindBuffer( GL_ARRAY_BUFFER, 0 );
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
+
+	glUseProgram( 0 );
 
 	GLint n_texture_units;
 	glGetIntegerv( GL_MAX_TEXTURE_IMAGE_UNITS, &n_texture_units );
@@ -156,14 +160,18 @@ void GraphicsContext::SetVertexBuffer( SharedRef<Buffer> vbo,
 }
 
 void GraphicsContext::SetIndexBuffer( SharedRef<Buffer> ibo ) {
-	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo->GetApiResource() );
+	if ( ibo == nullptr ) {
+		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
+	} else {
+		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo->GetApiResource() );
+	}
 }
 
-void GraphicsContext::SetPipeline( SharedRef<Pipeline> pipeline ) {
-	if ( pipeline == nullptr ) {
-		glBindProgramPipeline( 0 );
+void GraphicsContext::SetProgram( SharedRef<Program> program ) {
+	if ( program == nullptr ) {
+		glUseProgram( 0 );
 	} else {
-		glBindProgramPipeline( pipeline->GetApiResource() );
+		glUseProgram( program->GetApiResource() );
 	}
 }
 
@@ -179,7 +187,11 @@ void GraphicsContext::SetSampler( uint32_t unit, SharedRef<Sampler> sampler ) {
 void GraphicsContext::SetTexture( uint32_t unit,
 								  SharedRef<Texture2D> texture ) {
 	glActiveTexture( GL_TEXTURE0 + unit );
-	glBindTexture( GL_TEXTURE_2D, texture->GetApiResource() );
+	if ( texture == nullptr ) {
+		glBindTexture( GL_TEXTURE_2D, 0 );
+	} else {
+		glBindTexture( GL_TEXTURE_2D, texture->GetApiResource() );
+	}
 }
 
 void GraphicsContext::SetViewport( int x, int y, int width,

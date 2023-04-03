@@ -11,6 +11,7 @@
 // clang-format on
 
 // C++ headers
+#include <array>
 #include <algorithm>
 #include <filesystem>
 #include <functional>

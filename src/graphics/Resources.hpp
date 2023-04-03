@@ -5,7 +5,7 @@
 
 #include "OpenGL/Buffer.hpp"
 #include "OpenGL/Fence.hpp"
-#include "OpenGL/Pipeline.hpp"
+#include "OpenGL/Program.hpp"
 #include "OpenGL/Sampler.hpp"
 #include "OpenGL/Shader.hpp"
 #include "OpenGL/VertexArray.hpp"
