@@ -113,21 +113,15 @@ public:
 			ubo_->SetData( &constants, sizeof( constants ) );
 		}
 
-		// Vertex Shader
-		{
-			vertex_shader_ = GetGraphicsDevice().CreateShader(
-				ShaderType::VertexShader, kVertexShaderSource );
-		}
-
-		// Fragment Shader
-		{
-			fragment_shader_ = GetGraphicsDevice().CreateShader(
-				ShaderType::FragmentShader, kFragmentShaderSource );
-		}
-
 		// Program
 		{
-			program_ = GetGraphicsDevice().CreateProgram( *vertex_shader_, *fragment_shader_ );
+			auto vs = GetGraphicsDevice().CreateShader(
+				ShaderType::VertexShader, kVertexShaderSource );
+
+			auto fs = GetGraphicsDevice().CreateShader(
+				ShaderType::FragmentShader, kFragmentShaderSource );
+
+			program_ = GetGraphicsDevice().CreateProgram( *vs, *fs );
 			program_->SetUniformBuffer( 0, ubo_ );
 		}
 	}
@@ -144,8 +138,6 @@ protected:
 
 private:
 	Ref<GraphicsContext> context_;
-	SharedRef<Shader> vertex_shader_;
-	SharedRef<Shader> fragment_shader_;
 	SharedRef<Program> program_;
 	SharedRef<Buffer> vbo_;
 	SharedRef<VertexArray> vao_;
