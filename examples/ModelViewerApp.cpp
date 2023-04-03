@@ -242,18 +242,30 @@ public:
 
 		// Shaders
 		{
-			vertex_shader_ = LoadShaderFromFile(
+			auto vs = LoadShaderFromFile(
 				GetGraphicsDevice(), ShaderType::VertexShader,
 				"resources/shaders/basic.vert" );
 
 
-			fragment_shader_ = LoadShaderFromFile(
+			auto fs = LoadShaderFromFile(
 				GetGraphicsDevice(), ShaderType::FragmentShader,
 				"resources/shaders/basic.frag" );
 
-			program_ = GetGraphicsDevice().CreateProgram( *vertex_shader_, *fragment_shader_ );
-			program_->SetUniformBuffer( 0, ub_matrices_ );
-			program_->SetUniformBuffer( 2, ub_directional_light_ );
+			program_ = GetGraphicsDevice().CreateProgram( *vs, *fs );
+
+			u_diffuse_loc_ = glGetUniformLocation( program_->GetApiResource(), "uMatDiffuse" );
+			u_specular_loc_ = glGetUniformLocation( program_->GetApiResource(), "uMatSpecular" );
+
+			program_->SetInt( u_diffuse_loc_, 0 );
+			program_->SetInt( u_specular_loc_, 1 );
+
+			auto idx = glGetUniformBlockIndex( program_->GetApiResource(), "Matrices" );
+			glUniformBlockBinding( program_->GetApiResource(), idx, 0 );
+
+			idx = glGetUniformBlockIndex( program_->GetApiResource(), "DirectionalLight" );
+			glUniformBlockBinding( program_->GetApiResource(), idx, 1 );
+
+			program_->SetUniformBuffer( 1, ub_directional_light_ );
 		}
 
 		// Samplers
@@ -287,19 +299,21 @@ protected:
 	void Draw() override {
 		context_->Clear( true, true, 0.1f, 0.1f, 0.1f );
 
-		context_->SetProgram( program_ );
-		context_->SetSampler( 0, sampler_ );
-
 		// Draw floating box
 		{
 			const Matrices matrices( camera_.GetProjectionMatrix(),
 									 camera_.GetViewMatrix(),
 									 cube_model_matrix_, camera_.position_ );
 			ub_matrices_->SetData( &matrices, sizeof( Matrices ) );
+			program_->SetUniformBuffer( 0, ub_matrices_ );
 
 			context_->SetVertexBuffer( cube_vbo_, cube_vao_ );
 			context_->SetIndexBuffer( cube_ibo_ );
 			context_->SetTexture( 0, cube_texture_ );
+			context_->SetSampler( 0, sampler_ );
+			context_->SetTexture( 1, nullptr );
+			context_->SetSampler( 1, nullptr );
+			context_->SetProgram( program_ );
 			context_->DrawIndexed( cube_ibo_->GetNumElements(), 0, 0 );
 		}
 
@@ -309,10 +323,14 @@ protected:
 									 camera_.GetViewMatrix(),
 									 floor_model_matrix_, camera_.position_ );
 			ub_matrices_->SetData( &matrices, sizeof( Matrices ) );
+			program_->SetUniformBuffer( 0, ub_matrices_ );
 
 			context_->SetVertexBuffer( floor_vbo_, floor_vao_ );
 			context_->SetTexture( 0, floor_texture_diffuse_ );
+			context_->SetSampler( 0, sampler_ );
 			context_->SetTexture( 1, floor_texture_specular_ );
+			context_->SetSampler( 1, sampler_ );
+			context_->SetProgram( program_ );
 			context_->Draw( floor_vbo_->GetNumElements(), 0 );
 		}
 	}
@@ -371,13 +389,13 @@ protected:
 	}
 
 private:
-	SharedRef<Shader> vertex_shader_;
-	SharedRef<Shader> fragment_shader_;
 	SharedRef<Program> program_;
 	SharedRef<Sampler> sampler_;
 
 	SharedRef<Buffer> ub_matrices_;
 	SharedRef<Buffer> ub_directional_light_;
+
+	GLint u_diffuse_loc_, u_specular_loc_;
 
 	glm::mat4 cube_model_matrix_;
 	glm::mat4 floor_model_matrix_;
