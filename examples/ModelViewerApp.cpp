@@ -246,17 +246,14 @@ public:
 				GetGraphicsDevice(), ShaderType::VertexShader,
 				"resources/shaders/basic.vert" );
 
-			vertex_shader_->SetUniformBuffer( 0, ub_matrices_ );
 
 			fragment_shader_ = LoadShaderFromFile(
 				GetGraphicsDevice(), ShaderType::FragmentShader,
 				"resources/shaders/basic.frag" );
 
-			fragment_shader_->SetUniformBuffer( 2, ub_directional_light_ );
-
-			pipeline_ = GetGraphicsDevice().CreatePipeline();
-			pipeline_->SetVertexShader( vertex_shader_ );
-			pipeline_->SetFragmentShader( fragment_shader_ );
+			program_ = GetGraphicsDevice().CreateProgram( *vertex_shader_, *fragment_shader_ );
+			program_->SetUniformBuffer( 0, ub_matrices_ );
+			program_->SetUniformBuffer( 2, ub_directional_light_ );
 		}
 
 		// Samplers
@@ -290,7 +287,7 @@ protected:
 	void Draw() override {
 		context_->Clear( true, true, 0.1f, 0.1f, 0.1f );
 
-		context_->SetPipeline( pipeline_ );
+		context_->SetProgram( program_ );
 		context_->SetSampler( 0, sampler_ );
 
 		// Draw floating box
@@ -298,7 +295,7 @@ protected:
 			const Matrices matrices( camera_.GetProjectionMatrix(),
 									 camera_.GetViewMatrix(),
 									 cube_model_matrix_, camera_.position_ );
-			ub_matrices_->SetData( &matrices, sizeof( matrices ) );
+			ub_matrices_->SetData( &matrices, sizeof( Matrices ) );
 
 			context_->SetVertexBuffer( cube_vbo_, cube_vao_ );
 			context_->SetIndexBuffer( cube_ibo_ );
@@ -311,7 +308,7 @@ protected:
 			const Matrices matrices( camera_.GetProjectionMatrix(),
 									 camera_.GetViewMatrix(),
 									 floor_model_matrix_, camera_.position_ );
-			ub_matrices_->SetData( &matrices, sizeof( matrices ) );
+			ub_matrices_->SetData( &matrices, sizeof( Matrices ) );
 
 			context_->SetVertexBuffer( floor_vbo_, floor_vao_ );
 			context_->SetTexture( 0, floor_texture_diffuse_ );
@@ -376,7 +373,7 @@ protected:
 private:
 	SharedRef<Shader> vertex_shader_;
 	SharedRef<Shader> fragment_shader_;
-	SharedRef<Pipeline> pipeline_;
+	SharedRef<Program> program_;
 	SharedRef<Sampler> sampler_;
 
 	SharedRef<Buffer> ub_matrices_;

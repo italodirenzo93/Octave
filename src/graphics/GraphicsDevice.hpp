@@ -26,7 +26,7 @@ public:
 	[[nodiscard]] Ref<Buffer> CreateBuffer( const BufferDescription& desc, const void* initial_data = nullptr );
 	[[nodiscard]] Ref<Fence> CreateFence() noexcept;
 	[[nodiscard]] Ref<VertexArray> CreateVertexArray( const VertexLayout& desc );
-	[[nodiscard]] Ref<Pipeline> CreatePipeline();
+	[[nodiscard]] Ref<Program> CreateProgram( const Shader& vs, const Shader& fs );
 	[[nodiscard]] Ref<Sampler> CreateSampler(
 		const SamplerDescription& desc );
 	[[nodiscard]] Ref<Shader> CreateShader( ShaderType type, const char* source );

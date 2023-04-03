@@ -89,8 +89,6 @@ public:
 			vao_ = GetGraphicsDevice().CreateVertexArray( layout );
 		}
 
-		pipeline_ = GetGraphicsDevice().CreatePipeline();
-
 		// Uniform buffer
 		{
 			BufferDescription desc{};
@@ -119,17 +117,18 @@ public:
 		{
 			vertex_shader_ = GetGraphicsDevice().CreateShader(
 				ShaderType::VertexShader, kVertexShaderSource );
-
-			vertex_shader_->SetUniformBuffer( 0, ubo_ );
-
-			pipeline_->SetVertexShader( vertex_shader_ );
 		}
 
 		// Fragment Shader
 		{
 			fragment_shader_ = GetGraphicsDevice().CreateShader(
 				ShaderType::FragmentShader, kFragmentShaderSource );
-			pipeline_->SetFragmentShader( fragment_shader_ );
+		}
+
+		// Program
+		{
+			program_ = GetGraphicsDevice().CreateProgram( *vertex_shader_, *fragment_shader_ );
+			program_->SetUniformBuffer( 0, ubo_ );
 		}
 	}
 
@@ -138,7 +137,7 @@ protected:
 		context_->Clear( true, true, 0, 0, 0 );
 
 		context_->SetVertexBuffer( vbo_, vao_ );
-		context_->SetPipeline( pipeline_ );
+		context_->SetProgram( program_ );
 
 		context_->Draw( 3, 0 );
 	}
@@ -147,7 +146,7 @@ private:
 	Ref<GraphicsContext> context_;
 	SharedRef<Shader> vertex_shader_;
 	SharedRef<Shader> fragment_shader_;
-	SharedRef<Pipeline> pipeline_;
+	SharedRef<Program> program_;
 	SharedRef<Buffer> vbo_;
 	SharedRef<VertexArray> vao_;
 	SharedRef<Buffer> ubo_;

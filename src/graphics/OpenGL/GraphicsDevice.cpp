@@ -17,7 +17,8 @@ static void APIENTRY DebugCallback( GLenum source, GLenum type, unsigned int id,
 									const void* userParam );
 
 GraphicsDevice::GraphicsDevice( const Window& window ) {
-	const auto p_window = static_cast<GLFWwindow*>( window.GetNativeWindowHandle() );
+	const auto p_window =
+		static_cast<GLFWwindow*>( window.GetNativeWindowHandle() );
 
 	if ( !p_window ) {
 		throw Exception( "Cannot accept a null window pointer" );
@@ -86,8 +87,8 @@ Ref<GraphicsContext> GraphicsDevice::CreateContext() noexcept {
 	return unique_ptr<GraphicsContext>( new GraphicsContext() );
 }
 
-Ref<Buffer> GraphicsDevice::CreateBuffer(
-	const BufferDescription& desc, const void* initial_data ) {
+Ref<Buffer> GraphicsDevice::CreateBuffer( const BufferDescription& desc,
+										  const void* initial_data ) {
 	return MakeRef<Buffer>( desc, initial_data );
 }
 
@@ -95,24 +96,26 @@ Ref<Fence> GraphicsDevice::CreateFence() noexcept {
 	return MakeRef<Fence>();
 }
 
-Ref<VertexArray> GraphicsDevice::CreateVertexArray(
-	const VertexLayout& desc ) {
+Ref<VertexArray> GraphicsDevice::CreateVertexArray( const VertexLayout& desc ) {
 	return MakeRef<VertexArray>( desc );
 }
 
-Ref<Pipeline> GraphicsDevice::CreatePipeline() {
-	return MakeRef<Pipeline>();
+Ref<Program> GraphicsDevice::CreateProgram( const Shader& vs,
+											const Shader& fs ) {
+	return MakeRef<Program>( vs, fs );
 }
 
 Ref<Sampler> GraphicsDevice::CreateSampler( const SamplerDescription& desc ) {
 	return MakeRef<Sampler>( desc );
 }
 
-Ref<Shader> GraphicsDevice::CreateShader( ShaderType type, const char* source ) {
+Ref<Shader> GraphicsDevice::CreateShader( ShaderType type,
+										  const char* source ) {
 	return MakeRef<Shader>( type, source );
 }
 
-Ref<Texture2D> GraphicsDevice::CreateTexture2D( const TextureDescription2D& desc ) {
+Ref<Texture2D> GraphicsDevice::CreateTexture2D(
+	const TextureDescription2D& desc ) {
 	return MakeRef<Texture2D>( desc );
 }
 
@@ -202,4 +205,4 @@ static void APIENTRY DebugCallback( GLenum source, GLenum type, unsigned int id,
 		id, str_source, str_type, str_severity, message );
 }
 
-}  // namespace Octave::Impl
+}  // namespace Octave

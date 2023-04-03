@@ -25,7 +25,7 @@ public:
 
 	[[nodiscard]] std::array<int, 4> GetViewport() const noexcept;
 
-	void SetPipeline( SharedRef<Pipeline> pipeline );
+	void SetProgram( SharedRef<Program> program );
 	void SetVertexBuffer( SharedRef<Buffer> vbo,
 									   SharedRef<VertexArray> vao );
 	void SetIndexBuffer( SharedRef<Buffer> ibo );
