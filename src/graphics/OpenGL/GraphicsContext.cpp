@@ -146,7 +146,7 @@ void GraphicsContext::SetVertexBuffer( const VertexArray& vao, const Buffer& vbo
 
 	uint32_t offset = 0;
 
-	for ( const auto& attr : vao.attrs_ ) {
+	for ( const auto& attr : vao.GetVertexLayout() ) {
 		glVertexAttribPointer(
 			AttrNameToIndex( attr.name ), static_cast<GLint>( attr.size ),
 			AttrTypeToGLType( attr.type ),
@@ -177,11 +177,7 @@ void GraphicsContext::SetTexture( uint32_t unit, const Texture2D& texture ) {
 
 void GraphicsContext::SetViewport( int x, int y, int width,
 								   int height ) noexcept {
-	assert( x >= 0 );
-	assert( y >= 0 );
-	assert( width > 0 );
-	assert( height > 0 );
-
+	assert( x >= 0 && y >= 0 && width > 0 && height > 0 );
 	glViewport( x, y, width, height );
 }
 

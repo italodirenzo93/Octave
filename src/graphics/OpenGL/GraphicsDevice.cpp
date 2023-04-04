@@ -172,10 +172,8 @@ Ref<Buffer> GraphicsDevice::CreateBuffer( const BufferDescription& desc,
 
 	glBindBuffer( target, 0 );
 
-	auto buffer = MakeRef<Buffer>();
-	buffer->desc_ = desc;
-	buffer->handle_ = handle;
-	buffer->target_ = target;
+	auto buffer = MakeRef<Buffer>( desc );
+	buffer->SetApiResource( handle );
 
 	return buffer;
 }
@@ -189,9 +187,8 @@ Ref<VertexArray> GraphicsDevice::CreateVertexArray( const VertexLayout& desc ) {
 	GLuint handle;
 	glGenVertexArrays( 1, &handle );
 
-	auto vertex_array = MakeRef<VertexArray>();
-	vertex_array->attrs_ = desc;
-	vertex_array->handle_ = handle;
+	auto vertex_array = MakeRef<VertexArray>( desc );
+	vertex_array->SetApiResource( handle );
 
 	return vertex_array;
 }
@@ -223,7 +220,7 @@ Ref<Program> GraphicsDevice::CreateProgram( const Shader& vs,
 	}
 
 	auto program = MakeRef<Program>();
-	program->handle_ = handle;
+	program->SetApiResource( handle );
 
 	return program;
 }
@@ -253,9 +250,8 @@ Ref<Sampler> GraphicsDevice::CreateSampler( const SamplerDescription& desc ) {
 	glSamplerParameteri( handle, GL_TEXTURE_WRAP_T,
 						 WrapToGLType( desc.wrap_t ) );
 
-	auto sampler = MakeRef<Sampler>();
-	sampler->desc_ = desc;
-	sampler->handle_ = handle;
+	auto sampler = MakeRef<Sampler>( desc );
+	sampler->SetApiResource( handle );
 
 	return sampler;
 }
@@ -285,9 +281,8 @@ Ref<Shader> GraphicsDevice::CreateShader( ShaderType type,
 		throw Exception( msg );
 	}
 
-	auto shader = MakeRef<Shader>();
-	shader->handle_ = handle;
-	shader->type_ = shader_type;
+	auto shader = MakeRef<Shader>( shader_type );
+	shader->SetApiResource( handle );
 
 	return shader;
 }
@@ -341,9 +336,8 @@ Ref<Texture2D> GraphicsDevice::CreateTexture2D(
 
 	glBindTexture( GL_TEXTURE_2D, 0 );
 
-	auto texture = MakeRef<Texture2D>();
-	texture->desc_ = desc;
-	texture->handle_ = handle;
+	auto texture = MakeRef<Texture2D>( desc );
+	texture->SetApiResource( handle );
 
 	return texture;
 }

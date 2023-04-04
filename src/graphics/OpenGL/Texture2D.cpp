@@ -3,6 +3,10 @@
 
 namespace Octave {
 
+Texture2D::Texture2D( const TextureDescription2D& desc ) noexcept
+	: handle_( 0 ), desc_( desc ) {
+}
+
 void Texture2D::SetData( TextureFormat format, int mip_level, int xoffset,
 						 int yoffset, uint32_t width, uint32_t height,
 						 const void* data ) {

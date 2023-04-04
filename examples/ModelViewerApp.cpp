@@ -255,11 +255,8 @@ public:
 			GetGraphicsDevice().DestroyShader( std::move( vs ) );
 			GetGraphicsDevice().DestroyShader( std::move( fs ) );
 
-			u_diffuse_loc_ = glGetUniformLocation( program_->GetApiResource(), "uMatDiffuse" );
-			u_specular_loc_ = glGetUniformLocation( program_->GetApiResource(), "uMatSpecular" );
-
-			program_->SetInt( u_diffuse_loc_, 0 );
-			program_->SetInt( u_specular_loc_, 1 );
+			program_->SetInt( "uMatDiffuse", 0 );
+			program_->SetInt( "uMatSpecular", 1 );
 
 			auto idx = glGetUniformBlockIndex( program_->GetApiResource(), "Matrices" );
 			glUniformBlockBinding( program_->GetApiResource(), idx, 0 );
@@ -418,8 +415,6 @@ private:
 
 	Ref<Buffer> ub_matrices_;
 	Ref<Buffer> ub_directional_light_;
-
-	GLint u_diffuse_loc_, u_specular_loc_;
 
 	glm::mat4 cube_model_matrix_;
 	glm::mat4 floor_model_matrix_;

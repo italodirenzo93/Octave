@@ -9,14 +9,23 @@
 
 namespace Octave {
 
-struct VertexArray {
-	GLuint handle_ = 0;
-	VertexLayout attrs_;
+class VertexArray {
+public:
+	explicit VertexArray( const VertexLayout& layout ) noexcept
+		: handle_( 0 ), attrs_( layout ) {}
 
 	[[nodiscard]] GLuint GetApiResource() const noexcept { return handle_; }
 	void SetApiResource( GLuint resource ) noexcept { handle_ = resource; }
+
+	[[nodiscard]] const VertexLayout& GetVertexLayout() const noexcept {
+		return attrs_;
+	}
+
+private:
+	GLuint handle_;
+	VertexLayout attrs_;
 };
 
-}
+}  // namespace Octave
 
 #endif

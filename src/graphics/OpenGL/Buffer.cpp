@@ -3,6 +3,22 @@
 
 namespace Octave {
 
+Buffer::Buffer( const BufferDescription& desc ) noexcept
+	: handle_( 0 ), target_( GL_ARRAY_BUFFER ), desc_( desc ) {
+	switch ( desc.type ) {
+		default:
+		case BufferType::VertexBuffer:
+			target_ = GL_ARRAY_BUFFER;
+			break;
+		case BufferType::IndexBuffer:
+			target_ = GL_ELEMENT_ARRAY_BUFFER;
+			break;
+		case BufferType::UniformBuffer:
+			target_ = GL_UNIFORM_BUFFER;
+			break;
+	}
+}
+
 uint32_t Buffer::GetSize() const noexcept {
 	return desc_.size;
 }
