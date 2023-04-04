@@ -6,10 +6,9 @@
 
 namespace Octave {
 
-struct Buffer {
-	GLuint handle_ = 0;
-	GLenum target_ = GL_ARRAY_BUFFER;
-	BufferDescription desc_{};
+class Buffer {
+public:
+	Buffer( const BufferDescription& desc ) noexcept;
 
 	[[nodiscard]] GLuint GetApiResource() const noexcept { return handle_; }
 	void SetApiResource( GLuint handle ) noexcept { handle_ = handle; }
@@ -20,7 +19,13 @@ struct Buffer {
 
 	[[nodiscard]] GLenum GetBindTarget() const noexcept { return target_; }
 
+
 	void SetData( const void* data, uint32_t offset, uint32_t size );
+
+private:
+	GLuint handle_;
+	GLenum target_;
+	BufferDescription desc_;
 };
 
 }  // namespace Octave

@@ -9,12 +9,16 @@
 
 namespace Octave {
 
-struct Shader {
-	GLuint handle_;
-	GLenum type_;
+class Shader {
+public:
+	explicit Shader( ShaderType type ) noexcept;
 
 	[[nodiscard]] GLuint GetApiResource() const noexcept { return handle_; }
 	void SetApiResource( GLuint resource ) noexcept { handle_ = resource; }
+
+private:
+	GLuint handle_;
+	GLenum type_;
 };
 
 }
