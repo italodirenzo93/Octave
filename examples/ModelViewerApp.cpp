@@ -17,12 +17,12 @@ using namespace Octave::Samples;
 template <class T>
 Ref<Buffer> CreateStaticBuffer( GraphicsDevice& device,
 								const std::vector<T>& data, size_t stride,
-								BufferBinding binding ) {
+								BufferType binding ) {
 	BufferDescription desc{};
 	desc.size = static_cast<uint32_t>( sizeof( T ) * data.size() );
 	desc.stride = static_cast<uint32_t>( stride );
-	desc.access_flags = ResourceAccess::ReadWrite;
-	desc.bind_flags = binding;
+	desc.usage = BufferUsage::Dynamic;
+	desc.type = binding;
 
 	return device.CreateBuffer( desc, data.data() );
 }
@@ -43,7 +43,6 @@ inline Ref<Texture2D> CreateTextureFromFile( GraphicsDevice& device,
 	TextureDescription2D desc{};
 	desc.width = width;
 	desc.height = height;
-	desc.access_flags = ResourceAccess::ReadWrite;
 	desc.mip_levels = 1;
 
 	if ( n_channels == 4 ) {
@@ -55,7 +54,7 @@ inline Ref<Texture2D> CreateTextureFromFile( GraphicsDevice& device,
 	auto texture = device.CreateTexture2D( desc );
 
 	texture->SetData( desc.format, 0, 0, 0, width, height, image );
-	texture->GenerateMipmap();
+	device.GenerateMipmap( *texture );
 
 	return texture;
 }
@@ -119,10 +118,10 @@ public:
 		BufferDescription desc{};
 		desc.size = sizeof( T );
 		desc.stride = 0;
-		desc.access_flags = ResourceAccess::ReadWrite;
-		desc.bind_flags = BufferBinding::UniformBuffer;
+		desc.usage = BufferUsage::Dynamic;
+		desc.type = BufferType::UniformBuffer;
 
-		buffer_ = device.CreateBuffer( desc );
+		buffer_ = device.CreateBuffer( desc, nullptr );
 	}
 
 	[[nodiscard]] SharedRef<Buffer> GetBuffer() const noexcept {
@@ -160,11 +159,11 @@ public:
 			cube_vbo_ =
 				CreateStaticBuffer( GetGraphicsDevice(), vertices,
 									sizeof( GeometricPrimitive::VertexType ),
-									BufferBinding::VertexBuffer );
+									BufferType::VertexBuffer );
 
 			cube_ibo_ = CreateStaticBuffer( GetGraphicsDevice(), indices,
 											sizeof( uint16_t ),
-											BufferBinding::IndexBuffer );
+											BufferType::IndexBuffer );
 
 			const VertexLayout layout{
 				VertexAttribute{ VertexAttributeName::kPosition, 3,
@@ -190,7 +189,7 @@ public:
 			floor_vbo_ =
 				CreateStaticBuffer( GetGraphicsDevice(), floor_verts,
 									sizeof( GeometricPrimitive::VertexType ),
-									BufferBinding::VertexBuffer );
+									BufferType::VertexBuffer );
 
 			const VertexLayout layout{
 				VertexAttribute{ VertexAttributeName::kPosition, 3,
@@ -215,20 +214,20 @@ public:
 		{
 			BufferDescription desc{};
 			desc.size = sizeof( Matrices );
-			desc.access_flags = ResourceAccess::ReadWrite;
+			desc.usage = BufferUsage::Dynamic;
 
 			const Matrices matrices(
 				camera_.GetProjectionMatrix(), camera_.GetViewMatrix(),
 				glm::identity<glm::mat4>(), camera_.position_ );
 
-			ub_matrices_ = GetGraphicsDevice().CreateBuffer( desc );
+			ub_matrices_ = GetGraphicsDevice().CreateBuffer( desc, nullptr );
 		}
 
 		// Directional light uniform buffer
 		{
 			BufferDescription desc{};
 			desc.size = sizeof( DirectionalLight );
-			desc.access_flags = ResourceAccess::ReadWrite;
+			desc.usage = BufferUsage::Dynamic;
 
 			DirectionalLight light{};
 			light.direction = glm::vec3( 0.5f, 0.0f, -0.5f );
@@ -253,6 +252,9 @@ public:
 
 			program_ = GetGraphicsDevice().CreateProgram( *vs, *fs );
 
+			GetGraphicsDevice().DestroyShader( std::move( vs ) );
+			GetGraphicsDevice().DestroyShader( std::move( fs ) );
+
 			u_diffuse_loc_ = glGetUniformLocation( program_->GetApiResource(), "uMatDiffuse" );
 			u_specular_loc_ = glGetUniformLocation( program_->GetApiResource(), "uMatSpecular" );
 
@@ -265,7 +267,7 @@ public:
 			idx = glGetUniformBlockIndex( program_->GetApiResource(), "DirectionalLight" );
 			glUniformBlockBinding( program_->GetApiResource(), idx, 1 );
 
-			program_->SetUniformBuffer( 1, ub_directional_light_ );
+			program_->SetUniformBuffer( 1, *ub_directional_light_ );
 		}
 
 		// Samplers
@@ -278,6 +280,28 @@ public:
 
 			sampler_ = GetGraphicsDevice().CreateSampler( desc );
 		}
+	}
+
+	~ModelViewerSample() noexcept {
+		auto& device = GetGraphicsDevice();
+
+		device.DestroyBuffer( std::move( floor_vbo_ ) );
+		device.DestroyBuffer( std::move( cube_vbo_ ) );
+		device.DestroyBuffer( std::move( cube_ibo_ ) );
+
+		device.DestroyBuffer( std::move( ub_matrices_ ) );
+		device.DestroyBuffer( std::move( ub_directional_light_ ) );
+
+		device.DestroyVertexArray( std::move( cube_vao_ ) );
+		device.DestroyVertexArray( std::move( floor_vao_ ) );
+
+		device.DestroyTexture2D( std::move( cube_texture_ ) );
+		device.DestroyTexture2D( std::move( floor_texture_diffuse_ ) );
+		device.DestroyTexture2D( std::move( floor_texture_specular_ ) );
+
+		device.DestroySampler( std::move( sampler_ ) );
+
+		device.DestroyProgram( std::move( program_ ) );
 	}
 
 protected:
@@ -299,21 +323,21 @@ protected:
 	void Draw() override {
 		context_->Clear( true, true, 0.1f, 0.1f, 0.1f );
 
+		context_->Reset();
+
 		// Draw floating box
 		{
 			const Matrices matrices( camera_.GetProjectionMatrix(),
 									 camera_.GetViewMatrix(),
 									 cube_model_matrix_, camera_.position_ );
-			ub_matrices_->SetData( &matrices, sizeof( Matrices ) );
-			program_->SetUniformBuffer( 0, ub_matrices_ );
+			ub_matrices_->SetData( &matrices, 0, sizeof( Matrices ) );
+			program_->SetUniformBuffer( 0, *ub_matrices_ );
 
-			context_->SetVertexBuffer( cube_vbo_, cube_vao_ );
-			context_->SetIndexBuffer( cube_ibo_ );
-			context_->SetTexture( 0, cube_texture_ );
-			context_->SetSampler( 0, sampler_ );
-			context_->SetTexture( 1, nullptr );
-			context_->SetSampler( 1, nullptr );
-			context_->SetProgram( program_ );
+			context_->SetVertexBuffer( *cube_vao_, *cube_vbo_ );
+			context_->SetIndexBuffer( *cube_ibo_ );
+			context_->SetTexture( 0, *cube_texture_ );
+			context_->SetSampler( 0, *sampler_ );
+			context_->SetProgram( *program_ );
 			context_->DrawIndexed( cube_ibo_->GetNumElements(), 0, 0 );
 		}
 
@@ -322,15 +346,15 @@ protected:
 			const Matrices matrices( camera_.GetProjectionMatrix(),
 									 camera_.GetViewMatrix(),
 									 floor_model_matrix_, camera_.position_ );
-			ub_matrices_->SetData( &matrices, sizeof( Matrices ) );
-			program_->SetUniformBuffer( 0, ub_matrices_ );
+			ub_matrices_->SetData( &matrices, 0, sizeof( Matrices ) );
+			program_->SetUniformBuffer( 0, *ub_matrices_ );
 
-			context_->SetVertexBuffer( floor_vbo_, floor_vao_ );
-			context_->SetTexture( 0, floor_texture_diffuse_ );
-			context_->SetSampler( 0, sampler_ );
-			context_->SetTexture( 1, floor_texture_specular_ );
-			context_->SetSampler( 1, sampler_ );
-			context_->SetProgram( program_ );
+			context_->SetVertexBuffer( *floor_vao_, *floor_vbo_ );
+			context_->SetTexture( 0, *floor_texture_diffuse_ );
+			context_->SetSampler( 0, *sampler_ );
+			context_->SetTexture( 1, *floor_texture_specular_ );
+			context_->SetSampler( 1, *sampler_ );
+			context_->SetProgram( *program_ );
 			context_->Draw( floor_vbo_->GetNumElements(), 0 );
 		}
 	}
@@ -389,11 +413,11 @@ protected:
 	}
 
 private:
-	SharedRef<Program> program_;
-	SharedRef<Sampler> sampler_;
+	Ref<Program> program_;
+	Ref<Sampler> sampler_;
 
-	SharedRef<Buffer> ub_matrices_;
-	SharedRef<Buffer> ub_directional_light_;
+	Ref<Buffer> ub_matrices_;
+	Ref<Buffer> ub_directional_light_;
 
 	GLint u_diffuse_loc_, u_specular_loc_;
 
@@ -402,14 +426,14 @@ private:
 
 	DebugCamera camera_;
 
-	SharedRef<Buffer> cube_vbo_;
-	SharedRef<VertexArray> cube_vao_;
-	SharedRef<Buffer> cube_ibo_;
-	SharedRef<Texture2D> cube_texture_;
+	Ref<Buffer> cube_vbo_;
+	Ref<VertexArray> cube_vao_;
+	Ref<Buffer> cube_ibo_;
+	Ref<Texture2D> cube_texture_;
 
-	SharedRef<Buffer> floor_vbo_;
-	SharedRef<VertexArray> floor_vao_;
-	SharedRef<Texture2D> floor_texture_diffuse_, floor_texture_specular_;
+	Ref<Buffer> floor_vbo_;
+	Ref<VertexArray> floor_vao_;
+	Ref<Texture2D> floor_texture_diffuse_, floor_texture_specular_;
 };
 
 SAMPLE_MAIN( ModelViewerSample )

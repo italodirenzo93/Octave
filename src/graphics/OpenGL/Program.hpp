@@ -9,30 +9,18 @@
 
 namespace Octave {
 
-class Program {
-public:
-	using UniformBufferArray =
-		std::array<SharedRef<Buffer>, GL_MAX_UNIFORM_BUFFER_BINDINGS>;
+struct Program {
+	GLuint handle_;
 
-	Program( const Shader& vs, const Shader& fs );
-	~Program() noexcept;
-
-	Program() = delete;
-	Program( const Program& ) = delete;
-	Program& operator=( const Program& ) = delete;
-
-	[[nodiscard]] GLuint GetApiResource() const noexcept { return id_; }
+	[[nodiscard]] GLuint GetApiResource() const noexcept { return handle_; }
+	void SetApiResource( GLuint resource ) noexcept { handle_ = resource; }
 
 	Program& SetInt( int location, int value );
 	Program& SetFloat( int location, float value );
 	Program& SetVec3( int location, const glm::vec3& value );
 	Program& SetMat4( int location, const glm::mat4& value );
 
-	Program& SetUniformBuffer( uint32_t binding, SharedRef<Buffer> ubo );
-
-private:
-	GLuint id_ = 0;
-	UniformBufferArray ubos_;
+	Program& SetUniformBuffer( uint32_t binding, const Buffer& ubo );
 };
 
 }  // namespace Octave

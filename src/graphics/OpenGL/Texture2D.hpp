@@ -7,22 +7,17 @@
 
 namespace Octave {
 
-class Texture2D {
-public:
-	Texture2D( const TextureDescription2D& desc );
-	~Texture2D() noexcept;
+struct Texture2D {
+	GLuint handle_;
+	TextureDescription2D desc_;
 
-	[[nodiscard]] GLuint GetApiResource() const noexcept { return id_; }
+	[[nodiscard]] GLuint GetApiResource() const noexcept { return handle_; }
+	void SetApiResource( GLuint resource ) noexcept { handle_ = resource; }
 
 	void SetData( TextureFormat format, int mip_level, int xoffset, int yoffset,
 				  uint32_t width, uint32_t height, const void* data );
-	void GenerateMipmap();
-
-private:
-	GLuint id_;
-	TextureDescription2D desc_;
 };
 
-}
+}  // namespace Octave
 
 #endif

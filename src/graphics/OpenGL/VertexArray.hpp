@@ -9,20 +9,12 @@
 
 namespace Octave {
 
-class VertexArray {
-public:
-	explicit VertexArray( const VertexLayout& layout );
-	~VertexArray() noexcept;
-
-	[[nodiscard]] GLuint GetApiResource() const noexcept { return id_; }
-
-	using Iterator = VertexLayout::iterator;
-	Iterator begin() noexcept { return attrs_.begin(); }
-	Iterator end() noexcept { return attrs_.end(); }
-
-private:
-	GLuint id_ = 0;
+struct VertexArray {
+	GLuint handle_ = 0;
 	VertexLayout attrs_;
+
+	[[nodiscard]] GLuint GetApiResource() const noexcept { return handle_; }
+	void SetApiResource( GLuint resource ) noexcept { handle_ = resource; }
 };
 
 }

@@ -74,7 +74,7 @@ public:
 			BufferDescription desc{};
 			desc.size = sizeof( VertexType ) * vertices.size();
 			desc.stride = sizeof( VertexType );
-			desc.access_flags = ResourceAccess::Read;
+			desc.usage = BufferUsage::Static;
 
 			vbo_ = GetGraphicsDevice().CreateBuffer( desc, vertices.data() );
 		}
@@ -93,9 +93,9 @@ public:
 		{
 			BufferDescription desc{};
 			desc.size = sizeof( VertexConstants );
-			desc.access_flags = ResourceAccess::ReadWrite;
+			desc.usage = BufferUsage::Dynamic;
 
-			ubo_ = GetGraphicsDevice().CreateBuffer( desc );
+			ubo_ = GetGraphicsDevice().CreateBuffer( desc, nullptr );
 
 			const auto [width, height] = GetWindow().GetSize();
 
@@ -110,7 +110,7 @@ public:
 
 			constants.model = glm::identity<glm::mat4>();
 
-			ubo_->SetData( &constants, sizeof( constants ) );
+			ubo_->SetData( &constants, 0, sizeof( constants ) );
 		}
 
 		// Program
@@ -122,26 +122,38 @@ public:
 				ShaderType::FragmentShader, kFragmentShaderSource );
 
 			program_ = GetGraphicsDevice().CreateProgram( *vs, *fs );
-			program_->SetUniformBuffer( 0, ubo_ );
+			program_->SetUniformBuffer( 0, *ubo_ );
+
+			GetGraphicsDevice().DestroyShader( std::move( vs ) );
+			GetGraphicsDevice().DestroyShader( std::move( fs ) );
 		}
+	}
+
+	~SimpleApp() noexcept {
+		auto& device = GetGraphicsDevice();
+
+		device.DestroyBuffer( std::move( vbo_ ) );
+		device.DestroyBuffer( std::move( ubo_ ) );
+		device.DestroyVertexArray( std::move( vao_ ) );
+		device.DestroyProgram( std::move( program_ ) );
 	}
 
 protected:
 	void OnUpdate() override {
 		context_->Clear( true, true, 0, 0, 0 );
 
-		context_->SetVertexBuffer( vbo_, vao_ );
-		context_->SetProgram( program_ );
+		context_->SetVertexBuffer( *vao_, *vbo_ );
+		context_->SetProgram( *program_ );
 
 		context_->Draw( 3, 0 );
 	}
 
 private:
 	Ref<GraphicsContext> context_;
-	SharedRef<Program> program_;
-	SharedRef<Buffer> vbo_;
-	SharedRef<VertexArray> vao_;
-	SharedRef<Buffer> ubo_;
+	Ref<Program> program_;
+	Ref<Buffer> vbo_;
+	Ref<VertexArray> vao_;
+	Ref<Buffer> ubo_;
 };
 
 Ref<Application> Octave::CreateApplication( int argc, char* argv[] ) {
