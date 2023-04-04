@@ -23,17 +23,33 @@ public:
 	[[nodiscard]] std::string TryDequeueError() noexcept;
 
 	[[nodiscard]] Ref<GraphicsContext> CreateContext() noexcept;
-	[[nodiscard]] Ref<Buffer> CreateBuffer( const BufferDescription& desc, const void* initial_data = nullptr );
-	[[nodiscard]] Ref<Fence> CreateFence() noexcept;
-	[[nodiscard]] Ref<VertexArray> CreateVertexArray( const VertexLayout& desc );
-	[[nodiscard]] Ref<Program> CreateProgram( const Shader& vs, const Shader& fs );
-	[[nodiscard]] Ref<Sampler> CreateSampler(
-		const SamplerDescription& desc );
-	[[nodiscard]] Ref<Shader> CreateShader( ShaderType type, const char* source );
+
+	[[nodiscard]] Ref<Buffer> CreateBuffer( const BufferDescription& desc,
+											const void* data );
+	void DestroyBuffer( Ref<Buffer> buffer );
+
+	[[nodiscard]] Ref<VertexArray> CreateVertexArray(
+		const VertexLayout& desc );
+	void DestroyVertexArray( Ref<VertexArray> vertex_array );
+
+	[[nodiscard]] Ref<Program> CreateProgram( const Shader& vs,
+											  const Shader& fs );
+	void DestroyProgram( Ref<Program> program );
+
+	[[nodiscard]] Ref<Sampler> CreateSampler( const SamplerDescription& desc );
+	void DestroySampler( Ref<Sampler> sampler );
+
+	[[nodiscard]] Ref<Shader> CreateShader( ShaderType type,
+											const char* source );
+	void DestroyShader( Ref<Shader> shader );
+
 	[[nodiscard]] Ref<Texture2D> CreateTexture2D(
 		const TextureDescription2D& desc );
+	void DestroyTexture2D( Ref<Texture2D> texture );
+
+	void GenerateMipmap( const Texture2D& texture );
 };
 
-}
+}  // namespace Octave
 
 #endif

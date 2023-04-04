@@ -7,19 +7,12 @@
 
 namespace Octave {
 
-class Sampler {
-public:
-	explicit Sampler( const SamplerDescription& desc );
-	~Sampler() noexcept;
-
-	[[nodiscard]] GLuint GetApiResource() const noexcept { return id_; }
-	[[nodiscard]] SamplerDescription GetDescription() const noexcept {
-		return desc_;
-	}
-
-private:
-	GLuint id_;
+struct Sampler {
+	GLuint handle_;
 	SamplerDescription desc_;
+
+	[[nodiscard]] GLuint GetApiResource() const noexcept { return handle_; }
+	void SetApiResource( GLuint resource ) noexcept { handle_ = resource; }
 };
 
 }

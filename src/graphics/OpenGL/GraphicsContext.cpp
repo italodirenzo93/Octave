@@ -138,20 +138,19 @@ std::array<int, 4> GraphicsContext::GetViewport() const noexcept {
 	return vp;
 }
 
-void GraphicsContext::SetVertexBuffer( SharedRef<Buffer> vbo,
-									   SharedRef<VertexArray> vao ) {
-	glBindVertexArray( vao->GetApiResource() );
+void GraphicsContext::SetVertexBuffer( const VertexArray& vao, const Buffer& vbo ) {
+	glBindVertexArray( vao.GetApiResource() );
 
 	// Define vertex data layout
-	glBindBuffer( GL_ARRAY_BUFFER, vbo->GetApiResource() );
+	glBindBuffer( GL_ARRAY_BUFFER, vbo.GetApiResource() );
 
 	uint32_t offset = 0;
 
-	for ( const auto& attr : *vao ) {
+	for ( const auto& attr : vao.attrs_ ) {
 		glVertexAttribPointer(
 			AttrNameToIndex( attr.name ), static_cast<GLint>( attr.size ),
 			AttrTypeToGLType( attr.type ),
-			static_cast<GLboolean>( attr.normalized ), vbo->GetStride(),
+			static_cast<GLboolean>( attr.normalized ), vbo.GetStride(),
 			reinterpret_cast<const void*>( offset ) );
 		glEnableVertexAttribArray( AttrNameToIndex( attr.name ) );
 
@@ -159,39 +158,21 @@ void GraphicsContext::SetVertexBuffer( SharedRef<Buffer> vbo,
 	}
 }
 
-void GraphicsContext::SetIndexBuffer( SharedRef<Buffer> ibo ) {
-	if ( ibo == nullptr ) {
-		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
-	} else {
-		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo->GetApiResource() );
-	}
+void GraphicsContext::SetIndexBuffer( const Buffer& ibo ) {
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo.GetApiResource() );
 }
 
-void GraphicsContext::SetProgram( SharedRef<Program> program ) {
-	if ( program == nullptr ) {
-		glUseProgram( 0 );
-	} else {
-		glUseProgram( program->GetApiResource() );
-	}
+void GraphicsContext::SetProgram( const Program& program ) {
+	glUseProgram( program.GetApiResource() );
 }
 
-void GraphicsContext::SetSampler( uint32_t unit, SharedRef<Sampler> sampler ) {
-	if ( sampler == nullptr ) {
-		glBindSampler( unit, 0 );
-	} else {
-		glBindSampler( unit, sampler->GetApiResource() );
-	}
+void GraphicsContext::SetSampler( uint32_t unit, const Sampler& sampler ) {
+	glBindSampler( unit, sampler.GetApiResource() );
 }
 
-
-void GraphicsContext::SetTexture( uint32_t unit,
-								  SharedRef<Texture2D> texture ) {
+void GraphicsContext::SetTexture( uint32_t unit, const Texture2D& texture ) {
 	glActiveTexture( GL_TEXTURE0 + unit );
-	if ( texture == nullptr ) {
-		glBindTexture( GL_TEXTURE_2D, 0 );
-	} else {
-		glBindTexture( GL_TEXTURE_2D, texture->GetApiResource() );
-	}
+	glBindTexture( GL_TEXTURE_2D, texture.GetApiResource() );
 }
 
 void GraphicsContext::SetViewport( int x, int y, int width,
@@ -202,30 +183,6 @@ void GraphicsContext::SetViewport( int x, int y, int width,
 	assert( height > 0 );
 
 	glViewport( x, y, width, height );
-}
-
-void GraphicsContext::Signal( SharedRef<Fence> fence ) {
-	assert( fence != nullptr );
-
-	if ( fence->sync_ ) {
-		glDeleteSync( fence->sync_ );
-	}
-
-	fence->sync_ = glFenceSync( GL_SYNC_GPU_COMMANDS_COMPLETE, 0 );
-}
-
-void GraphicsContext::Wait( SharedRef<Fence> fence, uint64_t timeout ) {
-	assert( fence != nullptr );
-
-	if ( fence->sync_ ) {
-		GLenum wait_return = 0;
-		while ( wait_return != GL_ALREADY_SIGNALED &&
-				wait_return != GL_CONDITION_SATISFIED ) {
-			wait_return =
-				glClientWaitSync( fence->sync_, GL_SYNC_FLUSH_COMMANDS_BIT,
-								  timeout == 0 ? GL_TIMEOUT_IGNORED : timeout );
-		}
-	}
 }
 
 }  // namespace Octave

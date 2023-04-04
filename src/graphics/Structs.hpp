@@ -9,22 +9,23 @@ namespace Octave {
 // Buffers
 //////////////////////////////
 
-enum class BufferBinding {
+enum class BufferType {
 	VertexBuffer,
 	IndexBuffer,
 	UniformBuffer
 };
 
-enum class ResourceAccess {
-	Read,
-	ReadWrite
+enum class BufferUsage {
+	Static,
+	Dynamic
 };
 
 struct BufferDescription {
+	const char* name;
 	uint32_t size;
 	uint32_t stride;
-	BufferBinding bind_flags;
-	ResourceAccess access_flags;
+	BufferType type;
+	BufferUsage usage;
 };
 
 //////////////////////////////
@@ -56,14 +57,13 @@ enum class ShaderType {
 // Textures
 //////////////////////////////
 
-enum class TextureFormat { Rgba, Rgb }; 
+enum class TextureFormat { Rgba, Rgb };
 
 struct TextureDescription2D {
 	uint32_t width;
 	uint32_t height;
 	TextureFormat format;
 	uint32_t mip_levels;
-	ResourceAccess access_flags;
 };
 
 enum class TextureWrap { Repeat, Mirror, ClampEdge, ClampBorder };

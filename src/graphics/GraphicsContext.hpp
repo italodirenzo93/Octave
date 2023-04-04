@@ -25,16 +25,12 @@ public:
 
 	[[nodiscard]] std::array<int, 4> GetViewport() const noexcept;
 
-	void SetProgram( SharedRef<Program> program );
-	void SetVertexBuffer( SharedRef<Buffer> vbo,
-									   SharedRef<VertexArray> vao );
-	void SetIndexBuffer( SharedRef<Buffer> ibo );
-	void SetSampler( uint32_t unit, SharedRef<Sampler> sampler );
-	void SetTexture( uint32_t unit, SharedRef<Texture2D> texture );
+	void SetProgram( const Program& program );
+	void SetVertexBuffer( const VertexArray& vao, const Buffer& vbo );
+	void SetIndexBuffer( const Buffer& ibo );
+	void SetSampler( uint32_t unit, const Sampler& sampler );
+	void SetTexture( uint32_t unit, const Texture2D& texture );
 	void SetViewport( int x, int y, int width, int height ) noexcept;
-
-	void Signal( SharedRef<Fence> fence );
-	void Wait( SharedRef<Fence> fence, uint64_t timeout );
 
 private:
 	GraphicsContext();
