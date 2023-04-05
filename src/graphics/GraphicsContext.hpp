@@ -2,7 +2,6 @@
 #define OCTAVE_GRAPHICS_GRAPHICSCONTEXT_HPP
 
 #include "Resources.hpp"
-#include "core/Types.hpp"
 
 namespace Octave {
 

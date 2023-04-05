@@ -17,7 +17,7 @@ public:
 	[[nodiscard]] virtual bool IsKeyDown( const Window& window,
 										  Key key ) const noexcept = 0;
 
-	[[nodiscard]] virtual Ref<Gamepad> GetGamepad(
+	[[nodiscard]] virtual std::unique_ptr<Gamepad> GetGamepad(
 		int player_index ) const noexcept = 0;
 };
 

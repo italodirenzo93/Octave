@@ -27,13 +27,13 @@ protected:
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
 
-	Ref<GraphicsContext> context_;
+	std::unique_ptr<GraphicsContext> context_;
 	StepTimer step_timer_;
 };
 
 #define SAMPLE_MAIN(ClassName) \
-	Ref<Octave::Application> Octave::CreateApplication( int argc, char* argv[] ) { \
-		return MakeRef<ClassName>(); \
+	std::unique_ptr<Octave::Application> Octave::CreateApplication( int argc, char* argv[] ) { \
+		return std::make_unique<ClassName>(); \
 	}
 
 }

@@ -43,7 +43,7 @@ bool InputSystemGLFW::IsKeyDown( const Window& window,
 	return glfwGetKey( glfw_window, MapKey( key ) ) == GLFW_TRUE;
 }
 
-Ref<Gamepad> InputSystemGLFW::GetGamepad(
+std::unique_ptr<Gamepad> InputSystemGLFW::GetGamepad(
 	int player_index ) const noexcept {
 	assert( player_index >= 0 );
 
@@ -57,7 +57,7 @@ Ref<Gamepad> InputSystemGLFW::GetGamepad(
 		return nullptr;
 	}
 
-	return MakeRef<GamepadGLFW>( jid );
+	return std::make_unique<GamepadGLFW>( jid );
 }
 
 }  // namespace Octave::Impl

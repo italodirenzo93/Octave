@@ -26,7 +26,6 @@
 
 // Framework headers
 #include "Exception.hpp"
-#include "core/Types.hpp"
 
 #define NON_COPYABLE_CLASS( className )     \
 	className( const className& ) = delete; \

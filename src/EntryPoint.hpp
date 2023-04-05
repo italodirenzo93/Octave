@@ -4,7 +4,7 @@
 #include "Application.hpp"
 #include "core/Log.hpp"
 
-extern Octave::Ref<Octave::Application> Octave::CreateApplication( int argc, char* argv[] );
+extern std::unique_ptr<Octave::Application> Octave::CreateApplication( int argc, char* argv[] );
 
 int main( int argc, char* argv[] ) {
 	try {

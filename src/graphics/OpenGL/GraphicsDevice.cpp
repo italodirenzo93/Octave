@@ -115,11 +115,11 @@ std::string GraphicsDevice::TryDequeueError() noexcept {
 	}
 }
 
-Ref<GraphicsContext> GraphicsDevice::CreateContext() noexcept {
+std::unique_ptr<GraphicsContext> GraphicsDevice::CreateContext() noexcept {
 	return unique_ptr<GraphicsContext>( new GraphicsContext() );
 }
 
-Ref<Buffer> GraphicsDevice::CreateBuffer( const BufferDescription& desc,
+std::unique_ptr<Buffer> GraphicsDevice::CreateBuffer( const BufferDescription& desc,
 										  const void* data ) {
 	GLenum target = GL_ARRAY_BUFFER;
 	switch ( desc.type ) {
@@ -172,33 +172,33 @@ Ref<Buffer> GraphicsDevice::CreateBuffer( const BufferDescription& desc,
 
 	glBindBuffer( target, 0 );
 
-	auto buffer = MakeRef<Buffer>( desc );
+	auto buffer = std::make_unique<Buffer>( desc );
 	buffer->SetApiResource( handle );
 
 	return buffer;
 }
 
-void GraphicsDevice::DestroyBuffer( Ref<Buffer> buffer ) {
+void GraphicsDevice::DestroyBuffer( std::unique_ptr<Buffer> buffer ) {
 	const GLuint handle = buffer->GetApiResource();
 	glDeleteBuffers( 1, &handle );
 }
 
-Ref<VertexArray> GraphicsDevice::CreateVertexArray( const VertexLayout& desc ) {
+std::unique_ptr<VertexArray> GraphicsDevice::CreateVertexArray( const VertexLayout& desc ) {
 	GLuint handle;
 	glGenVertexArrays( 1, &handle );
 
-	auto vertex_array = MakeRef<VertexArray>( desc );
+	auto vertex_array = std::make_unique<VertexArray>( desc );
 	vertex_array->SetApiResource( handle );
 
 	return vertex_array;
 }
 
-void GraphicsDevice::DestroyVertexArray( Ref<VertexArray> vertex_array ) {
+void GraphicsDevice::DestroyVertexArray( std::unique_ptr<VertexArray> vertex_array ) {
 	const GLuint handle = vertex_array->GetApiResource();
 	glDeleteVertexArrays( 1, &handle );
 }
 
-Ref<Program> GraphicsDevice::CreateProgram( const Shader& vs,
+std::unique_ptr<Program> GraphicsDevice::CreateProgram( const Shader& vs,
 											const Shader& fs ) {
 	const GLuint handle = glCreateProgram();
 
@@ -219,18 +219,18 @@ Ref<Program> GraphicsDevice::CreateProgram( const Shader& vs,
 		throw Exception( msg );
 	}
 
-	auto program = MakeRef<Program>();
+	auto program = std::make_unique<Program>();
 	program->SetApiResource( handle );
 
 	return program;
 }
 
-void GraphicsDevice::DestroyProgram( Ref<Program> program ) {
+void GraphicsDevice::DestroyProgram( std::unique_ptr<Program> program ) {
 	assert( glIsProgram( program->GetApiResource() ) );
 	glDeleteProgram( program->GetApiResource() );
 }
 
-Ref<Sampler> GraphicsDevice::CreateSampler( const SamplerDescription& desc ) {
+std::unique_ptr<Sampler> GraphicsDevice::CreateSampler( const SamplerDescription& desc ) {
 	GLuint handle;
 	glGenSamplers( 1, &handle );
 
@@ -250,19 +250,19 @@ Ref<Sampler> GraphicsDevice::CreateSampler( const SamplerDescription& desc ) {
 	glSamplerParameteri( handle, GL_TEXTURE_WRAP_T,
 						 WrapToGLType( desc.wrap_t ) );
 
-	auto sampler = MakeRef<Sampler>( desc );
+	auto sampler = std::make_unique<Sampler>( desc );
 	sampler->SetApiResource( handle );
 
 	return sampler;
 }
 
-void GraphicsDevice::DestroySampler( Ref<Sampler> sampler ) {
+void GraphicsDevice::DestroySampler( std::unique_ptr<Sampler> sampler ) {
 	const GLuint handle = sampler->GetApiResource();
 	assert( glIsSampler( handle ) );
 	glDeleteSamplers( 1, &handle );
 }
 
-Ref<Shader> GraphicsDevice::CreateShader( ShaderType type,
+std::unique_ptr<Shader> GraphicsDevice::CreateShader( ShaderType type,
 										  const char* source ) {
 	const GLenum shader_type = type == ShaderType::VertexShader
 								   ? GL_VERTEX_SHADER
@@ -281,18 +281,18 @@ Ref<Shader> GraphicsDevice::CreateShader( ShaderType type,
 		throw Exception( msg );
 	}
 
-	auto shader = MakeRef<Shader>( shader_type );
+	auto shader = std::make_unique<Shader>( type );
 	shader->SetApiResource( handle );
 
 	return shader;
 }
 
-void GraphicsDevice::DestroyShader( Ref<Shader> shader ) {
+void GraphicsDevice::DestroyShader( std::unique_ptr<Shader> shader ) {
 	assert( glIsShader( shader->GetApiResource() ) );
 	glDeleteShader( shader->GetApiResource() );
 }
 
-Ref<Texture2D> GraphicsDevice::CreateTexture2D(
+std::unique_ptr<Texture2D> GraphicsDevice::CreateTexture2D(
 	const TextureDescription2D& desc ) {
 	GLuint handle;
 	glGenTextures( 1, &handle );
@@ -336,13 +336,13 @@ Ref<Texture2D> GraphicsDevice::CreateTexture2D(
 
 	glBindTexture( GL_TEXTURE_2D, 0 );
 
-	auto texture = MakeRef<Texture2D>( desc );
+	auto texture = std::make_unique<Texture2D>( desc );
 	texture->SetApiResource( handle );
 
 	return texture;
 }
 
-void GraphicsDevice::DestroyTexture2D( Ref<Texture2D> texture ) {
+void GraphicsDevice::DestroyTexture2D( std::unique_ptr<Texture2D> texture ) {
 	const GLuint handle = texture->GetApiResource();
 	glDeleteTextures( 1, &handle );
 }

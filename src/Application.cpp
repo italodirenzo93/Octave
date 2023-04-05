@@ -11,9 +11,9 @@ Application::Application() : Application( 0, nullptr ) {
 Application::Application( int argc, char* argv[] ) : is_running_( true ) {
 	Log::Init();
 
-	input_ = MakeRef<Impl::InputSystemGLFW>();
-	window_ = MakeRef<Window>( WindowOptions() );
-    graphics_ = MakeRef<GraphicsDevice>( *window_ );
+	input_ = std::make_unique<Impl::InputSystemGLFW>();
+	window_ = std::make_unique<Window>( WindowOptions() );
+    graphics_ = std::make_unique<GraphicsDevice>( *window_ );
 }
 
 Application::~Application() noexcept {
