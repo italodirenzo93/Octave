@@ -12,7 +12,7 @@ This is my first real big pet project. Having dabbled in this type of work frequ
   - Use modern features where it makes sense (_noexcept_, _lambdas_, _raw strings_, etc.)
   - _const_ and _constexpr_ everywhere!
   - Use exceptions only for "exceptional code" (i.e. this complex operation encountered a non-trivial error)
-- Focus on cross-platform (**Windows** and **Linux** initially)
-  - **Graphics** - OpenGL 4.6
+- Focus on cross-platform (**Windows**, **macOS**, and **Linux** initially)
+  - **Graphics** - OpenGL 4.1+
   - **Windowing**/**Input** - GLFW 3.3
   - **Audio** - OpenAL Soft
