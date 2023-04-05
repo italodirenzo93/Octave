@@ -5,10 +5,6 @@ layout( location=1 ) in vec3 aColor;
 layout( location=3 ) in vec3 aNormal;
 layout( location=2 ) in vec2 aTexCoord;
 
-out gl_PerVertex {
-	vec4 gl_Position;
-};
-
 out FragmentData {
 	vec3 vertex_color;
 	vec3 vertex_normal;
