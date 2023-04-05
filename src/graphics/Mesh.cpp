@@ -9,9 +9,9 @@ Mesh::Mesh() noexcept {
 	shininess_ = kDefaultShininess;
 }
 
-Mesh::Mesh( const SharedRef<VertexBuffer>& vbo,
-			const SharedRef<IndexBuffer>& ibo,
-			const std::vector<SharedRef<Texture>>& textures ) noexcept {
+Mesh::Mesh( const std::shared_ptr<VertexBuffer>& vbo,
+			const std::shared_ptr<IndexBuffer>& ibo,
+			const std::vector<std::shared_ptr<Texture>>& textures ) noexcept {
 	vbo_ = vbo;
 	ibo_ = ibo;
 	textures_ = textures;
@@ -60,18 +60,18 @@ void Mesh::Draw( Shader& shader, const GraphicsContext& renderer ) const {
 }
 
 Mesh& Mesh::SetVertexBuffer(
-	const SharedRef<VertexBuffer>& vbo ) noexcept {
+	const std::shared_ptr<VertexBuffer>& vbo ) noexcept {
 	vbo_ = vbo;
 	return *this;
 }
 
-Mesh& Mesh::SetIndexBuffer( const SharedRef<IndexBuffer>& ibo ) noexcept {
+Mesh& Mesh::SetIndexBuffer( const std::shared_ptr<IndexBuffer>& ibo ) noexcept {
 	ibo_ = ibo;
 	return *this;
 }
 
 Mesh& Mesh::SetTextures(
-	const std::vector<SharedRef<Texture>>& textures ) noexcept {
+	const std::vector<std::shared_ptr<Texture>>& textures ) noexcept {
 	textures_ = textures;
 	return *this;
 }

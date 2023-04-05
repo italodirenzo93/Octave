@@ -15,7 +15,7 @@ class Config {
 public:
 	static Config& Instance() noexcept {
 		if ( instance_ == nullptr ) {
-			instance_ = Ref<Config>( new Config() );
+			instance_ = std::unique_ptr<Config>( new Config() );
 		}
 
 		return *instance_;
@@ -41,7 +41,7 @@ public:
 
 private:
 	Config() noexcept;
-	static Ref<Config> instance_;
+	static std::unique_ptr<Config> instance_;
 
 	CSimpleIniA ini_;
 

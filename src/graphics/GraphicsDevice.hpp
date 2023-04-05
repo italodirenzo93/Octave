@@ -3,7 +3,6 @@
 
 #include <string>
 
-#include "core/Types.hpp"
 #include "core/Window.hpp"
 #include "GraphicsContext.hpp"
 #include "Resources.hpp"
@@ -22,30 +21,30 @@ public:
 
 	[[nodiscard]] std::string TryDequeueError() noexcept;
 
-	[[nodiscard]] Ref<GraphicsContext> CreateContext() noexcept;
+	[[nodiscard]] std::unique_ptr<GraphicsContext> CreateContext() noexcept;
 
-	[[nodiscard]] Ref<Buffer> CreateBuffer( const BufferDescription& desc,
+	[[nodiscard]] std::unique_ptr<Buffer> CreateBuffer( const BufferDescription& desc,
 											const void* data );
-	void DestroyBuffer( Ref<Buffer> buffer );
+	void DestroyBuffer( std::unique_ptr<Buffer> buffer );
 
-	[[nodiscard]] Ref<VertexArray> CreateVertexArray(
+	[[nodiscard]] std::unique_ptr<VertexArray> CreateVertexArray(
 		const VertexLayout& desc );
-	void DestroyVertexArray( Ref<VertexArray> vertex_array );
+	void DestroyVertexArray( std::unique_ptr<VertexArray> vertex_array );
 
-	[[nodiscard]] Ref<Program> CreateProgram( const Shader& vs,
+	[[nodiscard]] std::unique_ptr<Program> CreateProgram( const Shader& vs,
 											  const Shader& fs );
-	void DestroyProgram( Ref<Program> program );
+	void DestroyProgram( std::unique_ptr<Program> program );
 
-	[[nodiscard]] Ref<Sampler> CreateSampler( const SamplerDescription& desc );
-	void DestroySampler( Ref<Sampler> sampler );
+	[[nodiscard]] std::unique_ptr<Sampler> CreateSampler( const SamplerDescription& desc );
+	void DestroySampler( std::unique_ptr<Sampler> sampler );
 
-	[[nodiscard]] Ref<Shader> CreateShader( ShaderType type,
+	[[nodiscard]] std::unique_ptr<Shader> CreateShader( ShaderType type,
 											const char* source );
-	void DestroyShader( Ref<Shader> shader );
+	void DestroyShader( std::unique_ptr<Shader> shader );
 
-	[[nodiscard]] Ref<Texture2D> CreateTexture2D(
+	[[nodiscard]] std::unique_ptr<Texture2D> CreateTexture2D(
 		const TextureDescription2D& desc );
-	void DestroyTexture2D( Ref<Texture2D> texture );
+	void DestroyTexture2D( std::unique_ptr<Texture2D> texture );
 
 	void GenerateMipmap( const Texture2D& texture );
 };

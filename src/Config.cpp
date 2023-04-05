@@ -38,7 +38,7 @@ static void SetDefaultConfig( CSimpleIniA& config ) {
 	config.SetBoolValue( "Renderer", "bCullFace", kDefaultIsCullFaceEnabled );
 }
 
-Ref<Config> Config::instance_ = nullptr;
+std::unique_ptr<Config> Config::instance_ = nullptr;
 
 Config::Config() noexcept {
 	SI_Error result;

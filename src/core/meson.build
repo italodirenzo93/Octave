@@ -7,7 +7,6 @@ core_dep = declare_dependency(
 		'Log.cpp',
 		'Log.hpp',
 		'Platform.hpp',
-		'Types.hpp',
 		'Window.cpp',
 		'Window.hpp'
 	],

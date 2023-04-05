@@ -11,7 +11,6 @@
 
 #include "core/Log.hpp"
 #include "core/Platform.hpp"
-#include "core/Types.hpp"
 #include "core/Window.hpp"
 
 #include "input/Gamepad.hpp"

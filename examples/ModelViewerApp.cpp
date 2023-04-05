@@ -15,7 +15,7 @@ using namespace Octave;
 using namespace Octave::Samples;
 
 template <class T>
-Ref<Buffer> CreateStaticBuffer( GraphicsDevice& device,
+unique_ptr<Buffer> CreateStaticBuffer( GraphicsDevice& device,
 								const std::vector<T>& data, size_t stride,
 								BufferType binding ) {
 	BufferDescription desc{};
@@ -27,7 +27,7 @@ Ref<Buffer> CreateStaticBuffer( GraphicsDevice& device,
 	return device.CreateBuffer( desc, data.data() );
 }
 
-inline Ref<Texture2D> CreateTextureFromFile( GraphicsDevice& device,
+inline unique_ptr<Texture2D> CreateTextureFromFile( GraphicsDevice& device,
 											 const std::string& filename ) {
 	stbi_set_flip_vertically_on_load( true );
 
@@ -59,7 +59,7 @@ inline Ref<Texture2D> CreateTextureFromFile( GraphicsDevice& device,
 	return texture;
 }
 
-inline Ref<Shader> LoadShaderFromFile( GraphicsDevice& device, ShaderType type,
+inline unique_ptr<Shader> LoadShaderFromFile( GraphicsDevice& device, ShaderType type,
 									   const std::string& path ) {
 	std::ifstream ifs( path );
 	if ( !ifs.is_open() ) {
@@ -101,40 +101,6 @@ struct DirectionalLight {
 	glm::float32 pad_diffuse;
 	glm::vec3 specular;
 	glm::float32 pad_specular;
-};
-
-template <class T>
-class UniformBuffer {
-public:
-	UniformBuffer() = default;
-
-	explicit UniformBuffer( GraphicsDevice& device ) { Create( device ); }
-
-	void Create( GraphicsDevice& device ) {
-		if ( buffer_ != nullptr ) {
-			return;
-		}
-
-		BufferDescription desc{};
-		desc.size = sizeof( T );
-		desc.stride = 0;
-		desc.usage = BufferUsage::Dynamic;
-		desc.type = BufferType::UniformBuffer;
-
-		buffer_ = device.CreateBuffer( desc, nullptr );
-	}
-
-	[[nodiscard]] SharedRef<Buffer> GetBuffer() const noexcept {
-		return buffer_;
-	}
-
-	void SetData( const T& data ) noexcept {
-		assert( buffer_ != nullptr );
-		buffer_->SetData( &data, sizeof( data ) );
-	}
-
-private:
-	SharedRef<Buffer> buffer_;
 };
 
 class ModelViewerSample final : public SampleApplication {
@@ -410,25 +376,25 @@ protected:
 	}
 
 private:
-	Ref<Program> program_;
-	Ref<Sampler> sampler_;
+	unique_ptr<Program> program_;
+	unique_ptr<Sampler> sampler_;
 
-	Ref<Buffer> ub_matrices_;
-	Ref<Buffer> ub_directional_light_;
+	unique_ptr<Buffer> ub_matrices_;
+	unique_ptr<Buffer> ub_directional_light_;
 
 	glm::mat4 cube_model_matrix_;
 	glm::mat4 floor_model_matrix_;
 
 	DebugCamera camera_;
 
-	Ref<Buffer> cube_vbo_;
-	Ref<VertexArray> cube_vao_;
-	Ref<Buffer> cube_ibo_;
-	Ref<Texture2D> cube_texture_;
+	unique_ptr<Buffer> cube_vbo_;
+	unique_ptr<VertexArray> cube_vao_;
+	unique_ptr<Buffer> cube_ibo_;
+	unique_ptr<Texture2D> cube_texture_;
 
-	Ref<Buffer> floor_vbo_;
-	Ref<VertexArray> floor_vao_;
-	Ref<Texture2D> floor_texture_diffuse_, floor_texture_specular_;
+	unique_ptr<Buffer> floor_vbo_;
+	unique_ptr<VertexArray> floor_vao_;
+	unique_ptr<Texture2D> floor_texture_diffuse_, floor_texture_specular_;
 };
 
 SAMPLE_MAIN( ModelViewerSample )

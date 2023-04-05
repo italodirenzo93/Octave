@@ -11,7 +11,7 @@ namespace Octave {
 template <class TResource>
 class ResourceManager {
 public:
-	using ResourcePtr = SharedRef<TResource>;
+	using ResourcePtr = std::shared_ptr<TResource>;
 
 	virtual ResourceManager& AddResource( const std::string& key,
 										  ResourcePtr ptr );

@@ -149,13 +149,13 @@ protected:
 	}
 
 private:
-	Ref<GraphicsContext> context_;
-	Ref<Program> program_;
-	Ref<Buffer> vbo_;
-	Ref<VertexArray> vao_;
-	Ref<Buffer> ubo_;
+	unique_ptr<GraphicsContext> context_;
+	unique_ptr<Program> program_;
+	unique_ptr<Buffer> vbo_;
+	unique_ptr<VertexArray> vao_;
+	unique_ptr<Buffer> ubo_;
 };
 
-Ref<Application> Octave::CreateApplication( int argc, char* argv[] ) {
-	return MakeRef<SimpleApp>();
+unique_ptr<Application> Octave::CreateApplication( int argc, char* argv[] ) {
+	return make_unique<SimpleApp>();
 }

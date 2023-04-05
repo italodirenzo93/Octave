@@ -36,9 +36,9 @@ protected:
 	LayerStack::LayerPtr PopLayer() noexcept;
 
 private:
-	Ref<Window> window_;
-	Ref<InputSystem> input_;
-	Ref<GraphicsDevice> graphics_;
+	std::unique_ptr<Window> window_;
+	std::unique_ptr<InputSystem> input_;
+	std::unique_ptr<GraphicsDevice> graphics_;
 
     LayerStack layers_;
 
@@ -52,7 +52,7 @@ public:
 };
 
 // To be implemented by the client application
-Ref<Application> CreateApplication( int argc, char* argv[] );
+std::unique_ptr<Application> CreateApplication( int argc, char* argv[] );
 
 }  // namespace Octave
 

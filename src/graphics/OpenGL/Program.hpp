@@ -3,7 +3,6 @@
 
 #include <glm/glm.hpp>
 
-#include "core/Types.hpp"
 #include "Buffer.hpp"
 #include "Shader.hpp"
 
