@@ -7,7 +7,6 @@
 #include "OpenGL/Program.hpp"
 #include "OpenGL/Sampler.hpp"
 #include "OpenGL/Shader.hpp"
-#include "OpenGL/VertexArray.hpp"
 #include "OpenGL/Texture2D.hpp"
 
 #else

@@ -9,12 +9,8 @@ using namespace std;
 using namespace Octave;
 
 static constexpr const char* kVertexShaderSource = R"(#version 410
-layout( location = 0 ) in vec2 position;
+layout( location=0 ) in vec2 position;
 layout( location=1 ) in vec3 color;
-
-out gl_PerVertex {
-	vec4 gl_Position;
-};
 
 out vec3 vertex_color;
 

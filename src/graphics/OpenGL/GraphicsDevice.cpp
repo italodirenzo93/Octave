@@ -127,6 +127,7 @@ std::unique_ptr<GraphicsContext> GraphicsDevice::CreateContext() noexcept {
 
 void GraphicsDevice::DestroyContext(
 	std::unique_ptr<GraphicsContext> context ) {
+	assert( context != nullptr );
 	const GLuint vao = dynamic_cast<OpenGL::GraphicsContext*>( context.get() )
 						   ->GetApiResource();
 	glDeleteVertexArrays( 1, &vao );
@@ -192,25 +193,9 @@ std::unique_ptr<Buffer> GraphicsDevice::CreateBuffer(
 }
 
 void GraphicsDevice::DestroyBuffer( std::unique_ptr<Buffer> buffer ) {
+	assert( buffer != nullptr );
 	const GLuint handle = buffer->GetApiResource();
 	glDeleteBuffers( 1, &handle );
-}
-
-std::unique_ptr<VertexArray> GraphicsDevice::CreateVertexArray(
-	const VertexLayout& desc ) {
-	GLuint handle;
-	glGenVertexArrays( 1, &handle );
-
-	auto vertex_array = std::make_unique<VertexArray>( desc );
-	vertex_array->SetApiResource( handle );
-
-	return vertex_array;
-}
-
-void GraphicsDevice::DestroyVertexArray(
-	std::unique_ptr<VertexArray> vertex_array ) {
-	const GLuint handle = vertex_array->GetApiResource();
-	glDeleteVertexArrays( 1, &handle );
 }
 
 std::unique_ptr<Program> GraphicsDevice::CreateProgram( const Shader& vs,
@@ -241,7 +226,7 @@ std::unique_ptr<Program> GraphicsDevice::CreateProgram( const Shader& vs,
 }
 
 void GraphicsDevice::DestroyProgram( std::unique_ptr<Program> program ) {
-	assert( glIsProgram( program->GetApiResource() ) );
+	assert( program != nullptr );
 	glDeleteProgram( program->GetApiResource() );
 }
 
@@ -273,8 +258,8 @@ std::unique_ptr<Sampler> GraphicsDevice::CreateSampler(
 }
 
 void GraphicsDevice::DestroySampler( std::unique_ptr<Sampler> sampler ) {
+	assert( sampler != nullptr );
 	const GLuint handle = sampler->GetApiResource();
-	assert( glIsSampler( handle ) );
 	glDeleteSamplers( 1, &handle );
 }
 
@@ -304,7 +289,7 @@ std::unique_ptr<Shader> GraphicsDevice::CreateShader( ShaderType type,
 }
 
 void GraphicsDevice::DestroyShader( std::unique_ptr<Shader> shader ) {
-	assert( glIsShader( shader->GetApiResource() ) );
+	assert( shader != nullptr );
 	glDeleteShader( shader->GetApiResource() );
 }
 
@@ -359,6 +344,7 @@ std::unique_ptr<Texture2D> GraphicsDevice::CreateTexture2D(
 }
 
 void GraphicsDevice::DestroyTexture2D( std::unique_ptr<Texture2D> texture ) {
+	assert( texture != nullptr );
 	const GLuint handle = texture->GetApiResource();
 	glDeleteTextures( 1, &handle );
 }

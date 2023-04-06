@@ -28,10 +28,6 @@ public:
 											const void* data );
 	void DestroyBuffer( std::unique_ptr<Buffer> buffer );
 
-	[[nodiscard]] std::unique_ptr<VertexArray> CreateVertexArray(
-		const VertexLayout& desc );
-	void DestroyVertexArray( std::unique_ptr<VertexArray> vertex_array );
-
 	[[nodiscard]] std::unique_ptr<Program> CreateProgram( const Shader& vs,
 											  const Shader& fs );
 	void DestroyProgram( std::unique_ptr<Program> program );
