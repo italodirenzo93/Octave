@@ -29,6 +29,11 @@ protected:
 
 	std::unique_ptr<GraphicsContext> context_;
 	StepTimer step_timer_;
+
+public:
+	virtual ~SampleApplication() noexcept {
+		GetGraphicsDevice().DestroyContext( std::move( context_ ));
+	}
 };
 
 #define SAMPLE_MAIN(ClassName) \

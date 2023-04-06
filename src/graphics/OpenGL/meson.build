@@ -4,6 +4,7 @@ rhi_opengl_dep = declare_dependency(
 		'Buffer.cpp',
 		'Buffer.hpp',
 		'GraphicsContext.cpp',
+		'GraphicsContext.hpp',
 		'GraphicsDevice.cpp',
 		'Program.cpp',
 		'Program.hpp',

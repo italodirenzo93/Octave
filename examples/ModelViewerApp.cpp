@@ -14,10 +14,20 @@ using namespace std;
 using namespace Octave;
 using namespace Octave::Samples;
 
+class Mesh {
+public:
+	std::vector<std::unique_ptr<Buffer>> m_VertexBuffers;
+	std::unique_ptr<Buffer> m_IndexBuffer;
+	uint32_t m_NumVertices;
+	std::vector<uint8_t> m_Vertices;
+	uint32_t m_NumIndices;
+	std::vector<uint16_t> m_Indices;
+};
+
 template <class T>
 unique_ptr<Buffer> CreateStaticBuffer( GraphicsDevice& device,
-								const std::vector<T>& data, size_t stride,
-								BufferType binding ) {
+									   const std::vector<T>& data,
+									   size_t stride, BufferType binding ) {
 	BufferDescription desc{};
 	desc.size = static_cast<uint32_t>( sizeof( T ) * data.size() );
 	desc.stride = static_cast<uint32_t>( stride );
@@ -27,8 +37,8 @@ unique_ptr<Buffer> CreateStaticBuffer( GraphicsDevice& device,
 	return device.CreateBuffer( desc, data.data() );
 }
 
-inline unique_ptr<Texture2D> CreateTextureFromFile( GraphicsDevice& device,
-											 const std::string& filename ) {
+inline unique_ptr<Texture2D> CreateTextureFromFile(
+	GraphicsDevice& device, const std::string& filename ) {
 	stbi_set_flip_vertically_on_load( true );
 
 	int n_channels, width, height;
@@ -59,8 +69,9 @@ inline unique_ptr<Texture2D> CreateTextureFromFile( GraphicsDevice& device,
 	return texture;
 }
 
-inline unique_ptr<Shader> LoadShaderFromFile( GraphicsDevice& device, ShaderType type,
-									   const std::string& path ) {
+inline unique_ptr<Shader> LoadShaderFromFile( GraphicsDevice& device,
+											  ShaderType type,
+											  const std::string& path ) {
 	std::ifstream ifs( path );
 	if ( !ifs.is_open() ) {
 		throw Octave::Exception( "Unable to open file " + path );
@@ -131,15 +142,13 @@ public:
 											sizeof( uint16_t ),
 											BufferType::IndexBuffer );
 
-			const VertexLayout layout{
-				VertexAttribute{ VertexAttributeName::kPosition, 3,
-								 VertexAttributeType::kFloat, false },
-				VertexAttribute{ VertexAttributeName::kNormal, 3,
-								 VertexAttributeType::kFloat, false },
-				VertexAttribute{ VertexAttributeName::kTexCoord, 2,
-								 VertexAttributeType::kFloat, false } };
-
-			cube_vao_ = GetGraphicsDevice().CreateVertexArray( layout );
+			cube_layout_.assign(
+				{ VertexAttribute{ VertexAttributeName::kPosition, 3,
+								   VertexAttributeType::kFloat, false },
+				  VertexAttribute{ VertexAttributeName::kNormal, 3,
+								   VertexAttributeType::kFloat, false },
+				  VertexAttribute{ VertexAttributeName::kTexCoord, 2,
+								   VertexAttributeType::kFloat, false } } );
 
 			cube_texture_ = CreateTextureFromFile(
 				GetGraphicsDevice(), "resources/textures/container.jpg" );
@@ -157,15 +166,13 @@ public:
 									sizeof( GeometricPrimitive::VertexType ),
 									BufferType::VertexBuffer );
 
-			const VertexLayout layout{
-				VertexAttribute{ VertexAttributeName::kPosition, 3,
-								 VertexAttributeType::kFloat, false },
-				VertexAttribute{ VertexAttributeName::kNormal, 3,
-								 VertexAttributeType::kFloat, false },
-				VertexAttribute{ VertexAttributeName::kTexCoord, 2,
-								 VertexAttributeType::kFloat, false } };
-
-			floor_vao_ = GetGraphicsDevice().CreateVertexArray( layout );
+			floor_layout_.assign(
+				{ VertexAttribute{ VertexAttributeName::kPosition, 3,
+								   VertexAttributeType::kFloat, false },
+				  VertexAttribute{ VertexAttributeName::kNormal, 3,
+								   VertexAttributeType::kFloat, false },
+				  VertexAttribute{ VertexAttributeName::kTexCoord, 2,
+								   VertexAttributeType::kFloat, false } } );
 
 			floor_texture_diffuse_ = CreateTextureFromFile(
 				GetGraphicsDevice(), "resources/textures/wood_diffuse.png" );
@@ -207,14 +214,14 @@ public:
 
 		// Shaders
 		{
-			auto vs = LoadShaderFromFile(
-				GetGraphicsDevice(), ShaderType::VertexShader,
-				"resources/shaders/basic.vert" );
+			auto vs = LoadShaderFromFile( GetGraphicsDevice(),
+										  ShaderType::VertexShader,
+										  "resources/shaders/basic.vert" );
 
 
-			auto fs = LoadShaderFromFile(
-				GetGraphicsDevice(), ShaderType::FragmentShader,
-				"resources/shaders/basic.frag" );
+			auto fs = LoadShaderFromFile( GetGraphicsDevice(),
+										  ShaderType::FragmentShader,
+										  "resources/shaders/basic.frag" );
 
 			program_ = GetGraphicsDevice().CreateProgram( *vs, *fs );
 
@@ -224,10 +231,12 @@ public:
 			program_->SetInt( "uMatDiffuse", 0 );
 			program_->SetInt( "uMatSpecular", 1 );
 
-			auto idx = glGetUniformBlockIndex( program_->GetApiResource(), "Matrices" );
+			auto idx = glGetUniformBlockIndex( program_->GetApiResource(),
+											   "Matrices" );
 			glUniformBlockBinding( program_->GetApiResource(), idx, 0 );
 
-			idx = glGetUniformBlockIndex( program_->GetApiResource(), "DirectionalLight" );
+			idx = glGetUniformBlockIndex( program_->GetApiResource(),
+										  "DirectionalLight" );
 			glUniformBlockBinding( program_->GetApiResource(), idx, 1 );
 
 			program_->SetUniformBuffer( 1, *ub_directional_light_ );
@@ -245,7 +254,7 @@ public:
 		}
 	}
 
-	~ModelViewerSample() noexcept {
+	~ModelViewerSample() noexcept override {
 		auto& device = GetGraphicsDevice();
 
 		device.DestroyBuffer( std::move( floor_vbo_ ) );
@@ -254,9 +263,6 @@ public:
 
 		device.DestroyBuffer( std::move( ub_matrices_ ) );
 		device.DestroyBuffer( std::move( ub_directional_light_ ) );
-
-		device.DestroyVertexArray( std::move( cube_vao_ ) );
-		device.DestroyVertexArray( std::move( floor_vao_ ) );
 
 		device.DestroyTexture2D( std::move( cube_texture_ ) );
 		device.DestroyTexture2D( std::move( floor_texture_diffuse_ ) );
@@ -286,21 +292,22 @@ protected:
 	void Draw() override {
 		context_->Clear( true, true, 0.1f, 0.1f, 0.1f );
 
-		context_->Reset();
-
 		// Draw floating box
 		{
+
 			const Matrices matrices( camera_.GetProjectionMatrix(),
 									 camera_.GetViewMatrix(),
 									 cube_model_matrix_, camera_.position_ );
 			ub_matrices_->SetData( &matrices, 0, sizeof( Matrices ) );
 			program_->SetUniformBuffer( 0, *ub_matrices_ );
 
-			context_->SetVertexBuffer( *cube_vao_, *cube_vbo_ );
+			context_->Reset();
+			context_->SetVertexBuffer( *cube_vbo_ );
 			context_->SetIndexBuffer( *cube_ibo_ );
 			context_->SetTexture( 0, *cube_texture_ );
 			context_->SetSampler( 0, *sampler_ );
 			context_->SetProgram( *program_ );
+			context_->SetVertexLayout( cube_layout_ );
 			context_->DrawIndexed( cube_ibo_->GetNumElements(), 0, 0 );
 		}
 
@@ -312,12 +319,14 @@ protected:
 			ub_matrices_->SetData( &matrices, 0, sizeof( Matrices ) );
 			program_->SetUniformBuffer( 0, *ub_matrices_ );
 
-			context_->SetVertexBuffer( *floor_vao_, *floor_vbo_ );
+			context_->Reset();
+			context_->SetVertexBuffer( *floor_vbo_ );
 			context_->SetTexture( 0, *floor_texture_diffuse_ );
 			context_->SetSampler( 0, *sampler_ );
 			context_->SetTexture( 1, *floor_texture_specular_ );
 			context_->SetSampler( 1, *sampler_ );
 			context_->SetProgram( *program_ );
+			context_->SetVertexLayout( floor_layout_ );
 			context_->Draw( floor_vbo_->GetNumElements(), 0 );
 		}
 	}
@@ -387,13 +396,13 @@ private:
 
 	DebugCamera camera_;
 
+	VertexLayout cube_layout_;
 	unique_ptr<Buffer> cube_vbo_;
-	unique_ptr<VertexArray> cube_vao_;
 	unique_ptr<Buffer> cube_ibo_;
 	unique_ptr<Texture2D> cube_texture_;
 
+	VertexLayout floor_layout_;
 	unique_ptr<Buffer> floor_vbo_;
-	unique_ptr<VertexArray> floor_vao_;
 	unique_ptr<Texture2D> floor_texture_diffuse_, floor_texture_specular_;
 };
 

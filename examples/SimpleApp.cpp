@@ -79,15 +79,11 @@ public:
 			vbo_ = GetGraphicsDevice().CreateBuffer( desc, vertices.data() );
 		}
 
-		// Vertex Array
-		{
-			const VertexLayout layout{ { VertexAttributeName::kPosition, 2,
-										 VertexAttributeType::kFloat, false },
-									   { VertexAttributeName::kColor, 3,
-										 VertexAttributeType::kFloat, false } };
-
-			vao_ = GetGraphicsDevice().CreateVertexArray( layout );
-		}
+		// Vertex layout
+		vertex_layout_.assign( { { VertexAttributeName::kPosition, 2,
+								   VertexAttributeType::kFloat, false },
+								 { VertexAttributeName::kColor, 3,
+								   VertexAttributeType::kFloat, false } } );
 
 		// Uniform buffer
 		{
@@ -134,15 +130,17 @@ public:
 
 		device.DestroyBuffer( std::move( vbo_ ) );
 		device.DestroyBuffer( std::move( ubo_ ) );
-		device.DestroyVertexArray( std::move( vao_ ) );
 		device.DestroyProgram( std::move( program_ ) );
+		device.DestroyContext( std::move( context_ ) );
 	}
 
 protected:
 	void OnUpdate() override {
 		context_->Clear( true, true, 0, 0, 0 );
 
-		context_->SetVertexBuffer( *vao_, *vbo_ );
+		context_->Reset();
+		context_->SetVertexBuffer( *vbo_ );
+		context_->SetVertexLayout( vertex_layout_ );
 		context_->SetProgram( *program_ );
 
 		context_->Draw( 3, 0 );
@@ -151,8 +149,8 @@ protected:
 private:
 	unique_ptr<GraphicsContext> context_;
 	unique_ptr<Program> program_;
+	VertexLayout vertex_layout_;
 	unique_ptr<Buffer> vbo_;
-	unique_ptr<VertexArray> vao_;
 	unique_ptr<Buffer> ubo_;
 };
 

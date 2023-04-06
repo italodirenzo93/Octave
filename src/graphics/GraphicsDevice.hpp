@@ -22,6 +22,7 @@ public:
 	[[nodiscard]] std::string TryDequeueError() noexcept;
 
 	[[nodiscard]] std::unique_ptr<GraphicsContext> CreateContext() noexcept;
+	void DestroyContext( std::unique_ptr<GraphicsContext> context );
 
 	[[nodiscard]] std::unique_ptr<Buffer> CreateBuffer( const BufferDescription& desc,
 											const void* data );

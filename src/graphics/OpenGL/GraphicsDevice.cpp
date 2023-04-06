@@ -3,7 +3,7 @@
 
 #include "core/Log.hpp"
 #include "Config.hpp"
-#include "graphics/GraphicsContext.hpp"
+#include "GraphicsContext.hpp"
 #include "core/glfw/GLFWError.hpp"
 #include <GLFW/glfw3.h>
 
@@ -116,11 +116,24 @@ std::string GraphicsDevice::TryDequeueError() noexcept {
 }
 
 std::unique_ptr<GraphicsContext> GraphicsDevice::CreateContext() noexcept {
-	return unique_ptr<GraphicsContext>( new GraphicsContext() );
+	GLuint vao;
+	glGenVertexArrays( 1, &vao );
+
+	auto context = std::make_unique<OpenGL::GraphicsContext>();
+	context->SetApiResource( vao );
+
+	return context;
 }
 
-std::unique_ptr<Buffer> GraphicsDevice::CreateBuffer( const BufferDescription& desc,
-										  const void* data ) {
+void GraphicsDevice::DestroyContext(
+	std::unique_ptr<GraphicsContext> context ) {
+	const GLuint vao = dynamic_cast<OpenGL::GraphicsContext*>( context.get() )
+						   ->GetApiResource();
+	glDeleteVertexArrays( 1, &vao );
+}
+
+std::unique_ptr<Buffer> GraphicsDevice::CreateBuffer(
+	const BufferDescription& desc, const void* data ) {
 	GLenum target = GL_ARRAY_BUFFER;
 	switch ( desc.type ) {
 		default:
@@ -183,7 +196,8 @@ void GraphicsDevice::DestroyBuffer( std::unique_ptr<Buffer> buffer ) {
 	glDeleteBuffers( 1, &handle );
 }
 
-std::unique_ptr<VertexArray> GraphicsDevice::CreateVertexArray( const VertexLayout& desc ) {
+std::unique_ptr<VertexArray> GraphicsDevice::CreateVertexArray(
+	const VertexLayout& desc ) {
 	GLuint handle;
 	glGenVertexArrays( 1, &handle );
 
@@ -193,13 +207,14 @@ std::unique_ptr<VertexArray> GraphicsDevice::CreateVertexArray( const VertexLayo
 	return vertex_array;
 }
 
-void GraphicsDevice::DestroyVertexArray( std::unique_ptr<VertexArray> vertex_array ) {
+void GraphicsDevice::DestroyVertexArray(
+	std::unique_ptr<VertexArray> vertex_array ) {
 	const GLuint handle = vertex_array->GetApiResource();
 	glDeleteVertexArrays( 1, &handle );
 }
 
 std::unique_ptr<Program> GraphicsDevice::CreateProgram( const Shader& vs,
-											const Shader& fs ) {
+														const Shader& fs ) {
 	const GLuint handle = glCreateProgram();
 
 	glAttachShader( handle, vs.GetApiResource() );
@@ -230,7 +245,8 @@ void GraphicsDevice::DestroyProgram( std::unique_ptr<Program> program ) {
 	glDeleteProgram( program->GetApiResource() );
 }
 
-std::unique_ptr<Sampler> GraphicsDevice::CreateSampler( const SamplerDescription& desc ) {
+std::unique_ptr<Sampler> GraphicsDevice::CreateSampler(
+	const SamplerDescription& desc ) {
 	GLuint handle;
 	glGenSamplers( 1, &handle );
 
@@ -263,7 +279,7 @@ void GraphicsDevice::DestroySampler( std::unique_ptr<Sampler> sampler ) {
 }
 
 std::unique_ptr<Shader> GraphicsDevice::CreateShader( ShaderType type,
-										  const char* source ) {
+													  const char* source ) {
 	const GLenum shader_type = type == ShaderType::VertexShader
 								   ? GL_VERTEX_SHADER
 								   : GL_FRAGMENT_SHADER;
