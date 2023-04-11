@@ -2,6 +2,7 @@
 #define OCTAVE_CORE_WINDOW_HPP
 
 #include "core/Callback.hpp"
+#include <string>
 
 namespace Octave {
 
@@ -21,31 +22,25 @@ struct WindowOptions {
 
 class Window {
 public:
-	explicit Window( const WindowOptions& options );
-	~Window() noexcept;
+	explicit Window( const WindowOptions& options ) {};
+	virtual ~Window() noexcept = default;
 
-	[[nodiscard]] void* GetNativeWindowHandle() const noexcept {
-		return handle_;
-	}
-	[[nodiscard]] std::pair<int, int> GetSize() const noexcept;
-	[[nodiscard]] bool IsOpen() const noexcept;
+	[[nodiscard]] virtual void* GetNativeHandle() const noexcept = 0;
+	[[nodiscard]] virtual std::pair<int, int> GetSize() const noexcept = 0;
+	[[nodiscard]] virtual bool IsOpen() const noexcept = 0;
 
-	Window& SetTitle( const std::string& title ) noexcept;
-	Window& SetSyncInterval( int interval ) noexcept;
+	virtual Window& SetTitle( const std::string& title ) noexcept = 0;
+	// Window& SetSyncInterval( int interval ) noexcept;
 
 	// Actions
 	void Close() const noexcept;
 	void PollEvents() noexcept;
-	void SwapBuffers() noexcept;
+	// void SwapBuffers() noexcept;
 
 	// Callbacks
 	Callback<void, int, int> OnSizeChanged;
 	Callback<void> OnClose;
 
-private:
-	void* handle_ = nullptr;
-
-public:
 	Window( const Window& ) = delete;
 	Window& operator=( const Window& ) = delete;
 };

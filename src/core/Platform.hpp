@@ -5,10 +5,13 @@
 
 namespace Octave {
 
-enum class PlatformName { Windows, Mac, Linux };
+enum class PlatformName { Unknown, Windows, Mac, Linux };
 
 class Platform {
 public:
+	static bool Init();
+	static void Quit();
+
 	static PlatformName GetName() noexcept;
 
 	static double GetElapsedTime() noexcept;

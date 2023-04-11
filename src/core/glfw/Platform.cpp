@@ -1,6 +1,7 @@
 #include "core/Platform.hpp"
 
 #include <GLFW/glfw3.h>
+#include "Platform.hpp"
 
 namespace Octave {
 

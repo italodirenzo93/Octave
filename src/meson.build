@@ -1,7 +1,7 @@
 subdir('core')
 subdir('graphics')
 
-glfw3_dep = dependency('glfw3')
+sdl2_dep = dependency('sdl2')
 glm_dep = dependency('glm')
 glad_dep = dependency('glad', fallback: ['glad', 'glad_dep'])
 simpleini_dep = dependency('simpleini', fallback: ['simpleini', 'simpleini_dep'])
@@ -52,7 +52,7 @@ octave_lib = static_library(
 		graphics_dep,
 
 		# Third-party
-		glfw3_dep,
+		sdl2_dep,
 		glm_dep,
 		glad_dep,
 		simpleini_dep,
@@ -67,7 +67,7 @@ octave_dep = declare_dependency(
 	include_directories: include_directories(''),
 	dependencies: [
 		# Third-party
-		glfw3_dep,
+		sdl2_dep,
 		glm_dep,
 		glad_dep,
 		simpleini_dep,
