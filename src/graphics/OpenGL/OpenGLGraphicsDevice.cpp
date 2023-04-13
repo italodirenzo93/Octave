@@ -1,11 +1,11 @@
 #include "pch/pch.hpp"
-#include "graphics/GraphicsDevice.hpp"
+#include "OpenGLGraphicsDevice.hpp"
 
 #include "core/Log.hpp"
 #include "Config.hpp"
-#include "GraphicsContext.hpp"
+#include "OpenGLGraphicsContext.hpp"
 #include "core/glfw/GLFWError.hpp"
-#include <GLFW/glfw3.h>
+#include "core/glfw/GLFWWindow.hpp"
 
 using namespace std;
 
@@ -48,21 +48,8 @@ static GLuint FilterToGLType( TextureFilter filter ) noexcept {
 	}
 }
 
-GraphicsDevice::GraphicsDevice( const Window& window ) {
-	const auto p_window =
-		static_cast<GLFWwindow*>( window.GetNativeWindowHandle() );
-
-	if ( !p_window ) {
-		throw Exception( "Cannot accept a null window pointer" );
-	}
-
-	// Validate GLFW handle
-	{
-		const auto client = glfwGetWindowAttrib( p_window, GLFW_CLIENT_API );
-		if ( client == GLFW_PLATFORM_ERROR || client == GLFW_NOT_INITIALIZED ) {
-			throw GLFWError();
-		}
-	}
+OpenGLGraphicsDevice::OpenGLGraphicsDevice( const Window& window ) {
+	m_Window = dynamic_cast<const GLFWWindow&>( window ).GetGlfwWindowPointer();
 
 	// Initialize Open GL extension loader
 	if ( !gladLoadGLLoader(
@@ -86,11 +73,7 @@ GraphicsDevice::GraphicsDevice( const Window& window ) {
 	}
 }
 
-GraphicsDevice::~GraphicsDevice() noexcept {
-	Log::GetCoreLogger()->trace( "Deleting OpenGL rendering context" );
-}
-
-std::string GraphicsDevice::TryDequeueError() noexcept {
+std::string OpenGLGraphicsDevice::TryDequeueError() {
 	const GLenum error = glGetError();
 
 	switch ( error ) {
@@ -115,25 +98,25 @@ std::string GraphicsDevice::TryDequeueError() noexcept {
 	}
 }
 
-std::unique_ptr<GraphicsContext> GraphicsDevice::CreateContext() noexcept {
+std::unique_ptr<GraphicsContext> OpenGLGraphicsDevice::CreateContext() {
 	GLuint vao;
 	glGenVertexArrays( 1, &vao );
 
-	auto context = std::make_unique<OpenGL::GraphicsContext>();
+	auto context = std::make_unique<OpenGLGraphicsContext>();
 	context->SetApiResource( vao );
 
 	return context;
 }
 
-void GraphicsDevice::DestroyContext(
+void OpenGLGraphicsDevice::DestroyContext(
 	std::unique_ptr<GraphicsContext> context ) {
 	assert( context != nullptr );
-	const GLuint vao = dynamic_cast<OpenGL::GraphicsContext*>( context.get() )
+	const GLuint vao = dynamic_cast<OpenGLGraphicsContext*>( context.get() )
 						   ->GetApiResource();
 	glDeleteVertexArrays( 1, &vao );
 }
 
-std::unique_ptr<Buffer> GraphicsDevice::CreateBuffer(
+std::unique_ptr<Buffer> OpenGLGraphicsDevice::CreateBuffer(
 	const BufferDescription& desc, const void* data ) {
 	GLenum target = GL_ARRAY_BUFFER;
 	switch ( desc.type ) {
@@ -192,13 +175,13 @@ std::unique_ptr<Buffer> GraphicsDevice::CreateBuffer(
 	return buffer;
 }
 
-void GraphicsDevice::DestroyBuffer( std::unique_ptr<Buffer> buffer ) {
+void OpenGLGraphicsDevice::DestroyBuffer( std::unique_ptr<Buffer> buffer ) {
 	assert( buffer != nullptr );
 	const GLuint handle = buffer->GetApiResource();
 	glDeleteBuffers( 1, &handle );
 }
 
-std::unique_ptr<Program> GraphicsDevice::CreateProgram( const Shader& vs,
+std::unique_ptr<Program> OpenGLGraphicsDevice::CreateProgram( const Shader& vs,
 														const Shader& fs ) {
 	const GLuint handle = glCreateProgram();
 
@@ -225,12 +208,12 @@ std::unique_ptr<Program> GraphicsDevice::CreateProgram( const Shader& vs,
 	return program;
 }
 
-void GraphicsDevice::DestroyProgram( std::unique_ptr<Program> program ) {
+void OpenGLGraphicsDevice::DestroyProgram( std::unique_ptr<Program> program ) {
 	assert( program != nullptr );
 	glDeleteProgram( program->GetApiResource() );
 }
 
-std::unique_ptr<Sampler> GraphicsDevice::CreateSampler(
+std::unique_ptr<Sampler> OpenGLGraphicsDevice::CreateSampler(
 	const SamplerDescription& desc ) {
 	GLuint handle;
 	glGenSamplers( 1, &handle );
@@ -257,13 +240,13 @@ std::unique_ptr<Sampler> GraphicsDevice::CreateSampler(
 	return sampler;
 }
 
-void GraphicsDevice::DestroySampler( std::unique_ptr<Sampler> sampler ) {
+void OpenGLGraphicsDevice::DestroySampler( std::unique_ptr<Sampler> sampler ) {
 	assert( sampler != nullptr );
 	const GLuint handle = sampler->GetApiResource();
 	glDeleteSamplers( 1, &handle );
 }
 
-std::unique_ptr<Shader> GraphicsDevice::CreateShader( ShaderType type,
+std::unique_ptr<Shader> OpenGLGraphicsDevice::CreateShader( ShaderType type,
 													  const char* source ) {
 	const GLenum shader_type = type == ShaderType::VertexShader
 								   ? GL_VERTEX_SHADER
@@ -288,12 +271,12 @@ std::unique_ptr<Shader> GraphicsDevice::CreateShader( ShaderType type,
 	return shader;
 }
 
-void GraphicsDevice::DestroyShader( std::unique_ptr<Shader> shader ) {
+void OpenGLGraphicsDevice::DestroyShader( std::unique_ptr<Shader> shader ) {
 	assert( shader != nullptr );
 	glDeleteShader( shader->GetApiResource() );
 }
 
-std::unique_ptr<Texture2D> GraphicsDevice::CreateTexture2D(
+std::unique_ptr<Texture2D> OpenGLGraphicsDevice::CreateTexture2D(
 	const TextureDescription2D& desc ) {
 	GLuint handle;
 	glGenTextures( 1, &handle );
@@ -343,17 +326,21 @@ std::unique_ptr<Texture2D> GraphicsDevice::CreateTexture2D(
 	return texture;
 }
 
-void GraphicsDevice::DestroyTexture2D( std::unique_ptr<Texture2D> texture ) {
+void OpenGLGraphicsDevice::DestroyTexture2D( std::unique_ptr<Texture2D> texture ) {
 	assert( texture != nullptr );
 	const GLuint handle = texture->GetApiResource();
 	glDeleteTextures( 1, &handle );
 }
 
-void GraphicsDevice::GenerateMipmap( const Texture2D& texture ) {
+void OpenGLGraphicsDevice::GenerateMipmap( const Texture2D& texture ) {
 	assert( glIsTexture( texture.GetApiResource() ) );
 	glBindTexture( GL_TEXTURE_2D, texture.GetApiResource() );
 	glGenerateMipmap( GL_TEXTURE_2D );
 	glBindTexture( GL_TEXTURE_2D, 0 );
+}
+
+void OpenGLGraphicsDevice::SwapBuffers() {
+	glfwSwapBuffers( m_Window );
 }
 
 static void APIENTRY DebugCallback( GLenum source, GLenum type, unsigned int id,

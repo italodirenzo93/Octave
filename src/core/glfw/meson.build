@@ -3,7 +3,8 @@ platform_glfw_dep = declare_dependency(
 	sources: [
 		'GLFWError.cpp',
 		'GLFWError.hpp',
-		'Platform.cpp',
-		'Window.cpp'
+		'GLFWWindow.cpp',
+		'GLFWWindow.hpp',
+		'Platform.cpp'
 	]
 )

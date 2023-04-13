@@ -2,6 +2,7 @@
 
 #include "core/Log.hpp"
 #include "input/glfw/InputSystemGLFW.hpp"
+#include "graphics/OpenGL/OpenGLGraphicsDevice.hpp"
 
 namespace Octave {
 
@@ -10,10 +11,13 @@ Application::Application() : Application( 0, nullptr ) {
 
 Application::Application( int argc, char* argv[] ) : is_running_( true ) {
 	Log::Init();
+	if ( !Platform::Init() ) {
+		throw Exception( "Unable to initialize platform" );
+	}
 
 	input_ = std::make_unique<Impl::InputSystemGLFW>();
-	window_ = std::make_unique<Window>( WindowOptions() );
-    graphics_ = std::make_unique<GraphicsDevice>( *window_ );
+	window_ = Platform::CreateWindow( WindowOptions() );
+    graphics_ = std::make_unique<OpenGLGraphicsDevice>( *window_ );
 }
 
 Application::~Application() noexcept {
@@ -21,6 +25,9 @@ Application::~Application() noexcept {
 	while ( !layers_.IsEmpty() ) {
 		PopLayer();
 	}
+
+	Platform::DestroyWindow( std::move( window_ ) );
+	Platform::Quit();
 }
 
 
@@ -35,7 +42,7 @@ void Application::Run() {
 			layer->OnUpdate();
 		}
 
-		window_->SwapBuffers();
+		graphics_->SwapBuffers();
 	}
 	OnExit();
 }

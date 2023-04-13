@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 
 #include "GamepadGLFW.hpp"
+#include "core/glfw/GLFWWindow.hpp"
 
 namespace Octave::Impl {
 
@@ -39,7 +40,7 @@ static int MapKey( Key key ) {
 
 bool InputSystemGLFW::IsKeyDown( const Window& window,
 								 Key key ) const noexcept {
-	auto glfw_window = static_cast<GLFWwindow*>( window.GetNativeWindowHandle() );
+	auto glfw_window = dynamic_cast<const GLFWWindow&>( window ).GetGlfwWindowPointer();
 	return glfwGetKey( glfw_window, MapKey( key ) ) == GLFW_TRUE;
 }
 

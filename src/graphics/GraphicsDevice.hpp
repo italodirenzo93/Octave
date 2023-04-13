@@ -3,7 +3,6 @@
 
 #include <string>
 
-#include "core/Window.hpp"
 #include "GraphicsContext.hpp"
 #include "Resources.hpp"
 #include "Structs.hpp"
@@ -12,38 +11,39 @@ namespace Octave {
 
 class GraphicsDevice {
 public:
-	explicit GraphicsDevice( const Window& window );
-	~GraphicsDevice() noexcept;
+	GraphicsDevice() = default;
+	virtual ~GraphicsDevice() noexcept = default;
 
-	GraphicsDevice() = delete;
 	GraphicsDevice( const GraphicsDevice& ) = delete;
 	GraphicsDevice& operator=( const GraphicsDevice& ) = delete;
 
-	[[nodiscard]] std::string TryDequeueError() noexcept;
+	[[nodiscard]] virtual std::string TryDequeueError() = 0;
 
-	[[nodiscard]] std::unique_ptr<GraphicsContext> CreateContext() noexcept;
-	void DestroyContext( std::unique_ptr<GraphicsContext> context );
+	[[nodiscard]] virtual std::unique_ptr<GraphicsContext> CreateContext() = 0;
+	virtual void DestroyContext( std::unique_ptr<GraphicsContext> context ) = 0;
 
-	[[nodiscard]] std::unique_ptr<Buffer> CreateBuffer( const BufferDescription& desc,
-											const void* data );
-	void DestroyBuffer( std::unique_ptr<Buffer> buffer );
+	[[nodiscard]] virtual std::unique_ptr<Buffer> CreateBuffer(
+		const BufferDescription& desc, const void* data ) = 0;
+	virtual void DestroyBuffer( std::unique_ptr<Buffer> buffer ) = 0;
 
-	[[nodiscard]] std::unique_ptr<Program> CreateProgram( const Shader& vs,
-											  const Shader& fs );
-	void DestroyProgram( std::unique_ptr<Program> program );
+	[[nodiscard]] virtual std::unique_ptr<Program> CreateProgram(
+		const Shader& vs, const Shader& fs ) = 0;
+	virtual void DestroyProgram( std::unique_ptr<Program> program ) = 0;
 
-	[[nodiscard]] std::unique_ptr<Sampler> CreateSampler( const SamplerDescription& desc );
-	void DestroySampler( std::unique_ptr<Sampler> sampler );
+	[[nodiscard]] virtual std::unique_ptr<Sampler> CreateSampler(
+		const SamplerDescription& desc ) = 0;
+	virtual void DestroySampler( std::unique_ptr<Sampler> sampler ) = 0;
 
-	[[nodiscard]] std::unique_ptr<Shader> CreateShader( ShaderType type,
-											const char* source );
-	void DestroyShader( std::unique_ptr<Shader> shader );
+	[[nodiscard]] virtual std::unique_ptr<Shader> CreateShader(
+		ShaderType type, const char* source ) = 0;
+	virtual void DestroyShader( std::unique_ptr<Shader> shader ) = 0;
 
-	[[nodiscard]] std::unique_ptr<Texture2D> CreateTexture2D(
-		const TextureDescription2D& desc );
-	void DestroyTexture2D( std::unique_ptr<Texture2D> texture );
+	[[nodiscard]] virtual std::unique_ptr<Texture2D> CreateTexture2D(
+		const TextureDescription2D& desc ) = 0;
+	virtual void DestroyTexture2D( std::unique_ptr<Texture2D> texture ) = 0;
 
-	void GenerateMipmap( const Texture2D& texture );
+	virtual void GenerateMipmap( const Texture2D& texture ) = 0;
+	virtual void SwapBuffers() = 0;
 };
 
 }  // namespace Octave

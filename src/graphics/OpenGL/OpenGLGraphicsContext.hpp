@@ -1,13 +1,16 @@
-#ifndef OCTAVE_GRAPHICS_OPENGL_GRAPHICSCONTEXT_HPP
-#define OCTAVE_GRAPHICS_OPENGL_GRAPHICSCONTEXT_HPP
+#ifndef OCTAVE_GRAPHICS_OPENGL_OPENGLGRAPHICSCONTEXT_HPP
+#define OCTAVE_GRAPHICS_OPENGL_OPENGLGRAPHICSCONTEXT_HPP
 
+#include "pch/pch.hpp"
 #include "graphics/GraphicsContext.hpp"
 
-namespace Octave::OpenGL {
+#include <glad/glad.h>
 
-class GraphicsContext final : public Octave::GraphicsContext {
+namespace Octave {
+
+class OpenGLGraphicsContext final : public GraphicsContext {
 public:
-	GraphicsContext() noexcept;
+	OpenGLGraphicsContext() noexcept;
 
 	[[nodiscard]] GLuint GetApiResource() const noexcept { return m_Vao; }
 	void SetApiResource( GLuint resource ) noexcept { m_Vao = resource; }

@@ -1,11 +1,11 @@
 #include "pch/pch.hpp"
-#include "GraphicsContext.hpp"
+#include "OpenGLGraphicsContext.hpp"
 
 #include <glad/glad.h>
 
 using namespace std;
 
-namespace Octave::OpenGL {
+namespace Octave {
 
 static int AttrNameToIndex( VertexAttributeName name ) noexcept {
 	switch ( name ) {
@@ -51,7 +51,7 @@ static GLuint AttrTypeSize( VertexAttributeType type ) noexcept {
 	}
 }
 
-GraphicsContext::GraphicsContext() noexcept : m_Vao( 0 ) {
+OpenGLGraphicsContext::OpenGLGraphicsContext() noexcept : m_Vao( 0 ) {
 	// Enable depth by default
 	glEnable( GL_DEPTH_TEST );
 	glDepthFunc( GL_LEQUAL );
@@ -71,7 +71,7 @@ GraphicsContext::GraphicsContext() noexcept : m_Vao( 0 ) {
 	Reset();
 }
 
-void GraphicsContext::Reset() noexcept {
+void OpenGLGraphicsContext::Reset() noexcept {
 	m_Vbo = 0;
 	m_Ibo = 0;
 	m_Program = 0;
@@ -81,7 +81,7 @@ void GraphicsContext::Reset() noexcept {
 	std::fill( m_Textures.begin(), m_Textures.end(), 0 );
 }
 
-void GraphicsContext::Clear( bool color, bool depth, float r, float g, float b,
+void OpenGLGraphicsContext::Clear( bool color, bool depth, float r, float g, float b,
 							 float a ) noexcept {
 	int clear_flags = 0;
 
@@ -98,13 +98,13 @@ void GraphicsContext::Clear( bool color, bool depth, float r, float g, float b,
 	glClear( clear_flags );
 }
 
-void GraphicsContext::Draw( size_t vertex_count, size_t offset ) noexcept {
+void OpenGLGraphicsContext::Draw( size_t vertex_count, size_t offset ) noexcept {
 	PrepareToDraw();
 	glDrawArrays( GL_TRIANGLES, static_cast<GLint>( offset ),
 				  static_cast<GLsizei>( vertex_count ) );
 }
 
-void GraphicsContext::DrawIndexed( size_t index_count, size_t offset,
+void OpenGLGraphicsContext::DrawIndexed( size_t index_count, size_t offset,
 								   size_t base_vertex ) noexcept {
 	PrepareToDraw();
 	glDrawRangeElementsBaseVertex(
@@ -113,13 +113,13 @@ void GraphicsContext::DrawIndexed( size_t index_count, size_t offset,
 		static_cast<GLint>( base_vertex ) );
 }
 
-std::array<int, 4> GraphicsContext::GetViewport() const noexcept {
+std::array<int, 4> OpenGLGraphicsContext::GetViewport() const noexcept {
 	std::array<int, 4> vp;
 	glGetIntegerv( GL_VIEWPORT, vp.data() );
 	return vp;
 }
 
-void GraphicsContext::SetVertexBuffer( const Buffer& vbo ) {
+void OpenGLGraphicsContext::SetVertexBuffer( const Buffer& vbo ) {
 	const GLuint resource = vbo.GetApiResource();
 	if ( resource != 0 ) {
 		assert( glIsBuffer( resource ) );
@@ -129,7 +129,7 @@ void GraphicsContext::SetVertexBuffer( const Buffer& vbo ) {
 	m_VertexStride = vbo.GetStride();
 }
 
-void GraphicsContext::SetIndexBuffer( const Buffer& ibo ) {
+void OpenGLGraphicsContext::SetIndexBuffer( const Buffer& ibo ) {
 	const GLuint resource = ibo.GetApiResource();
 	if ( resource != 0 ) {
 		assert( glIsBuffer( resource ) );
@@ -138,7 +138,7 @@ void GraphicsContext::SetIndexBuffer( const Buffer& ibo ) {
 	m_Ibo = resource;
 }
 
-void GraphicsContext::SetProgram( const Program& program ) {
+void OpenGLGraphicsContext::SetProgram( const Program& program ) {
 	const GLuint resource = program.GetApiResource();
 	if ( resource != 0 ) {
 		assert( glIsProgram( resource ) );
@@ -147,7 +147,7 @@ void GraphicsContext::SetProgram( const Program& program ) {
 	m_Program = resource;
 }
 
-void GraphicsContext::SetSampler( uint32_t unit, const Sampler& sampler ) {
+void OpenGLGraphicsContext::SetSampler( uint32_t unit, const Sampler& sampler ) {
 	assert( unit < m_MaxTextures );
 
 	const GLuint resource = sampler.GetApiResource();
@@ -158,7 +158,7 @@ void GraphicsContext::SetSampler( uint32_t unit, const Sampler& sampler ) {
 	m_Samplers.emplace( m_Samplers.begin() + unit, resource );
 }
 
-void GraphicsContext::SetTexture( uint32_t unit, const Texture2D& texture ) {
+void OpenGLGraphicsContext::SetTexture( uint32_t unit, const Texture2D& texture ) {
 	assert( unit < m_MaxTextures );
 
 	const GLuint resource = texture.GetApiResource();
@@ -169,16 +169,16 @@ void GraphicsContext::SetTexture( uint32_t unit, const Texture2D& texture ) {
 	m_Textures.emplace( m_Textures.begin() + unit, resource );
 }
 
-void GraphicsContext::SetVertexLayout( const VertexLayout& layout ) {
+void OpenGLGraphicsContext::SetVertexLayout( const VertexLayout& layout ) {
 	m_VertexLayout = layout;
 }
 
-void GraphicsContext::SetViewport( int x, int y, int width, int height ) {
+void OpenGLGraphicsContext::SetViewport( int x, int y, int width, int height ) {
 	assert( x >= 0 && y >= 0 && width > 0 && height > 0 );
 	glViewport( x, y, width, height );
 }
 
-void GraphicsContext::PrepareToDraw() {
+void OpenGLGraphicsContext::PrepareToDraw() {
 	// Bind vertex array
 	glBindVertexArray( m_Vao );
 
