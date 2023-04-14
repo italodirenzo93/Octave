@@ -30,15 +30,15 @@ public:
 	Window( const Window& ) = delete;
 	Window& operator=( const Window& ) = delete;
 
-	[[nodiscard]] virtual void* GetNativeWindowHandle() = 0;
-	[[nodiscard]] virtual std::pair<int, int> GetSize() = 0;
+	[[nodiscard]] virtual void* GetNativeWindowHandle() const = 0;
+	[[nodiscard]] virtual GraphicsDevice& GetGraphicsDevice() const = 0;
+	[[nodiscard]] virtual std::pair<int, int> GetSize() const = 0;
 
 	virtual void SetTitle( const std::string& title ) = 0;
-	virtual void SetSyncInterval( int interval ) = 0;
 
 	// Actions
-	virtual void Close() = 0;
 	virtual void PollEvents() = 0;
+	virtual void SwapBuffers() = 0;
 
 	// Callbacks
 	Callback<void, int, int> OnSizeChanged;

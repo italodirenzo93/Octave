@@ -4,7 +4,7 @@
 #include "core/Window.hpp"
 #include "graphics/GraphicsDevice.hpp"
 
-#include <GLFW/glfw3.h>
+#include <SDL.h>
 
 namespace Octave {
 
@@ -41,7 +41,8 @@ public:
 	void SwapBuffers() override;
 
 private:
-	GLFWwindow* m_Window;
+	SDL_Window* m_Window;
+	SDL_GLContext m_Context;
 };
 
 }  // namespace Octave

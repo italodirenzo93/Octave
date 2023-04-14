@@ -1,4 +1,4 @@
-subdir('glfw')
+subdir('SDL')
 
 core_dep = declare_dependency(
 	include_directories: include_directories(''),
@@ -11,6 +11,6 @@ core_dep = declare_dependency(
 		'Window.hpp'
 	],
 	dependencies: [
-		platform_glfw_dep
+		platform_sdl_dep
 	]
 )

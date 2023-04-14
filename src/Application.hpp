@@ -4,7 +4,6 @@
 // clang-format off
 #include "input/InputSystem.hpp"
 #include "core/Platform.hpp"
-#include "graphics/GraphicsDevice.hpp"
 #include "LayerStack.hpp"
 // clang-format on
 
@@ -18,9 +17,9 @@ public:
 	virtual ~Application() noexcept;
 
 	// Getter/setter pairs
-	[[nodiscard]] Window& GetWindow() const noexcept { return *window_; }
-	[[nodiscard]] InputSystem& GetInputSystem() const noexcept { return *input_; }
-	[[nodiscard]] GraphicsDevice& GetGraphicsDevice() const noexcept { return *graphics_; }
+	[[nodiscard]] Window& GetWindow() const noexcept { return *m_Window; }
+	[[nodiscard]] InputSystem& GetInputSystem() const noexcept { return *m_Input; }
+	[[nodiscard]] GraphicsDevice& GetGraphicsDevice() const noexcept { return m_Window->GetGraphicsDevice(); }
 
 	// Methods
 	void Run();
@@ -36,9 +35,8 @@ protected:
 	LayerStack::LayerPtr PopLayer() noexcept;
 
 private:
-	std::unique_ptr<Window> window_;
-	std::unique_ptr<InputSystem> input_;
-	std::unique_ptr<GraphicsDevice> graphics_;
+	std::unique_ptr<Window> m_Window;
+	std::unique_ptr<InputSystem> m_Input;
 
     LayerStack layers_;
 
