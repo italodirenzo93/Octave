@@ -61,12 +61,6 @@ OpenGLGraphicsDevice::OpenGLGraphicsDevice( const Window& window ) {
 
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_FLAGS, flags );
 
-	// Initialize Open GL extension loader
-	if ( !gladLoadGLLoader(
-			 reinterpret_cast<GLADloadproc>( SDL_GL_ExtensionSupported ) ) ) {
-		throw Exception( "Unable to initialize GLAD OpenGL extension loader" );
-	}
-
 	Log::GetCoreLogger()->trace( "Creating OpenGL rendering context" );
 
 	m_Window = static_cast<SDL_Window*>( window.GetNativeWindowHandle() );
@@ -74,6 +68,12 @@ OpenGLGraphicsDevice::OpenGLGraphicsDevice( const Window& window ) {
 	if ( !m_Context ) {
 		Log::GetCoreLogger()->error( "SDL_GL_CreateContext error: {}", SDL_GetError() );
 		throw Exception( "Unable to create OpenGL context" );
+	}
+
+	// Initialize Open GL extension loader
+	if ( !gladLoadGLLoader(
+			 reinterpret_cast<GLADloadproc>( SDL_GL_GetProcAddress ) ) ) {
+		throw Exception( "Unable to initialize GLAD OpenGL extension loader" );
 	}
 
 	// Get context information

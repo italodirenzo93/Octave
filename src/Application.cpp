@@ -4,6 +4,10 @@
 #include "input/Null/InputSystemNull.hpp"
 #include "graphics/OpenGL/OpenGLGraphicsDevice.hpp"
 
+#ifdef OGT_PLATFORM_WINDOWS
+#undef CreateWindow
+#endif
+
 namespace Octave {
 
 Application::Application() : Application( 0, nullptr ) {
