@@ -34,18 +34,10 @@ octave_lib = static_library(
 		# Input
 		'input/Gamepad.hpp',
 		'input/InputSystem.hpp',
-		# 'input/glfw/GamepadGLFW.cpp',
-		# 'input/glfw/GamepadGLFW.hpp',
-		# 'input/glfw/InputSystemGLFW.cpp',
-		# 'input/glfw/InputSystemGLFW.hpp',
 		'input/Null/InputSystemNull.hpp',
 
 		# Resources
-		'resources/ResourceManager.hpp',
-		# 'resources/ShaderManager.cpp',
-		# 'resources/ShaderManager.hpp',
-		# 'resources/TextureManager.cpp',
-		# 'resources/TextureManager.hpp'
+		'resources/ResourceManager.hpp'
 	],
 	include_directories: include_directories(''),
 	dependencies: [
