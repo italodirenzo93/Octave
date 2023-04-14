@@ -5,6 +5,10 @@
 #include "Window.hpp"
 #include "graphics/GraphicsDevice.hpp"
 
+#ifdef OGT_PLATFORM_WINDOWS
+#undef CreateWindow
+#endif
+
 namespace Octave {
 
 enum class PlatformName { Windows, Mac, Linux };

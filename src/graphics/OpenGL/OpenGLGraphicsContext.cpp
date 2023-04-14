@@ -63,8 +63,8 @@ OpenGLGraphicsContext::OpenGLGraphicsContext() noexcept : m_Vao( 0 ) {
 	glFrontFace( GL_CW );
 
 	glGetIntegerv( GL_MAX_TEXTURE_IMAGE_UNITS, &m_MaxTextures );
-	m_Samplers.reserve( m_MaxTextures );
-	m_Textures.reserve( m_MaxTextures );
+	m_Textures.resize( m_MaxTextures, 0 );
+	m_Samplers.resize( m_MaxTextures, 0 );
 
 	glGetIntegerv( GL_MAX_ELEMENTS_INDICES, &m_MaxIndices );
 
@@ -77,8 +77,8 @@ void OpenGLGraphicsContext::Reset() noexcept {
 	m_Program = 0;
 	m_VertexStride = 0;
 	m_VertexLayout.clear();
-	std::fill( m_Samplers.begin(), m_Samplers.end(), 0 );
 	std::fill( m_Textures.begin(), m_Textures.end(), 0 );
+	std::fill( m_Samplers.begin(), m_Samplers.end(), 0 );
 }
 
 void OpenGLGraphicsContext::Clear( bool color, bool depth, float r, float g, float b,
@@ -204,6 +204,7 @@ void OpenGLGraphicsContext::PrepareToDraw() {
 		glActiveTexture( GL_TEXTURE0 + i );
 		glBindTexture( GL_TEXTURE_2D, m_Textures[i] );
 	}
+	glActiveTexture( GL_TEXTURE0 );
 
 	// Bind samplers
 	for ( int i = 0; i < m_MaxTextures; i++ ) {

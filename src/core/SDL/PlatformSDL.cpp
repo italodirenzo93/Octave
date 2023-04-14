@@ -4,6 +4,10 @@
 
 #include "SDL/WindowSDL.hpp"
 
+#ifdef OGT_PLATFORM_WINDOWS
+#undef CreateWindow
+#endif
+
 namespace Octave {
 
 static bool g_initialized = false;
