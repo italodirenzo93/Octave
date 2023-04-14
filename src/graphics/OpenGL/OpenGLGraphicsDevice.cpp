@@ -4,8 +4,6 @@
 #include "core/Log.hpp"
 #include "Config.hpp"
 #include "OpenGLGraphicsContext.hpp"
-#include "core/glfw/GLFWError.hpp"
-#include "core/glfw/GLFWWindow.hpp"
 
 using namespace std;
 
@@ -49,15 +47,34 @@ static GLuint FilterToGLType( TextureFilter filter ) noexcept {
 }
 
 OpenGLGraphicsDevice::OpenGLGraphicsDevice( const Window& window ) {
-	m_Window = dynamic_cast<const GLFWWindow&>( window ).GetGlfwWindowPointer();
+	SDL_GL_ResetAttributes();
+
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
+
+	int flags = SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG;
+
+#ifdef OGT_DEBUG
+	flags |= SDL_GL_CONTEXT_DEBUG_FLAG;
+#endif
+
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_FLAGS, flags );
 
 	// Initialize Open GL extension loader
 	if ( !gladLoadGLLoader(
-			 reinterpret_cast<GLADloadproc>( glfwGetProcAddress ) ) ) {
+			 reinterpret_cast<GLADloadproc>( SDL_GL_ExtensionSupported ) ) ) {
 		throw Exception( "Unable to initialize GLAD OpenGL extension loader" );
 	}
 
 	Log::GetCoreLogger()->trace( "Creating OpenGL rendering context" );
+
+	m_Window = static_cast<SDL_Window*>( window.GetNativeWindowHandle() );
+	m_Context = SDL_GL_CreateContext( m_Window );
+	if ( !m_Context ) {
+		Log::GetCoreLogger()->error( "SDL_GL_CreateContext error: {}", SDL_GetError() );
+		throw Exception( "Unable to create OpenGL context" );
+	}
 
 	// Get context information
 	int context_flags;
@@ -340,7 +357,7 @@ void OpenGLGraphicsDevice::GenerateMipmap( const Texture2D& texture ) {
 }
 
 void OpenGLGraphicsDevice::SwapBuffers() {
-	glfwSwapBuffers( m_Window );
+	SDL_GL_SwapWindow( m_Window );
 }
 
 static void APIENTRY DebugCallback( GLenum source, GLenum type, unsigned int id,

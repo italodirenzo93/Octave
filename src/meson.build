@@ -1,10 +1,10 @@
 subdir('core')
 subdir('graphics')
 
-glfw3_dep = dependency('glfw3')
 glm_dep = dependency('glm')
 glad_dep = dependency('glad', fallback: ['glad', 'glad_dep'])
 simpleini_dep = dependency('simpleini', fallback: ['simpleini', 'simpleini_dep'])
+sdl2_dep = dependency('sdl2')
 spdlog_dep = dependency('spdlog')
 stb_image_dep = dependency('stb_image', fallback: ['stb_image', 'stb_image_dep'])
 
@@ -34,10 +34,11 @@ octave_lib = static_library(
 		# Input
 		'input/Gamepad.hpp',
 		'input/InputSystem.hpp',
-		'input/glfw/GamepadGLFW.cpp',
-		'input/glfw/GamepadGLFW.hpp',
-		'input/glfw/InputSystemGLFW.cpp',
-		'input/glfw/InputSystemGLFW.hpp',
+		# 'input/glfw/GamepadGLFW.cpp',
+		# 'input/glfw/GamepadGLFW.hpp',
+		# 'input/glfw/InputSystemGLFW.cpp',
+		# 'input/glfw/InputSystemGLFW.hpp',
+		'input/Null/InputSystemNull.hpp',
 
 		# Resources
 		'resources/ResourceManager.hpp',
@@ -52,10 +53,10 @@ octave_lib = static_library(
 		graphics_dep,
 
 		# Third-party
-		glfw3_dep,
 		glm_dep,
 		glad_dep,
 		simpleini_dep,
+		sdl2_dep,
 		spdlog_dep,
 		stb_image_dep
 	],
@@ -67,10 +68,10 @@ octave_dep = declare_dependency(
 	include_directories: include_directories(''),
 	dependencies: [
 		# Third-party
-		glfw3_dep,
 		glm_dep,
 		glad_dep,
 		simpleini_dep,
+		sdl2_dep,
 		spdlog_dep,
 		stb_image_dep
 	]
