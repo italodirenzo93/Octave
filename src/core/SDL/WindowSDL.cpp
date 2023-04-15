@@ -22,8 +22,18 @@ void WindowSDL::SetTitle( const std::string& title ) {
 void WindowSDL::PollEvents() {
 	SDL_Event evt;
 	while ( SDL_PollEvent( &evt ) != 0) {
-		if ( evt.type == SDL_QUIT ) {
+		switch ( evt.type ) {
+		case SDL_QUIT:
 			OnClose.InvokeAll();
+			break;
+		case SDL_WINDOWEVENT: {
+			switch ( evt.window.event ) {
+			case SDL_WINDOWEVENT_RESIZED:
+				OnSizeChanged.InvokeAll( evt.window.data1, evt.window.data2 );
+				break;
+			}
+		}
+		break;
 		}
 	}
 }

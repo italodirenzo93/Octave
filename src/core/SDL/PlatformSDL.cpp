@@ -63,7 +63,7 @@ uint64_t Platform::GetCounterValue() noexcept {
 }
 
 std::unique_ptr<Window> Platform::CreateWindow( const WindowOptions& options ) {
-	int flags = SDL_WINDOW_OPENGL;
+	int flags = SDL_WINDOW_RESIZABLE;
 
 	if ( options.is_borderless ) {
 		flags |= SDL_WINDOW_BORDERLESS;
@@ -72,6 +72,10 @@ std::unique_ptr<Window> Platform::CreateWindow( const WindowOptions& options ) {
 	if ( options.is_fullscreen ) {
 		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 	}
+
+#ifdef OGT_RHI_OPENGL
+	flags |= SDL_WINDOW_OPENGL;
+#endif
 
 	const auto window = SDL_CreateWindow(
 		options.title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
