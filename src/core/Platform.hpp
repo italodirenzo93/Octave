@@ -1,9 +1,9 @@
 #ifndef OCTAVE_PLATFORM_HPP
 #define OCTAVE_PLATFORM_HPP
 
-#include "pch/pch.hpp"
 #include "Window.hpp"
 #include "graphics/GraphicsDevice.hpp"
+#include "pch/pch.hpp"
 
 #ifdef OGT_PLATFORM_WINDOWS
 #undef CreateWindow
@@ -11,7 +11,7 @@
 
 namespace Octave {
 
-enum class PlatformName { Windows, Mac, Linux };
+enum class PlatformName { Unknown, Windows, Mac, Linux };
 
 class Platform {
 public:
@@ -20,11 +20,12 @@ public:
 
 	static PlatformName GetName() noexcept;
 
-	static double GetElapsedTime() noexcept;
-	static uint64_t GetTimerFrequency() noexcept;
-	static uint64_t GetTimerValue() noexcept;
+	static uint64_t GetElapsedTicks() noexcept;
+	static uint64_t GetCounterFrequency() noexcept;
+	static uint64_t GetCounterValue() noexcept;
 
-	[[nodiscard]] static std::unique_ptr<Window> CreateWindow( const WindowOptions& options );
+	[[nodiscard]] static std::unique_ptr<Window> CreateWindow(
+		const WindowOptions& options );
 	static void DestroyWindow( std::unique_ptr<Window> window );
 
 	Platform() = delete;
