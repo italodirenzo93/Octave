@@ -356,6 +356,10 @@ void OpenGLGraphicsDevice::GenerateMipmap( const Texture2D& texture ) {
 	glBindTexture( GL_TEXTURE_2D, 0 );
 }
 
+void OpenGLGraphicsDevice::SetSwapInterval( int interval ) {
+	SDL_GL_SetSwapInterval( interval );
+}
+
 void OpenGLGraphicsDevice::SwapBuffers() {
 	SDL_GL_SwapWindow( m_Window );
 }

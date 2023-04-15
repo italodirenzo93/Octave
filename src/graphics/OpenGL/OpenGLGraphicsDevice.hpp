@@ -38,6 +38,7 @@ public:
 	void DestroyTexture2D( std::unique_ptr<Texture2D> texture ) override;
 
 	void GenerateMipmap( const Texture2D& texture ) override;
+	void SetSwapInterval( int interval ) override;
 	void SwapBuffers() override;
 
 private:

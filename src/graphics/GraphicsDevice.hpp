@@ -43,6 +43,7 @@ public:
 	virtual void DestroyTexture2D( std::unique_ptr<Texture2D> texture ) = 0;
 
 	virtual void GenerateMipmap( const Texture2D& texture ) = 0;
+	virtual void SetSwapInterval( int interval ) = 0;
 	virtual void SwapBuffers() = 0;
 };
 
