@@ -14,15 +14,15 @@ StepTimer::StepTimer() noexcept
 	  m_qpcSecondCounter( 0 ),
 	  m_isFixedTimeStep( false ),
 	  m_targetElapsedTicks( TicksPerSecond / 60 ) {
-	m_qpcFrequency = Platform::GetTimerFrequency();
-	m_qpcLastTime = Platform::GetTimerValue();
+	m_qpcFrequency = Platform::GetCounterFrequency();
+	m_qpcLastTime = Platform::GetCounterValue();
 
 	// Initialize max delta to 1/10 of a second.
 	m_qpcMaxDelta = static_cast<uint64_t>( m_qpcFrequency / 10 );
 }
 
 void StepTimer::ResetElapsedTime() noexcept {
-	m_qpcLastTime = Platform::GetTimerValue();
+	m_qpcLastTime = Platform::GetCounterValue();
 
 	m_leftOverTicks = 0;
 	m_framesPerSecond = 0;
@@ -32,7 +32,7 @@ void StepTimer::ResetElapsedTime() noexcept {
 
 void StepTimer::Tick( const std::function<void()>& update ) {
 	// Query the current time.
-	const auto currentTime = Platform::GetTimerValue();
+	const auto currentTime = Platform::GetCounterValue();
 
 	auto timeDelta = static_cast<uint64_t>( currentTime - m_qpcLastTime );
 

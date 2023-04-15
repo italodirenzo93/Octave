@@ -36,26 +36,29 @@ void Platform::Quit() {
 }
 
 PlatformName Platform::GetName() noexcept {
-#if defined( OGT_PLATFORM_WINDOWS )
-	return PlatformName::Windows;
-#elif defined( OGT_PLATFORM_MACOS )
-	return PlatformName::Mac;
-#elif defined( OGT_PLATFORM_LINUX )
-	return PlatformName::Linux;
-#else
-#error "Unsupported platform"
-#endif
+	const char* platform = SDL_GetPlatform();
+	if ( platform == "Windows" ) {
+		return PlatformName::Windows;
+	}
+	if ( platform == "Mac OS X" ) {
+		return PlatformName::Mac;
+	}
+	if ( platform == "Linux" ) {
+		return PlatformName::Linux;
+	}
+
+	return PlatformName::Unknown;
 }
 
-double Platform::GetElapsedTime() noexcept {
-	return SDL_GetTicks64() / 1000.0;
+uint64_t Platform::GetElapsedTicks() noexcept {
+	return SDL_GetTicks64();
 }
 
-uint64_t Platform::GetTimerFrequency() noexcept {
+uint64_t Platform::GetCounterFrequency() noexcept {
 	return SDL_GetPerformanceFrequency();
 }
 
-uint64_t Platform::GetTimerValue() noexcept {
+uint64_t Platform::GetCounterValue() noexcept {
 	return SDL_GetPerformanceCounter();
 }
 
