@@ -21,6 +21,7 @@ unique_ptr<Buffer> CreateStaticBuffer( GraphicsDevice& device,
 	BufferDescription desc{};
 	desc.size = static_cast<uint32_t>( sizeof( T ) * data.size() );
 	desc.stride = static_cast<uint32_t>( stride );
+	desc.access = ResourceAccess::WriteOnly;
 	desc.usage = BufferUsage::Static;
 	desc.type = binding;
 
@@ -72,25 +73,6 @@ inline unique_ptr<Shader> LoadShaderFromFile( GraphicsDevice& device,
 
 	return device.CreateShader( type, code.c_str() );
 }
-
-struct Matrices {
-	glm::mat4 projection_matrix;
-	glm::mat4 view_matrix;
-	glm::mat4 model_matrix;
-	glm::mat4 normal_matrix;
-	glm::vec3 view_position;
-	glm::float32 pad;
-
-	Matrices() noexcept = default;
-	Matrices( glm::mat4 proj, glm::mat4 view, glm::mat4 model,
-			  glm::vec3 view_pos ) noexcept
-		: projection_matrix( std::move( proj ) ),
-		  view_matrix( std::move( view ) ),
-		  model_matrix( std::move( model ) ),
-		  view_position( std::move( view_pos ) ) {
-		normal_matrix = glm::transpose( glm::inverse( model_matrix ) );
-	}
-};
 
 class ModelViewerSample final : public SampleApplication {
 public:

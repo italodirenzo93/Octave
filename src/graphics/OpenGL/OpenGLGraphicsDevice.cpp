@@ -135,7 +135,7 @@ void OpenGLGraphicsDevice::DestroyContext(
 
 std::unique_ptr<Buffer> OpenGLGraphicsDevice::CreateBuffer(
 	const BufferDescription& desc, const void* data ) {
-	GLenum target = GL_ARRAY_BUFFER;
+	GLenum target;
 	switch ( desc.type ) {
 		default:
 		case BufferType::VertexBuffer:
@@ -156,28 +156,58 @@ std::unique_ptr<Buffer> OpenGLGraphicsDevice::CreateBuffer(
 
 	if ( GLAD_GL_ARB_buffer_storage ) {
 		GLint flags = 0;
-		switch ( desc.usage ) {
+
+		if ( desc.usage == BufferUsage::Dynamic ) {
+			flags |= GL_DYNAMIC_STORAGE_BIT;
+		}
+
+		switch ( desc.access ) {
 			default:
-			case BufferUsage::Static:
-				flags = 0;
+			case ResourceAccess::WriteOnly:
+				flags |= GL_MAP_WRITE_BIT;
 				break;
-			case BufferUsage::Dynamic:
-				flags = GL_DYNAMIC_STORAGE_BIT;
+			case ResourceAccess::ReadOnly:
+				flags |= GL_MAP_READ_BIT;
+				break;
+			case ResourceAccess::ReadWrite:
+				flags |= GL_MAP_READ_BIT | GL_MAP_WRITE_BIT;
 				break;
 		}
 
 		glBufferStorage( target, static_cast<GLsizeiptr>( desc.size ), data,
 						 flags );
 	} else {
-		GLenum usage = GL_STATIC_DRAW;
+		GLenum usage;
 		switch ( desc.usage ) {
 			default:
 			case BufferUsage::Static:
-				usage = GL_STATIC_DRAW;
+				switch ( desc.access ) {
+					default:
+					case ResourceAccess::WriteOnly:
+						usage = GL_STATIC_DRAW;
+						break;
+					case ResourceAccess::ReadOnly:
+						usage = GL_STATIC_READ;
+						break;
+					case ResourceAccess::ReadWrite:
+						usage = GL_STATIC_COPY;
+						break;
+				}
 				break;
-			case BufferUsage::Dynamic:
-				usage = GL_DYNAMIC_DRAW;
-				break;
+			case BufferUsage::Dynamic: {
+				switch ( desc.access ) {
+					default:
+					case ResourceAccess::WriteOnly:
+						usage = GL_DYNAMIC_DRAW;
+						break;
+					case ResourceAccess::ReadOnly:
+						usage = GL_DYNAMIC_READ;
+						break;
+					case ResourceAccess::ReadWrite:
+						usage = GL_DYNAMIC_COPY;
+						break;
+				}
+			}
 		}
 
 		glBufferData( target, static_cast<GLsizeiptr>( desc.size ), data,

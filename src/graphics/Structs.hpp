@@ -1,9 +1,16 @@
 #ifndef OCTAVE_GRAPHICS_STRUCTS_HPP
 #define OCTAVE_GRAPHICS_STRUCTS_HPP
 
+#include <cstdint>
 #include <vector>
 
 namespace Octave {
+
+enum class ResourceAccess {
+	WriteOnly,
+	ReadOnly,
+	ReadWrite
+};
 
 //////////////////////////////
 // Buffers
@@ -24,6 +31,7 @@ struct BufferDescription {
 	const char* name;
 	uint32_t size;
 	uint32_t stride;
+	ResourceAccess access;
 	BufferType type;
 	BufferUsage usage;
 };
