@@ -3,6 +3,10 @@
 
 namespace Octave {
 
+Program& Program::SetBool( const char* name, bool value ) {
+	return SetInt( name, static_cast<int>( value ) );
+}
+
 Program& Program::SetInt( const char* name, int value ) {
 	assert( glIsProgram( handle_ ) );
 	glProgramUniform1i( handle_, LookupUniform( name ), value );

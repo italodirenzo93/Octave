@@ -15,6 +15,7 @@ public:
 	[[nodiscard]] GLuint GetApiResource() const noexcept { return handle_; }
 	void SetApiResource( GLuint resource ) noexcept { handle_ = resource; }
 
+	Program& SetBool( const char* name, bool value );
 	Program& SetInt( const char* name, int value );
 	Program& SetFloat( const char* name, float value );
 	Program& SetVec3( const char* name, const glm::vec3& value );

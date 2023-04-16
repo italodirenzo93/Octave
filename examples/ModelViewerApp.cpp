@@ -14,16 +14,6 @@ using namespace std;
 using namespace Octave;
 using namespace Octave::Samples;
 
-class Mesh {
-public:
-	std::vector<std::unique_ptr<Buffer>> m_VertexBuffers;
-	std::unique_ptr<Buffer> m_IndexBuffer;
-	uint32_t m_NumVertices;
-	std::vector<uint8_t> m_Vertices;
-	uint32_t m_NumIndices;
-	std::vector<uint16_t> m_Indices;
-};
-
 template <class T>
 unique_ptr<Buffer> CreateStaticBuffer( GraphicsDevice& device,
 									   const std::vector<T>& data,
@@ -31,7 +21,7 @@ unique_ptr<Buffer> CreateStaticBuffer( GraphicsDevice& device,
 	BufferDescription desc{};
 	desc.size = static_cast<uint32_t>( sizeof( T ) * data.size() );
 	desc.stride = static_cast<uint32_t>( stride );
-	desc.usage = BufferUsage::Dynamic;
+	desc.usage = BufferUsage::Static;
 	desc.type = binding;
 
 	return device.CreateBuffer( desc, data.data() );
@@ -83,7 +73,6 @@ inline unique_ptr<Shader> LoadShaderFromFile( GraphicsDevice& device,
 	return device.CreateShader( type, code.c_str() );
 }
 
-
 struct Matrices {
 	glm::mat4 projection_matrix;
 	glm::mat4 view_matrix;
@@ -101,17 +90,6 @@ struct Matrices {
 		  view_position( std::move( view_pos ) ) {
 		normal_matrix = glm::transpose( glm::inverse( model_matrix ) );
 	}
-};
-
-struct DirectionalLight {
-	glm::vec3 direction;
-	glm::float32 pad_direction;
-	glm::vec3 ambient;
-	glm::float32 pad_ambient;
-	glm::vec3 diffuse;
-	glm::float32 pad_diffuse;
-	glm::vec3 specular;
-	glm::float32 pad_specular;
 };
 
 class ModelViewerSample final : public SampleApplication {
@@ -183,35 +161,6 @@ public:
 												  glm::vec3( 0, -3, 0 ) );
 		}
 
-		// Matrix Uniform buffer
-		{
-			BufferDescription desc{};
-			desc.size = sizeof( Matrices );
-			desc.usage = BufferUsage::Dynamic;
-
-			const Matrices matrices(
-				camera_.GetProjectionMatrix(), camera_.GetViewMatrix(),
-				glm::identity<glm::mat4>(), camera_.position_ );
-
-			ub_matrices_ = GetGraphicsDevice().CreateBuffer( desc, nullptr );
-		}
-
-		// Directional light uniform buffer
-		{
-			BufferDescription desc{};
-			desc.size = sizeof( DirectionalLight );
-			desc.usage = BufferUsage::Dynamic;
-
-			DirectionalLight light{};
-			light.direction = glm::vec3( 0.5f, 0.0f, -0.5f );
-			light.ambient = glm::vec3( 0.2f );
-			light.diffuse = glm::vec3( 0.5f );
-			light.specular = glm::vec3( 0.8f );
-
-			ub_directional_light_ =
-				GetGraphicsDevice().CreateBuffer( desc, &light );
-		}
-
 		// Shaders
 		{
 			auto vs = LoadShaderFromFile( GetGraphicsDevice(),
@@ -227,19 +176,6 @@ public:
 
 			GetGraphicsDevice().DestroyShader( std::move( vs ) );
 			GetGraphicsDevice().DestroyShader( std::move( fs ) );
-
-			program_->SetInt( "uMatDiffuse", 0 );
-			program_->SetInt( "uMatSpecular", 1 );
-
-			auto idx = glGetUniformBlockIndex( program_->GetApiResource(),
-											   "Matrices" );
-			glUniformBlockBinding( program_->GetApiResource(), idx, 0 );
-
-			idx = glGetUniformBlockIndex( program_->GetApiResource(),
-										  "DirectionalLight" );
-			glUniformBlockBinding( program_->GetApiResource(), idx, 1 );
-
-			program_->SetUniformBuffer( 1, *ub_directional_light_ );
 		}
 
 		// Samplers
@@ -257,20 +193,17 @@ public:
 	~ModelViewerSample() noexcept override {
 		auto& device = GetGraphicsDevice();
 
-		device.DestroyBuffer( std::move( floor_vbo_ ) );
-		device.DestroyBuffer( std::move( cube_vbo_ ) );
-		device.DestroyBuffer( std::move( cube_ibo_ ) );
+		if ( floor_vbo_ ) device.DestroyBuffer( std::move( floor_vbo_ ) );
+		if ( cube_vbo_ ) device.DestroyBuffer( std::move( cube_vbo_ ) );
+		if ( cube_ibo_ ) device.DestroyBuffer( std::move( cube_ibo_ ) );
 
-		device.DestroyBuffer( std::move( ub_matrices_ ) );
-		device.DestroyBuffer( std::move( ub_directional_light_ ) );
+		if ( cube_texture_ ) device.DestroyTexture2D( std::move( cube_texture_ ) );
+		if ( floor_texture_diffuse_ ) device.DestroyTexture2D( std::move( floor_texture_diffuse_ ) );
+		if ( floor_texture_specular_ ) device.DestroyTexture2D( std::move( floor_texture_specular_ ) );
 
-		device.DestroyTexture2D( std::move( cube_texture_ ) );
-		device.DestroyTexture2D( std::move( floor_texture_diffuse_ ) );
-		device.DestroyTexture2D( std::move( floor_texture_specular_ ) );
+		if ( sampler_ ) device.DestroySampler( std::move( sampler_ ) );
 
-		device.DestroySampler( std::move( sampler_ ) );
-
-		device.DestroyProgram( std::move( program_ ) );
+		if ( program_ ) device.DestroyProgram( std::move( program_ ) );
 	}
 
 protected:
@@ -292,14 +225,32 @@ protected:
 	void Draw() override {
 		context_->Clear( true, true, 0.1f, 0.1f, 0.1f );
 
+		program_->SetMat4( "uMatProjection", camera_.GetProjectionMatrix() );
+		program_->SetMat4( "uMatView", camera_.GetViewMatrix() );
+		program_->SetVec3( "uViewPos", camera_.position_ );
+
+		program_->SetInt( "uMaterial.diffuse", 0 );
+		program_->SetInt( "uMaterial.specular", 1 );
+		program_->SetFloat( "uMaterial.shininess", 32.0f );
+
+		program_->SetVec3( "uDirectionalLight.direction", glm::vec3( 0.5f, 0.0f, -0.5f ) );
+		program_->SetVec3( "uDirectionalLight.ambient", glm::vec3( 0.2f ) );
+		program_->SetVec3( "uDirectionalLight.diffuse", glm::vec3( 0.5f ) );
+		program_->SetVec3( "uDirectionalLight.specular", glm::vec3( 0.8f ) );
+
+		program_->SetBool( "uPointLights[0].enabled", true );
+		program_->SetVec3( "uPointLights[0].position", glm::vec3( 1.0f, 1.5f, -2.1f ) );
+		program_->SetVec3( "uPointLights[0].ambient", glm::vec3( 0.2f ) );
+		program_->SetVec3( "uPointLights[0].diffuse", glm::vec3( 0.5f ) );
+		program_->SetVec3( "uPointLights[0].specular", glm::vec3( 0.8f ) );
+		program_->SetFloat( "uPointLights[0].constant", 1.0f );
+		program_->SetFloat( "uPointLights[0].linear", 0.09f );
+		program_->SetFloat( "uPointLights[0].quadratic", 0.032f );
+
 		// Draw floating box
 		{
-
-			const Matrices matrices( camera_.GetProjectionMatrix(),
-									 camera_.GetViewMatrix(),
-									 cube_model_matrix_, camera_.position_ );
-			ub_matrices_->SetData( &matrices, 0, sizeof( Matrices ) );
-			program_->SetUniformBuffer( 0, *ub_matrices_ );
+			program_->SetMat4( "uMatModel", cube_model_matrix_ );
+			program_->SetMat4( "uMatNormal", glm::transpose( glm::inverse( cube_model_matrix_ ) ) );
 
 			context_->Reset();
 			context_->SetVertexBuffer( *cube_vbo_ );
@@ -313,11 +264,8 @@ protected:
 
 		// Draw floor
 		{
-			const Matrices matrices( camera_.GetProjectionMatrix(),
-									 camera_.GetViewMatrix(),
-									 floor_model_matrix_, camera_.position_ );
-			ub_matrices_->SetData( &matrices, 0, sizeof( Matrices ) );
-			program_->SetUniformBuffer( 0, *ub_matrices_ );
+			program_->SetMat4( "uMatModel", floor_model_matrix_ );
+			program_->SetMat4( "uMatNormal", glm::transpose( glm::inverse( floor_model_matrix_ ) ) );
 
 			context_->Reset();
 			context_->SetVertexBuffer( *floor_vbo_ );
@@ -387,9 +335,6 @@ protected:
 private:
 	unique_ptr<Program> program_;
 	unique_ptr<Sampler> sampler_;
-
-	unique_ptr<Buffer> ub_matrices_;
-	unique_ptr<Buffer> ub_directional_light_;
 
 	glm::mat4 cube_model_matrix_;
 	glm::mat4 floor_model_matrix_;

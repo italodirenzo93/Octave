@@ -13,13 +13,13 @@ out FragmentData {
 	vec3 view_position;
 } vs_out;
 
-layout( std140 ) uniform Matrices {
-	mat4 uMatProjection;
-	mat4 uMatView;
-	mat4 uMatModel;
-	mat4 uMatNormal;
-	vec3 uViewPos;
-};
+
+uniform mat4 uMatProjection;
+uniform mat4 uMatView;
+uniform mat4 uMatModel;
+uniform mat4 uMatNormal;
+
+uniform vec3 uViewPos;
 
 void main() {
 	gl_Position = uMatProjection * uMatView * uMatModel * vec4( aPos, 1.0 );
