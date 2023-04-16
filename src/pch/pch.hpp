@@ -18,6 +18,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <type_traits>
 #include <unordered_map>
 #include <vector>
 
@@ -41,5 +42,20 @@
 
 #define SELF_REFERENCE_CHECK( other ) \
 	if ( &other == this ) return *this
+
+template <class TEnum>
+inline bool HasFlag( TEnum flags, TEnum test ) noexcept {
+	return ( flags & test ) == test;
+}
+
+#define ENUM_CLASS_OPERATORS( EnumClass )\
+	inline EnumClass operator&( EnumClass a, EnumClass b ) {\
+		using FlagsType = std::underlying_type_t<EnumClass>;\
+		return static_cast<EnumClass>( static_cast<FlagsType>( a ) & static_cast<FlagsType>( b ) );\
+	}\
+	inline EnumClass operator|( EnumClass a, EnumClass b ) {\
+		using FlagsType = std::underlying_type_t<EnumClass>;\
+		return static_cast<EnumClass>( static_cast<FlagsType>( a ) | static_cast<FlagsType>( b ) );\
+	}
 
 #endif

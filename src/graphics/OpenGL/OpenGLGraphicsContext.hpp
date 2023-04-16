@@ -16,9 +16,7 @@ public:
 	void SetApiResource( GLuint resource ) noexcept { m_Vao = resource; }
 
 	void Reset() noexcept override;
-	void Clear( bool color = true, bool depth = true, float r = 0.0f,
-				float g = 0.0f, float b = 0.0f,
-				float a = 1.0f ) noexcept override;
+	void Clear( ContextClearFlags flags, Colour color ) noexcept override;
 
 	void Draw( size_t vertex_count, size_t offset ) noexcept override;
 	void DrawIndexed( size_t index_count, size_t offset,
@@ -43,6 +41,9 @@ private:
 	GLsizei m_VertexStride;
 	GLint m_MaxIndices;
 	GLint m_MaxTextures;
+	GLint m_ClearFlags;
+	std::array<GLfloat, 4> m_ClearColor;
+
 	void PrepareToDraw();
 };
 

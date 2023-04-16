@@ -1,9 +1,17 @@
 #ifndef OCTAVE_GRAPHICS_GRAPHICSCONTEXT_HPP
 #define OCTAVE_GRAPHICS_GRAPHICSCONTEXT_HPP
 
+#include "Colour.hpp"
 #include "Resources.hpp"
 
 namespace Octave {
+
+enum class ContextClearFlags {
+	Color = 1,
+	Depth = 2,
+	Stencil = 4
+};
+ENUM_CLASS_OPERATORS( ContextClearFlags )
 
 class GraphicsContext {
 public:
@@ -14,8 +22,7 @@ public:
 	GraphicsContext& operator=( GraphicsContext&& ) = delete;
 
 	virtual void Reset() noexcept = 0;
-	virtual void Clear( bool color = true, bool depth = true, float r = 0.0f,
-				float g = 0.0f, float b = 0.0f, float a = 1.0f ) noexcept = 0;
+	virtual void Clear( ContextClearFlags flags, Colour colour = Colours::Black ) noexcept = 0;
 
 	virtual void Draw( size_t vertex_count, size_t offset ) noexcept = 0;
 	virtual void DrawIndexed( size_t index_count, size_t offset,

@@ -205,7 +205,7 @@ protected:
 	}
 
 	void Draw() override {
-		context_->Clear( true, true, 0.1f, 0.1f, 0.1f );
+		context_->Clear( ContextClearFlags::Color | ContextClearFlags::Depth );
 
 		program_->SetMat4( "uMatProjection", camera_.GetProjectionMatrix() );
 		program_->SetMat4( "uMatView", camera_.GetViewMatrix() );

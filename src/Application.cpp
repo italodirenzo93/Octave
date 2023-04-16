@@ -10,17 +10,17 @@
 
 namespace Octave {
 
-Application::Application() : Application( 0, nullptr ) {
-}
-
-Application::Application( int argc, char* argv[] ) : is_running_( true ) {
+Application::Application( const ApplicationOptions& options ) : is_running_( true ) {
 	Log::Init();
 	if ( !Platform::Init() ) {
 		throw Exception( "Unable to initialize platform" );
 	}
 
 	m_Input = std::make_unique<InputSystemNull>();
-	m_Window = Platform::CreateWindow( WindowOptions() );
+
+	WindowOptions windowOpts;
+	windowOpts.m_RenderApi = RenderApi::OpenGL;
+	m_Window = Platform::CreateWindow( windowOpts );
 }
 
 Application::~Application() noexcept {

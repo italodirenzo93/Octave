@@ -8,18 +8,21 @@
 
 namespace Octave {
 
+enum class RenderApi { Default, Null, OpenGL };
+
 struct WindowOptions {
-	int width;
-	int height;
-	bool is_fullscreen;
-	bool is_borderless;
-	std::string title;
+	RenderApi m_RenderApi;
+	int m_Width;
+	int m_Height;
+	bool m_IsFullscreen;
+	bool m_IsBorderless;
+	std::string m_Title;
 
 	WindowOptions() noexcept;
 	WindowOptions( std::string title ) noexcept;
 	WindowOptions( int width, int height, std::string title,
-				   bool is_fullscreen = false,
-				   bool is_borderless = false ) noexcept;
+				   bool isFullscreen = false,
+				   bool isBorderless = false ) noexcept;
 };
 
 class Window {

@@ -65,21 +65,21 @@ uint64_t Platform::GetCounterValue() noexcept {
 std::unique_ptr<Window> Platform::CreateWindow( const WindowOptions& options ) {
 	int flags = SDL_WINDOW_RESIZABLE;
 
-	if ( options.is_borderless ) {
+	if ( options.m_IsBorderless ) {
 		flags |= SDL_WINDOW_BORDERLESS;
 	}
 
-	if ( options.is_fullscreen ) {
+	if ( options.m_IsFullscreen ) {
 		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 	}
 
-#ifdef OGT_RHI_OPENGL
-	flags |= SDL_WINDOW_OPENGL;
-#endif
+	if ( options.m_RenderApi == RenderApi::OpenGL ) {
+		flags |= SDL_WINDOW_OPENGL;
+	}
 
 	const auto window = SDL_CreateWindow(
-		options.title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		options.width, options.height, flags );
+		options.m_Title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+		options.m_Width, options.m_Height, flags );
 
 	if ( !window ) {
 		Log::GetCoreLogger()->error( "Unable to create SDL window: {}",

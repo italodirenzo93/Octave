@@ -9,17 +9,25 @@
 
 namespace Octave {
 
+struct ApplicationOptions {
+	RenderApi m_RenderApi;
+	std::vector<std::string> m_Args;
+};
+
 class Application {
 public:
 	// Constructors
-	Application();
-	Application( int argc, char* argv[] );
+	explicit Application( const ApplicationOptions& options );
 	virtual ~Application() noexcept;
 
 	// Getter/setter pairs
 	[[nodiscard]] Window& GetWindow() const noexcept { return *m_Window; }
-	[[nodiscard]] InputSystem& GetInputSystem() const noexcept { return *m_Input; }
-	[[nodiscard]] GraphicsDevice& GetGraphicsDevice() const noexcept { return m_Window->GetGraphicsDevice(); }
+	[[nodiscard]] InputSystem& GetInputSystem() const noexcept {
+		return *m_Input;
+	}
+	[[nodiscard]] GraphicsDevice& GetGraphicsDevice() const noexcept {
+		return m_Window->GetGraphicsDevice();
+	}
 
 	// Methods
 	void Run();
@@ -38,11 +46,12 @@ private:
 	std::unique_ptr<Window> m_Window;
 	std::unique_ptr<InputSystem> m_Input;
 
-    LayerStack layers_;
+	LayerStack layers_;
 
 	bool is_running_;
 
 public:
+	Application() = delete;
 	Application( const Application& ) = delete;
 	Application( Application&& ) = delete;
 	Application& operator=( const Application& ) = delete;

@@ -79,33 +79,37 @@ void OpenGLGraphicsContext::Reset() noexcept {
 	m_VertexLayout.clear();
 	std::fill( m_Textures.begin(), m_Textures.end(), 0 );
 	std::fill( m_Samplers.begin(), m_Samplers.end(), 0 );
+	m_ClearFlags = 0;
+	m_ClearColor.fill( 0.0f );
 }
 
-void OpenGLGraphicsContext::Clear( bool color, bool depth, float r, float g, float b,
-							 float a ) noexcept {
-	int clear_flags = 0;
+void OpenGLGraphicsContext::Clear( ContextClearFlags flags,
+								   Colour colour ) noexcept {
+	m_ClearFlags = 0;
+	m_ClearColor.fill( 0.0f );
 
-	if ( color ) {
-		clear_flags |= GL_COLOR_BUFFER_BIT;
-		glClearColor( r, g, b, a );
+	if ( HasFlag( flags, ContextClearFlags::Color ) ) {
+		m_ClearFlags |= GL_COLOR_BUFFER_BIT;
+		m_ClearColor[0] = colour.m_Red;
+		m_ClearColor[1] = colour.m_Green;
+		m_ClearColor[2] = colour.m_Blue;
+		m_ClearColor[3] = colour.m_Alpha;
 	}
 
-	if ( depth ) {
-		clear_flags |= GL_DEPTH_BUFFER_BIT;
-		glClearDepth( 1.0 );
+	if ( HasFlag( flags, ContextClearFlags::Depth ) ) {
+		m_ClearFlags |= GL_DEPTH_BUFFER_BIT;
 	}
-
-	glClear( clear_flags );
 }
 
-void OpenGLGraphicsContext::Draw( size_t vertex_count, size_t offset ) noexcept {
+void OpenGLGraphicsContext::Draw( size_t vertex_count,
+								  size_t offset ) noexcept {
 	PrepareToDraw();
 	glDrawArrays( GL_TRIANGLES, static_cast<GLint>( offset ),
 				  static_cast<GLsizei>( vertex_count ) );
 }
 
 void OpenGLGraphicsContext::DrawIndexed( size_t index_count, size_t offset,
-								   size_t base_vertex ) noexcept {
+										 size_t base_vertex ) noexcept {
 	PrepareToDraw();
 	glDrawRangeElementsBaseVertex(
 		GL_TRIANGLES, static_cast<GLuint>( offset ), m_MaxIndices,
@@ -147,7 +151,8 @@ void OpenGLGraphicsContext::SetProgram( const Program& program ) {
 	m_Program = resource;
 }
 
-void OpenGLGraphicsContext::SetSampler( uint32_t unit, const Sampler& sampler ) {
+void OpenGLGraphicsContext::SetSampler( uint32_t unit,
+										const Sampler& sampler ) {
 	assert( unit < m_MaxTextures );
 
 	const GLuint resource = sampler.GetApiResource();
@@ -158,7 +163,8 @@ void OpenGLGraphicsContext::SetSampler( uint32_t unit, const Sampler& sampler ) 
 	m_Samplers.emplace( m_Samplers.begin() + unit, resource );
 }
 
-void OpenGLGraphicsContext::SetTexture( uint32_t unit, const Texture2D& texture ) {
+void OpenGLGraphicsContext::SetTexture( uint32_t unit,
+										const Texture2D& texture ) {
 	assert( unit < m_MaxTextures );
 
 	const GLuint resource = texture.GetApiResource();
@@ -179,6 +185,22 @@ void OpenGLGraphicsContext::SetViewport( int x, int y, int width, int height ) {
 }
 
 void OpenGLGraphicsContext::PrepareToDraw() {
+	// Clear the back buffer
+	if ( m_ClearFlags != 0 ) {
+		if ( m_ClearFlags & GL_COLOR_BUFFER_BIT ) {
+			glClearColor( m_ClearColor[0], m_ClearColor[1], m_ClearColor[2],
+						  m_ClearColor[3] );
+		}
+
+		if ( m_ClearFlags & GL_DEPTH_BUFFER_BIT ) {
+			glClearDepth( 1.0 );
+		}
+
+		glClear( m_ClearFlags );
+
+		m_ClearFlags = 0;
+	}
+
 	// Bind vertex array
 	glBindVertexArray( m_Vao );
 
@@ -215,4 +237,4 @@ void OpenGLGraphicsContext::PrepareToDraw() {
 	glUseProgram( m_Program );
 }
 
-}  // namespace Octave::OpenGL
+}  // namespace Octave

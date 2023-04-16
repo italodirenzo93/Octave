@@ -132,7 +132,7 @@ public:
 
 protected:
 	void OnUpdate() override {
-		context_->Clear( true, true, 0, 0, 0 );
+		context_->Clear( ContextClearFlags::Color, Colours::Black );
 
 		context_->Reset();
 		context_->SetVertexBuffer( *vbo_ );
