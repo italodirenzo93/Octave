@@ -12,6 +12,9 @@ namespace Octave {
 struct ApplicationOptions {
 	RenderApi m_RenderApi;
 	std::vector<std::string> m_Args;
+
+	ApplicationOptions() = default;
+	ApplicationOptions( int argc, char* argv[] );
 };
 
 class Application {
@@ -46,9 +49,9 @@ private:
 	std::unique_ptr<Window> m_Window;
 	std::unique_ptr<InputSystem> m_Input;
 
-	LayerStack layers_;
+	LayerStack m_Layers;
 
-	bool is_running_;
+	bool m_IsRunning;
 
 public:
 	Application() = delete;

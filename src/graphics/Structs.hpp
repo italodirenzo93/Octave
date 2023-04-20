@@ -28,12 +28,12 @@ enum class BufferUsage {
 };
 
 struct BufferDescription {
-	const char* name;
-	uint32_t size;
-	uint32_t stride;
-	ResourceAccess access;
-	BufferType type;
-	BufferUsage usage;
+	const char* m_Name = "";
+	uint32_t m_Size = 0;
+	uint32_t m_Stride = 0;
+	ResourceAccess m_Access = ResourceAccess::WriteOnly;
+	BufferType m_Type = BufferType::VertexBuffer;
+	BufferUsage m_Usage = BufferUsage::Static;
 };
 
 //////////////////////////////
@@ -44,10 +44,10 @@ enum class VertexAttributeName { kPosition, kColor, kTexCoord, kNormal };
 enum class VertexAttributeType { kFloat, kUint, kUbyte };
 
 struct VertexAttribute {
-	VertexAttributeName name;
-	uint32_t size;
-	VertexAttributeType type;
-	bool normalized;
+	VertexAttributeName m_Name = VertexAttributeName::kPosition;
+	uint32_t m_Size = 0;
+	VertexAttributeType m_Type = VertexAttributeType::kFloat;
+	bool m_IsNormalized = false;
 };
 
 using VertexLayout = std::vector<VertexAttribute>;
@@ -68,10 +68,11 @@ enum class ShaderType {
 enum class TextureFormat { Rgba, Rgb };
 
 struct TextureDescription2D {
-	uint32_t width;
-	uint32_t height;
-	TextureFormat format;
-	uint32_t mip_levels;
+	const char* m_Name = "";
+	uint32_t m_Width = 0;
+	uint32_t m_Height = 0;
+	TextureFormat m_Format = TextureFormat::Rgba;
+	uint32_t m_MipLevels = 1;
 };
 
 enum class TextureWrap { Repeat, Mirror, ClampEdge, ClampBorder };
@@ -86,13 +87,14 @@ enum class TextureFilter {
 };
 
 struct SamplerDescription {
-	TextureWrap wrap_s;
-	TextureWrap wrap_t;
-	TextureFilter filter;
-	uint32_t max_ansiotropy;
-	float max_lod;
-	float min_lod;
-	float mip_lod_bias;
+	const char* m_Name = "";
+	TextureWrap m_WrapS = TextureWrap::Repeat;
+	TextureWrap m_WrapT = TextureWrap::Repeat;
+	TextureFilter m_Filter = TextureFilter::Linear;
+	uint32_t m_MaxAnsiotropy = 0;
+	float m_MaxLod = 0.0f;
+	float m_MinLod = 0.0f;
+	float m_MipLodBias = 0.0f;
 };
 
 //////////////////////////////
@@ -103,8 +105,8 @@ enum class VertexWindingOrder { CounterClockwise, Clockwise };
 enum class CullFace { None, Back, Front, FrontAndBack };
 
 struct RasterizerStateDescription{
-	VertexWindingOrder winding_order;
-	CullFace cull_face;
+	VertexWindingOrder m_WindingOrder = VertexWindingOrder::Clockwise;
+	CullFace m_CullFace = CullFace::Back;
 };
 
 //////////////////////////////
@@ -112,11 +114,10 @@ struct RasterizerStateDescription{
 //////////////////////////////
 
 struct DepthStencilStateDescription {
-	bool depth_enabled;
-	float depth_value;
-
-	bool stencil_enabled;
-	int stencil_value;
+	bool m_DepthEnabled = true;
+	float m_DepthValue = 1.0f;
+	bool m_StencilEnabled = false;
+	int m_StencilValue = 0;
 };
 
 }

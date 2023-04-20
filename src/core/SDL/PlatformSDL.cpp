@@ -37,13 +37,13 @@ void Platform::Quit() {
 
 PlatformName Platform::GetName() noexcept {
 	const char* platform = SDL_GetPlatform();
-	if ( platform == "Windows" ) {
+	if ( strcmp( platform, "Windows" ) == 0 ) {
 		return PlatformName::Windows;
 	}
-	if ( platform == "Mac OS X" ) {
+	if ( strcmp( platform, "Mac OS X" ) == 0 ) {
 		return PlatformName::Mac;
 	}
-	if ( platform == "Linux" ) {
+	if ( strcmp( platform, "Linux" ) == 0 ) {
 		return PlatformName::Linux;
 	}
 

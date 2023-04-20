@@ -49,6 +49,8 @@ struct VertexConstants {
 
 class SimpleApp final : public Application {
 public:
+	SimpleApp( const ApplicationOptions& opts ) : Application( opts ) {}
+
 	void OnInitialize() override {
 		Log::Info( "Hello World!" );
 
@@ -68,9 +70,9 @@ public:
 				{ { -1.0f, -1.0f }, { 0.0f, 0.0f, 1.0f } } };
 
 			BufferDescription desc{};
-			desc.size = sizeof( VertexType ) * vertices.size();
-			desc.stride = sizeof( VertexType );
-			desc.usage = BufferUsage::Static;
+			desc.m_Size = sizeof( VertexType ) * vertices.size();
+			desc.m_Stride = sizeof( VertexType );
+			desc.m_Usage = BufferUsage::Static;
 
 			vbo_ = GetGraphicsDevice().CreateBuffer( desc, vertices.data() );
 		}
@@ -84,8 +86,8 @@ public:
 		// Uniform buffer
 		{
 			BufferDescription desc{};
-			desc.size = sizeof( VertexConstants );
-			desc.usage = BufferUsage::Dynamic;
+			desc.m_Size = sizeof( VertexConstants );
+			desc.m_Usage = BufferUsage::Dynamic;
 
 			ubo_ = GetGraphicsDevice().CreateBuffer( desc, nullptr );
 
@@ -151,5 +153,6 @@ private:
 };
 
 unique_ptr<Application> Octave::CreateApplication( int argc, char* argv[] ) {
-	return make_unique<SimpleApp>();
+	ApplicationOptions opts( argc, argv );
+	return make_unique<SimpleApp>( opts );
 }

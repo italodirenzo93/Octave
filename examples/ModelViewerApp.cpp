@@ -1,5 +1,6 @@
 // clang-format off
 #include "common/SampleApplication.hpp"
+#include "common/Helpers.hpp"
 #include <EntryPoint.hpp>
 // clang-format on
 
@@ -14,68 +15,11 @@ using namespace std;
 using namespace Octave;
 using namespace Octave::Samples;
 
-template <class T>
-unique_ptr<Buffer> CreateStaticBuffer( GraphicsDevice& device,
-									   const std::vector<T>& data,
-									   size_t stride, BufferType binding ) {
-	BufferDescription desc{};
-	desc.size = static_cast<uint32_t>( sizeof( T ) * data.size() );
-	desc.stride = static_cast<uint32_t>( stride );
-	desc.access = ResourceAccess::WriteOnly;
-	desc.usage = BufferUsage::Static;
-	desc.type = binding;
-
-	return device.CreateBuffer( desc, data.data() );
-}
-
-inline unique_ptr<Texture2D> CreateTextureFromFile(
-	GraphicsDevice& device, const std::string& filename ) {
-	stbi_set_flip_vertically_on_load( true );
-
-	int n_channels, width, height;
-	const stbi_uc* image = stbi_load( filename.c_str(), &width, &height,
-									  &n_channels, STBI_default );
-
-	if ( !image ) {
-		throw Octave::Exception( "Could not load texture from file " +
-								 filename );
-	}
-
-	TextureDescription2D desc{};
-	desc.width = width;
-	desc.height = height;
-	desc.mip_levels = 1;
-
-	if ( n_channels == 4 ) {
-		desc.format = TextureFormat::Rgba;
-	} else {
-		desc.format = TextureFormat::Rgb;
-	}
-
-	auto texture = device.CreateTexture2D( desc );
-
-	texture->SetData( desc.format, 0, 0, 0, width, height, image );
-	device.GenerateMipmap( *texture );
-
-	return texture;
-}
-
-inline unique_ptr<Shader> LoadShaderFromFile( GraphicsDevice& device,
-											  ShaderType type,
-											  const std::string& path ) {
-	std::ifstream ifs( path );
-	if ( !ifs.is_open() ) {
-		throw Octave::Exception( "Unable to open file " + path );
-	}
-
-	std::string code( ( std::istreambuf_iterator<char>( ifs ) ),
-					  ( std::istreambuf_iterator<char>() ) );
-
-	return device.CreateShader( type, code.c_str() );
-}
-
 class ModelViewerSample final : public SampleApplication {
 public:
+	ModelViewerSample( const ApplicationOptions& opts )
+		: SampleApplication( opts ) {}
+
 	void OnInitialize() override {
 		SampleApplication::OnInitialize();
 
@@ -163,10 +107,10 @@ public:
 		// Samplers
 		{
 			SamplerDescription desc{};
-			desc.max_lod = 0.0f;
-			desc.min_lod = 0.0f;
-			desc.mip_lod_bias = 0.0f;
-			desc.max_ansiotropy = 0;
+			desc.m_MaxLod = 0.0f;
+			desc.m_MinLod = 0.0f;
+			desc.m_MipLodBias = 0.0f;
+			desc.m_MaxAnsiotropy = 0;
 
 			sampler_ = GetGraphicsDevice().CreateSampler( desc );
 		}
@@ -179,9 +123,12 @@ public:
 		if ( cube_vbo_ ) device.DestroyBuffer( std::move( cube_vbo_ ) );
 		if ( cube_ibo_ ) device.DestroyBuffer( std::move( cube_ibo_ ) );
 
-		if ( cube_texture_ ) device.DestroyTexture2D( std::move( cube_texture_ ) );
-		if ( floor_texture_diffuse_ ) device.DestroyTexture2D( std::move( floor_texture_diffuse_ ) );
-		if ( floor_texture_specular_ ) device.DestroyTexture2D( std::move( floor_texture_specular_ ) );
+		if ( cube_texture_ )
+			device.DestroyTexture2D( std::move( cube_texture_ ) );
+		if ( floor_texture_diffuse_ )
+			device.DestroyTexture2D( std::move( floor_texture_diffuse_ ) );
+		if ( floor_texture_specular_ )
+			device.DestroyTexture2D( std::move( floor_texture_specular_ ) );
 
 		if ( sampler_ ) device.DestroySampler( std::move( sampler_ ) );
 
@@ -191,7 +138,7 @@ public:
 protected:
 	void Update() override {
 		const auto delta =
-			static_cast<float>( step_timer_.GetElapsedSeconds() );
+			static_cast<float>( m_StepTimer.GetElapsedSeconds() );
 
 		if ( GetInputSystem().IsKeyDown( GetWindow(), Key::Escape ) ) {
 			Exit();
@@ -205,7 +152,7 @@ protected:
 	}
 
 	void Draw() override {
-		context_->Clear( ContextClearFlags::Color | ContextClearFlags::Depth );
+		m_Context->Clear( ContextClearFlags::Color | ContextClearFlags::Depth );
 
 		program_->SetMat4( "uMatProjection", camera_.GetProjectionMatrix() );
 		program_->SetMat4( "uMatView", camera_.GetViewMatrix() );
@@ -215,13 +162,15 @@ protected:
 		program_->SetInt( "uMaterial.specular", 1 );
 		program_->SetFloat( "uMaterial.shininess", 32.0f );
 
-		program_->SetVec3( "uDirectionalLight.direction", glm::vec3( 0.5f, 0.0f, -0.5f ) );
+		program_->SetVec3( "uDirectionalLight.direction",
+						   glm::vec3( 0.5f, 0.0f, -0.5f ) );
 		program_->SetVec3( "uDirectionalLight.ambient", glm::vec3( 0.2f ) );
 		program_->SetVec3( "uDirectionalLight.diffuse", glm::vec3( 0.5f ) );
 		program_->SetVec3( "uDirectionalLight.specular", glm::vec3( 0.8f ) );
 
 		program_->SetBool( "uPointLights[0].enabled", true );
-		program_->SetVec3( "uPointLights[0].position", glm::vec3( 1.0f, 1.5f, -2.1f ) );
+		program_->SetVec3( "uPointLights[0].position",
+						   glm::vec3( 1.0f, 1.5f, -2.1f ) );
 		program_->SetVec3( "uPointLights[0].ambient", glm::vec3( 0.2f ) );
 		program_->SetVec3( "uPointLights[0].diffuse", glm::vec3( 0.5f ) );
 		program_->SetVec3( "uPointLights[0].specular", glm::vec3( 0.8f ) );
@@ -232,32 +181,36 @@ protected:
 		// Draw floating box
 		{
 			program_->SetMat4( "uMatModel", cube_model_matrix_ );
-			program_->SetMat4( "uMatNormal", glm::transpose( glm::inverse( cube_model_matrix_ ) ) );
+			program_->SetMat4(
+				"uMatNormal",
+				glm::transpose( glm::inverse( cube_model_matrix_ ) ) );
 
-			context_->Reset();
-			context_->SetVertexBuffer( *cube_vbo_ );
-			context_->SetIndexBuffer( *cube_ibo_ );
-			context_->SetTexture( 0, *cube_texture_ );
-			context_->SetSampler( 0, *sampler_ );
-			context_->SetProgram( *program_ );
-			context_->SetVertexLayout( cube_layout_ );
-			context_->DrawIndexed( cube_ibo_->GetNumElements(), 0, 0 );
+			m_Context->Reset();
+			m_Context->SetVertexBuffer( *cube_vbo_ );
+			m_Context->SetIndexBuffer( *cube_ibo_ );
+			m_Context->SetTexture( 0, *cube_texture_ );
+			m_Context->SetSampler( 0, *sampler_ );
+			m_Context->SetProgram( *program_ );
+			m_Context->SetVertexLayout( cube_layout_ );
+			m_Context->DrawIndexed( cube_ibo_->GetNumElements(), 0, 0 );
 		}
 
 		// Draw floor
 		{
 			program_->SetMat4( "uMatModel", floor_model_matrix_ );
-			program_->SetMat4( "uMatNormal", glm::transpose( glm::inverse( floor_model_matrix_ ) ) );
+			program_->SetMat4(
+				"uMatNormal",
+				glm::transpose( glm::inverse( floor_model_matrix_ ) ) );
 
-			context_->Reset();
-			context_->SetVertexBuffer( *floor_vbo_ );
-			context_->SetTexture( 0, *floor_texture_diffuse_ );
-			context_->SetSampler( 0, *sampler_ );
-			context_->SetTexture( 1, *floor_texture_specular_ );
-			context_->SetSampler( 1, *sampler_ );
-			context_->SetProgram( *program_ );
-			context_->SetVertexLayout( floor_layout_ );
-			context_->Draw( floor_vbo_->GetNumElements(), 0 );
+			m_Context->Reset();
+			m_Context->SetVertexBuffer( *floor_vbo_ );
+			m_Context->SetTexture( 0, *floor_texture_diffuse_ );
+			m_Context->SetSampler( 0, *sampler_ );
+			m_Context->SetTexture( 1, *floor_texture_specular_ );
+			m_Context->SetSampler( 1, *sampler_ );
+			m_Context->SetProgram( *program_ );
+			m_Context->SetVertexLayout( floor_layout_ );
+			m_Context->Draw( floor_vbo_->GetNumElements(), 0 );
 		}
 	}
 

@@ -79,8 +79,6 @@ void OpenGLGraphicsContext::Reset() noexcept {
 	m_VertexLayout.clear();
 	std::fill( m_Textures.begin(), m_Textures.end(), 0 );
 	std::fill( m_Samplers.begin(), m_Samplers.end(), 0 );
-	m_ClearFlags = 0;
-	m_ClearColor.fill( 0.0f );
 }
 
 void OpenGLGraphicsContext::Clear( ContextClearFlags flags,
@@ -212,13 +210,13 @@ void OpenGLGraphicsContext::PrepareToDraw() {
 	uint32_t offset = 0;
 	for ( const auto& attr : m_VertexLayout ) {
 		glVertexAttribPointer(
-			AttrNameToIndex( attr.name ), static_cast<GLint>( attr.size ),
-			AttrTypeToGLType( attr.type ),
-			static_cast<GLboolean>( attr.normalized ), m_VertexStride,
+			AttrNameToIndex( attr.m_Name ), static_cast<GLint>( attr.m_Size ),
+			AttrTypeToGLType( attr.m_Type ),
+			static_cast<GLboolean>( attr.m_IsNormalized ), m_VertexStride,
 			reinterpret_cast<const void*>( offset ) );
-		glEnableVertexAttribArray( AttrNameToIndex( attr.name ) );
+		glEnableVertexAttribArray( AttrNameToIndex( attr.m_Name ) );
 
-		offset += attr.size * AttrTypeSize( attr.type );
+		offset += attr.m_Size * AttrTypeSize( attr.m_Type );
 	}
 
 	// Bind textures

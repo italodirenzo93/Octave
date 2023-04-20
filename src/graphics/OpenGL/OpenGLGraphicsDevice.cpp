@@ -136,7 +136,7 @@ void OpenGLGraphicsDevice::DestroyContext(
 std::unique_ptr<Buffer> OpenGLGraphicsDevice::CreateBuffer(
 	const BufferDescription& desc, const void* data ) {
 	GLenum target;
-	switch ( desc.type ) {
+	switch ( desc.m_Type ) {
 		default:
 		case BufferType::VertexBuffer:
 			target = GL_ARRAY_BUFFER;
@@ -152,16 +152,20 @@ std::unique_ptr<Buffer> OpenGLGraphicsDevice::CreateBuffer(
 	GLuint handle;
 	glGenBuffers( 1, &handle );
 
+	if ( GLAD_GL_KHR_debug && desc.m_Name ) {
+		glObjectLabel( GL_BUFFER, handle, 0, desc.m_Name );
+	}
+
 	glBindBuffer( target, handle );
 
 	if ( GLAD_GL_ARB_buffer_storage ) {
 		GLint flags = 0;
 
-		if ( desc.usage == BufferUsage::Dynamic ) {
+		if ( desc.m_Usage == BufferUsage::Dynamic ) {
 			flags |= GL_DYNAMIC_STORAGE_BIT;
 		}
 
-		switch ( desc.access ) {
+		switch ( desc.m_Access ) {
 			default:
 			case ResourceAccess::WriteOnly:
 				flags |= GL_MAP_WRITE_BIT;
@@ -174,14 +178,14 @@ std::unique_ptr<Buffer> OpenGLGraphicsDevice::CreateBuffer(
 				break;
 		}
 
-		glBufferStorage( target, static_cast<GLsizeiptr>( desc.size ), data,
+		glBufferStorage( target, static_cast<GLsizeiptr>( desc.m_Size ), data,
 						 flags );
 	} else {
 		GLenum usage;
-		switch ( desc.usage ) {
+		switch ( desc.m_Usage ) {
 			default:
 			case BufferUsage::Static:
-				switch ( desc.access ) {
+				switch ( desc.m_Access ) {
 					default:
 					case ResourceAccess::WriteOnly:
 						usage = GL_STATIC_DRAW;
@@ -195,7 +199,7 @@ std::unique_ptr<Buffer> OpenGLGraphicsDevice::CreateBuffer(
 				}
 				break;
 			case BufferUsage::Dynamic: {
-				switch ( desc.access ) {
+				switch ( desc.m_Access ) {
 					default:
 					case ResourceAccess::WriteOnly:
 						usage = GL_DYNAMIC_DRAW;
@@ -210,7 +214,7 @@ std::unique_ptr<Buffer> OpenGLGraphicsDevice::CreateBuffer(
 			}
 		}
 
-		glBufferData( target, static_cast<GLsizeiptr>( desc.size ), data,
+		glBufferData( target, static_cast<GLsizeiptr>( desc.m_Size ), data,
 					  usage );
 	}
 
@@ -266,20 +270,20 @@ std::unique_ptr<Sampler> OpenGLGraphicsDevice::CreateSampler(
 	glGenSamplers( 1, &handle );
 
 	// Set sampler params
-	glSamplerParameterf( handle, GL_TEXTURE_LOD_BIAS, desc.mip_lod_bias );
+	glSamplerParameterf( handle, GL_TEXTURE_LOD_BIAS, desc.m_MipLodBias );
 
-	glSamplerParameterf( handle, GL_TEXTURE_MAX_LOD, desc.max_lod );
-	glSamplerParameterf( handle, GL_TEXTURE_MIN_LOD, desc.min_lod );
+	glSamplerParameterf( handle, GL_TEXTURE_MAX_LOD, desc.m_MaxLod );
+	glSamplerParameterf( handle, GL_TEXTURE_MIN_LOD, desc.m_MinLod );
 
 	glSamplerParameteri( handle, GL_TEXTURE_MAG_FILTER,
-						 FilterToGLType( desc.filter ) );
+						 FilterToGLType( desc.m_Filter ) );
 	glSamplerParameteri( handle, GL_TEXTURE_MIN_FILTER,
-						 FilterToGLType( desc.filter ) );
+						 FilterToGLType( desc.m_Filter ) );
 
 	glSamplerParameteri( handle, GL_TEXTURE_WRAP_S,
-						 WrapToGLType( desc.wrap_s ) );
+						 WrapToGLType( desc.m_WrapS ) );
 	glSamplerParameteri( handle, GL_TEXTURE_WRAP_T,
-						 WrapToGLType( desc.wrap_t ) );
+						 WrapToGLType( desc.m_WrapT ) );
 
 	auto sampler = std::make_unique<Sampler>( desc );
 	sampler->SetApiResource( handle );
@@ -332,7 +336,7 @@ std::unique_ptr<Texture2D> OpenGLGraphicsDevice::CreateTexture2D(
 
 	// Internal texture format
 	GLenum internal_format;
-	switch ( desc.format ) {
+	switch ( desc.m_Format ) {
 		case TextureFormat::Rgb:
 			internal_format = GL_RGB32F;
 			break;
@@ -344,7 +348,7 @@ std::unique_ptr<Texture2D> OpenGLGraphicsDevice::CreateTexture2D(
 
 	// Generic texture format
 	GLenum format;
-	switch ( desc.format ) {
+	switch ( desc.m_Format ) {
 		case TextureFormat::Rgb:
 			format = GL_RGB;
 			break;
@@ -355,13 +359,13 @@ std::unique_ptr<Texture2D> OpenGLGraphicsDevice::CreateTexture2D(
 	}
 
 	if ( GLAD_GL_ARB_texture_storage ) {
-		glTexStorage2D( GL_TEXTURE_2D, static_cast<GLsizei>( desc.mip_levels ),
-						internal_format, static_cast<GLsizei>( desc.width ),
-						static_cast<GLsizei>( desc.height ) );
+		glTexStorage2D( GL_TEXTURE_2D, static_cast<GLsizei>( desc.m_MipLevels ),
+						internal_format, static_cast<GLsizei>( desc.m_Width ),
+						static_cast<GLsizei>( desc.m_Height ) );
 	} else {
 		glTexImage2D( GL_TEXTURE_2D, 0, internal_format,
-					  static_cast<GLsizei>( desc.width ),
-					  static_cast<GLsizei>( desc.height ), 0, format,
+					  static_cast<GLsizei>( desc.m_Width ),
+					  static_cast<GLsizei>( desc.m_Height ), 0, format,
 					  GL_UNSIGNED_BYTE, nullptr );
 	}
 

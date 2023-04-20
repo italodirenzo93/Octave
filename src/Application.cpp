@@ -10,7 +10,12 @@
 
 namespace Octave {
 
-Application::Application( const ApplicationOptions& options ) : is_running_( true ) {
+ApplicationOptions::ApplicationOptions( int argc, char* argv[] )
+	: m_RenderApi( RenderApi::Default ), m_Args( argv + 1, argv + argc ) {
+}
+
+Application::Application( const ApplicationOptions& options )
+	: m_IsRunning( true ) {
 	Log::Init();
 	if ( !Platform::Init() ) {
 		throw Exception( "Unable to initialize platform" );
@@ -25,7 +30,7 @@ Application::Application( const ApplicationOptions& options ) : is_running_( tru
 
 Application::~Application() noexcept {
 	// Release all the layers
-	while ( !layers_.IsEmpty() ) {
+	while ( !m_Layers.IsEmpty() ) {
 		PopLayer();
 	}
 
@@ -36,12 +41,12 @@ Application::~Application() noexcept {
 
 void Application::Run() {
 	OnInitialize();
-	while ( is_running_ ) {
+	while ( m_IsRunning ) {
 		m_Window->PollEvents();
 
 		OnUpdate();
 
-		for ( const auto& layer : layers_ ) {
+		for ( const auto& layer : m_Layers ) {
 			layer->OnUpdate();
 		}
 
@@ -51,17 +56,17 @@ void Application::Run() {
 }
 
 void Application::Exit() {
-	is_running_ = false;
+	m_IsRunning = false;
 }
 
 Application& Application::PushLayer( LayerStack::LayerPtr layer ) noexcept {
 	layer->OnAttach();
-	layers_.PushLayer( std::move( layer ) );
+	m_Layers.PushLayer( std::move( layer ) );
 	return *this;
 }
 
 LayerStack::LayerPtr Application::PopLayer() noexcept {
-	auto layer = layers_.PopLayer();
+	auto layer = m_Layers.PopLayer();
 	layer->OnDetach();
 	return layer;
 }

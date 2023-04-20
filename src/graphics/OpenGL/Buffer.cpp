@@ -5,7 +5,7 @@ namespace Octave {
 
 Buffer::Buffer( const BufferDescription& desc ) noexcept
 	: handle_( 0 ), target_( GL_ARRAY_BUFFER ), desc_( desc ) {
-	switch ( desc.type ) {
+	switch ( desc.m_Type ) {
 		default:
 		case BufferType::VertexBuffer:
 			target_ = GL_ARRAY_BUFFER;
@@ -20,23 +20,23 @@ Buffer::Buffer( const BufferDescription& desc ) noexcept
 }
 
 uint32_t Buffer::GetSize() const noexcept {
-	return desc_.size;
+	return desc_.m_Size;
 }
 
 uint32_t Buffer::GetStride() const noexcept {
-	return desc_.stride;
+	return desc_.m_Stride;
 }
 
 uint32_t Buffer::GetNumElements() const noexcept {
-	if ( desc_.stride == 0 ) {
-		return desc_.size;
+	if ( desc_.m_Stride == 0 ) {
+		return desc_.m_Size;
 	}
 
-	return desc_.size / desc_.stride;
+	return desc_.m_Size / desc_.m_Stride;
 }
 
 void Buffer::SetData( const void* data, uint32_t offset, uint32_t size ) {
-	assert( data != nullptr && size <= desc_.size && offset < size );
+	assert( data != nullptr && size <= desc_.m_Size && offset < size );
 
 	glBindBuffer( target_, handle_ );
 
