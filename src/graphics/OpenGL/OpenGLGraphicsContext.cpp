@@ -199,6 +199,9 @@ void OpenGLGraphicsContext::PrepareToDraw() {
 		m_ClearFlags = 0;
 	}
 
+	// Use shader program
+	glUseProgram( m_Program );
+
 	// Bind vertex array
 	glBindVertexArray( m_Vao );
 
@@ -230,9 +233,6 @@ void OpenGLGraphicsContext::PrepareToDraw() {
 	for ( int i = 0; i < m_MaxTextures; i++ ) {
 		glBindSampler( i, m_Samplers[i] );
 	}
-
-	// Use shader program
-	glUseProgram( m_Program );
 }
 
 }  // namespace Octave
